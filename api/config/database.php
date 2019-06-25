@@ -9,7 +9,7 @@ namespace Config;
 class Database 
 {
     const HOST      = 'localhost';
-    const NAME      = 'shop';
+    const NAME      = 'market';
     const USERNAME  = 'root';
     const PASSWORD  = '';
 }
