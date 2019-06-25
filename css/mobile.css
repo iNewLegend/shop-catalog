@@ -1,0 +1,24 @@
+
+
+
+@media only screen and (max-width: 516px) {
+    #catalog .product {
+        width: 65%;
+    }
+
+    #sidebar {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    #catalog .product {
+        width: 85%;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #catalog .product {
+        width: 95%;
+    }
+}
