@@ -19,8 +19,8 @@ http://leonid.viewdns.net:8888/public/market/
 ## to start the backend
 ```
 mysql <your mysql info>
-mysql> create database elementor_market
-$ mysql -u root market < market.sql
+mysql> create database market
+$ mysql -u <your user> market < market.sql
 $ vim api/config/database.php
 $ php -S localhost:8080
 ````
