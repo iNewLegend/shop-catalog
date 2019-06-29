@@ -47,6 +47,14 @@
     outline: none;
 }
 
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: inherit;
+}
+
 li a:hover {
     background-color: #111;
 }

@@ -17,28 +17,36 @@ export default class Cart {
      * Function constructor() : Create Cart
      * 
      * @param {API} api
-     * @param {API_Catalog} apiCatalog 
+     * @param {API_Catalog} catalog 
      */
-    constructor(api, apiCatalog) {
+    constructor(api, catalog) {
         this.cart = [];
 
-        this.apiCart = new API_Cart(api);
-        this.apiCatalog = apiCatalog;
+        this.cart = new API_Cart(api);
+        this.catalog = catalog;
 
         this.elements = {
-            headerTogglerAmount: $('header #toggler .amount'),
+            header: {
+                togglerAmount: $('header #toggler .amount')
+            },
 
-            templateCartItem: $('template#cart-item'),
+            cart: {
+                self: $('#cart'),
+                empty: $('#cart #empty'),
+                items: $('#cart .items'),
+                itemsTotal: $('#cart .items .total'),
+                totalPrice: $('#cart .total .price'),
+                checkout: $('#cart .checkout')
+            },
 
-            cart: $('#cart'),
-            cartEmpty: $('#cart #empty'),
-            cartItems: $('#cart .items'),
-            cartCheckout: $("#cart .checkout"),
-            cartItemsTotal: $('#cart .items .total'),
-            cartTotalPrice: $('#cart .total .price')
+            template: {
+                cartItem: $('template#cart-item'),
+            },
         };
 
-        this.elements.cart.on('click', '.items .close', ((e) => this.onItemRemove(e)));
+        this.events = {
+            onCheckout: () => {}
+        }
     }
 
     /**
@@ -47,8 +55,33 @@ export default class Cart {
     initialize() {
         if (debug) console.log(`${this.constructor.name}::initialize()`);
 
+        const { cart } = this.elements;
+
+
+        cart.self.on('click', '.items .close', ((e) => this.onItemRemove(e)));
+        cart.checkout.click(this.events.onCheckout.bind(this));
+
         this.get();
     }
+
+    /**
+     * Function on() : Delcare event callback
+     * 
+     * @param {'checkout'} event 
+     * @param {{function()} } callback 
+     */
+    on(event, callback) {
+        switch (event) {
+            case 'checkout': {
+                this.events.onCheckout = callback;
+            } break;
+
+            default: {
+                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+            }
+        }
+    }
+
 
     /**
      * Function get() : Get cart from server
@@ -56,21 +89,21 @@ export default class Cart {
     get() {
         if (debug) console.log(`${this.constructor.name}::get()`);
 
-        const { cartItems, headerTogglerAmount } = this.elements;
+        const { cart, header } = this.elements;
 
         // clear toggler amount
-        headerTogglerAmount.html(0);
+        header.togglerAmount.html(0);
 
         // clear visual cart
         this.cart.items = [];
         this.cart.total = 0;
 
         // clear dom cart except .total
-        if (cartItems.length > 0) {
-            cartItems.find('.item').remove();
+        if (cart.items.length > 0) {
+            cart.items.find('.item').remove();
         }
 
-        this.apiCart.get(this.onRecv.bind(this));
+        this.cart.get(this.onRecv.bind(this));
     }
 
     /**
@@ -106,7 +139,7 @@ export default class Cart {
         const missingProducts = data.filter((item) => {
             // we get the price and name from local catalog;
             // there is many solutions, this is fine for that exmaple.
-            const localProduct = this.apiCatalog.getLocalProductById(item.id);
+            const localProduct = this.catalog.getLocalProductById(item.id);
 
             // use extra info from local product
             if (localProduct) {
@@ -119,7 +152,7 @@ export default class Cart {
             return true;
         });
 
-        this.apiCatalog.getByIds((missing) => {
+        this.catalog.getByIds((missing) => {
             data.map((item) => {
                 Object.assign(item, missing.find(x => x.id == item.id));
                 this.addItem(item, false);
@@ -142,21 +175,20 @@ export default class Cart {
             this.cart.total += item.amount * item.price;
         });
 
-        const { cartTotalPrice, headerTogglerAmount } = this.elements;
+        const { cart, header } = this.elements;
 
         // remove empty item slots from cart
         this.cart.items = this.cart.items.filter(function (el) {
             return el != null;
         });
 
-
         this.efficientEmptyState(Boolean(this.cart.items.length));
 
         // set the price
-        cartTotalPrice.html(this.cart.total.toFixed(2));
+        cart.totalPrice.html(this.cart.total.toFixed(2));
 
         // set amount of products ONLY!!! to toggler
-        headerTogglerAmount.html(this.cart.items.length);
+        header.togglerAmount.html(this.cart.items.length);
     }
 
     /**
@@ -176,8 +208,10 @@ export default class Cart {
     onClose() {
         if (debug) console.log(`${this.constructor.name}::onClose()`);
 
+        const { cart } = this.elements;
+
         // clear highlight
-        this.elements.cartItems.find('.item').css('animation', 'none');
+        cart.items.find('.item').css('animation', 'none');
     }
 
     /**
@@ -192,7 +226,7 @@ export default class Cart {
             console.log(product);
         }
 
-        this.apiCart.addItem((data) => {
+        this.cart.addItem((data) => {
             if (!data.error) {
                 this.addItem(product, true, true);
 
@@ -215,7 +249,7 @@ export default class Cart {
         const el = $(e.currentTarget);
         const item = el.parentsUntil('.item').parent();
 
-        this.apiCart.removeItem((data) => {
+        this.cart.removeItem((data) => {
             if (!data.error) {
                 const item = data;
 
@@ -238,13 +272,13 @@ export default class Cart {
             console.log(item);
         }
 
-        const { templateCartItem, cartItems } = this.elements;
+        const { template, cart } = this.elements;
 
         // add to virtual cart
         this.cart.items.push(item);
 
         // get dom
-        let templateHtml = templateCartItem.html();
+        let templateHtml = template.cartItem.html();
 
         // format template
         templateHtml = templateHtml.replace('${id}', item.id);
@@ -255,7 +289,7 @@ export default class Cart {
         templateHtml = templateHtml.replace('${sum}', (item.amount * item.price).toFixed(2));
 
         // update dom
-        cartItems.append($(templateHtml));
+        cart.items.append($(templateHtml));
     }
 
     /**
@@ -301,11 +335,11 @@ export default class Cart {
             console.log({ item, notifyCartChanged, highlight });
         }
 
-        const { cartItems } = this.elements;
+        const { cart } = this.elements;
 
         const foundItemKey = this.getItemKeyById(item.id);
         
-        const getDomItem = () => cartItems.find(`.item[data-id='${item.id}']`);
+        const getDomItem = () => cart.items.find(`.item[data-id='${item.id}']`);
 
         let domItem = getDomItem();
 
@@ -339,7 +373,7 @@ export default class Cart {
             console.log({ item, notifyCartChanged });
         }
 
-        const { cartItems } = this.elements;
+        const { cart } = this.elements;
 
         const foundProductKey = this.getItemKeyById(item.id);
 
@@ -348,7 +382,7 @@ export default class Cart {
             delete this.cart.items[foundProductKey];
 
             // update dom cart
-            cartItems.find(`.item[data-id='${item.id}']`).remove();
+            cart.items.find(`.item[data-id='${item.id}']`).remove();
 
         } else {
             alert(`${this.constructor.name}::removeItem() -> item with id: '${item.id}' not found in cart.`);
@@ -376,23 +410,18 @@ export default class Cart {
     efficientEmptyState(state) {
         if (debug) console.log(`${this.constructor.name}::efficientEmptyState('${state}')`);
 
-        const {
-            cartEmpty,
-            cartCheckout,
-            cartItemsTotal,
-            headerTogglerAmount
-        } = this.elements;
+        const { cart, header } = this.elements;
 
         if (state) {
-            cartEmpty.hide();
-            cartCheckout.addClass('open');
-            cartItemsTotal.addClass('open');
-            headerTogglerAmount.show();
+            cart.empty.hide();
+            cart.checkout.addClass('open');
+            cart.itemsTotal.addClass('open');
+            header.togglerAmount.show();
         } else {
-            cartEmpty.show();
-            cartCheckout.removeClass('open');
-            cartItemsTotal.removeClass('open');
-            headerTogglerAmount.hide();
+            cart.empty.show();
+            cart.checkout.removeClass('open');
+            cart.itemsTotal.removeClass('open');
+            header.togglerAmount.hide();
         }
     }
 }

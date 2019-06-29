@@ -11,7 +11,6 @@
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/mobile.css">
-
         <meta name="theme-color" content="#fafafa">
     </head>
 
@@ -23,7 +22,10 @@
         <header>
             <ul>
                 <li><h2>My Shop</h2></li>
-                <li id="toggler" class="pointer"><img src="img/cart.png"><span class="amount bg-light" style="display: none">0</span></li>
+                <li id="toggler" class="pointer">
+                    <img src="img/cart.png"><span class="amount bg-light"
+                        style="display: none">0</span>
+                </li>
             </ul>
         </header>
 
@@ -35,7 +37,8 @@
                 </div>
 
                 <div id="cart">
-                    <h1 id="empty" style="text-align: center">Your cart is empty.</h1>
+                    <h1 id="empty" style="text-align: center">Your cart is
+                        empty.</h1>
 
                     <ul class="items">
                         <li class="total">
@@ -102,9 +105,6 @@
             </li>
         </template>
 
-        <!-- was told not to use external freamworks or libraries -->
-        <!-- i added babel to support es6, it will work without babel but not in all browsers -->
-        <!-- hope you forgive me. -->
         <script src="js/vendor/jquery-3.4.1.min.js"></script>
         <script src="js/dist/app.bundle.js"></script>
     </body>

@@ -17,47 +17,50 @@ export default class Catalog {
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
-    page = 0;
-
     /**
      * Function constructor() : Create Catalog
      * 
      * @param {API} api 
      */
     constructor(api) {
-        this.apiCatalog = new API_Catalog(api);
+        this.catalog = new API_Catalog(api);
 
-        this.cart = new Cart(api, this.apiCatalog);
+        this.cart = new Cart(api, this.catalog);
+
+        this.page = 0;
 
         this.elements = {
-            headerToggler: $('header #toggler'),
+            header: {
+                toggler: $('header #toggler')
+            },
 
-            sidebar: $('#sidebar'),
-            sidebarCloseButton: $('#sidebar #close'),
+            sidebar: {
+                self: $('#sidebar'),
+                closeButton: $('#sidebar #close'),
+            },
 
             overlay: $('#overlay'),
 
-            paginationPrev: $("#pagination .prev"),
-            paginationNext: $("#pagination .next"),
+            pagination: {
+                self: $('#pagination'),
+                prev: $("#pagination .prev"),
+                next: $("#pagination .next"),
+                placeHolder: $('#pagination .placeholder')
+            },
 
-            catalog: $('#catalog'),
-            catalogSpinner: $('#catalog #spinner'),
+            catalog: {
+                self: $('#catalog'),
+                spinner: $('#catalog #spinner'),
+            },
 
-            templateProduct: $('template#product'),
-
-            pagination: $('#pagination'),
-            paginationPlaceholder: $('#pagination .placeholder'),
+            template: {
+                product: $('template#product'),
+            }
         };
 
-        this.elements.headerToggler.click(() => this.sidebarToggle(true));
-        this.elements.overlay.click(() => this.sidebarToggle(false));
-        this.elements.sidebarCloseButton.click(() => this.sidebarToggle(false));
-
-        this.elements.paginationNext.click(() => this.onPageChange((this.page + 1)));
-        this.elements.paginationPrev.click(() => this.onPageChange((this.page - 1)));
-
-        this.elements.catalog.on('change', '.product .amount', ((e) => this.onProudctAmountChange(e)));
-        this.elements.catalog.on('click', '.product button', ((e) => this.onProductAdd(e)));
+        this.events = {
+            onCheckout: () => {},
+        }
     }
 
     /**
@@ -66,9 +69,45 @@ export default class Catalog {
     initialize() {
         if (debug) console.log(`${this.constructor.name}::initialize()`);
 
+        const { header, overlay, sidebar, pagination, catalog } = this.elements;
+
+        overlay.click(() => this.sidebarToggle(false));
+
+        header.toggler.click(() => this.sidebarToggle(true));
+        sidebar.closeButton.click(() => this.sidebarToggle(false));
+
+        pagination.next.click(() => this.onPageChange((this.page + 1)));
+        pagination.prev.click(() => this.onPageChange((this.page - 1)));
+
+        catalog.self.on('change', '.product .amount', ((e) => this.onProudctAmountChange(e)));
+        catalog.self.on('click', '.product button', ((e) => this.onProductAdd(e)));
+
+        this.cart.on('checkout', () => {
+            this.sidebarToggle(false);
+            this.events.onCheckout();
+        });
+
         this.getCatalog(0, () => {
             this.cart.initialize();
         });
+    }
+
+    /**
+     * Function on() : Delcare event callback
+     * 
+     * @param {'checkout'} event 
+     * @param {{function()} } callback 
+     */
+    on(event, callback) {
+        switch (event) {
+            case 'checkout': {
+                this.events.onCheckout = callback;
+            } break;
+
+            default: {
+                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+            }
+        }
     }
 
 
@@ -80,15 +119,15 @@ export default class Catalog {
     onPageChange(page) {
         if (debug) console.log(`${this.constructor.name}::onPageChange('${page}')`);
 
+        const { catalog, pagination } = this.elements;
+
         --page;
 
-        this.elements.catalogSpinner.show();
+        catalog.self.children('.product').remove();
+        catalog.spinner.show();
 
-        this.elements.pagination.hide();
-
-        this.elements.catalog.children('.product').remove();
-
-        this.elements.paginationPlaceholder.empty();
+        pagination.self.hide();
+        pagination.placeHolder.empty();
 
         this.getCatalog(page);
     }
@@ -108,7 +147,7 @@ export default class Catalog {
         const id = parseInt(domProduct.attr('data-id'));
         const amount = parseInt(domProduct.find('.amount').val());
 
-        let product = this.apiCatalog.getLocalProductById(id);
+        let product = this.catalog.getLocalProductById(id);
 
         Object.assign(product, { id, amount });
 
@@ -158,7 +197,7 @@ export default class Catalog {
 
         if (state) {
             overlay.fadeIn();
-            sidebar.addClass('show');
+            sidebar.self.addClass('show');
 
             this.cart.onOpen();
 
@@ -166,7 +205,7 @@ export default class Catalog {
         }
 
         overlay.fadeOut();
-        sidebar.removeClass('show');
+        sidebar.self.removeClass('show');
 
         this.cart.onClose();
     }
@@ -174,11 +213,15 @@ export default class Catalog {
     /**
      * Function setPagination() : Set pagination to dom.
      * 
-     * @param {{}} pagination 
+     * @param {{}} paginationResult 
      */
-    setPagination(pagination) {
+    setPagination(paginationResult) {
+        if (debug) console.log(`${this.constructor.name}::setPagination('${JSON.stringify(paginationResult)}')`);
+
+        const { pagination } = this.elements;
+
         // pages
-        for (let i = 0; i < pagination.pages; ++i) {
+        for (let i = 0; i < paginationResult.pages; ++i) {
 
             const anchor = $(`<a href="#">${i + 1}</a>`)
 
@@ -186,28 +229,27 @@ export default class Catalog {
                 this.onPageChange(val);
             }.bind(this, parseInt(anchor.html())));
 
-            this.elements.paginationPlaceholder.append(anchor);
+            pagination.placeHolder.append(anchor);
 
-            this.elements.pagination.fadeIn();
+            pagination.self.fadeIn();
         }
 
         // set page
-        this.page = pagination.current + 1;
+        this.page = paginationResult.current + 1;
 
         // next
-        if (pagination.current >= (pagination.pages - 1)) {
-            this.elements.paginationNext.hide();
+        if (paginationResult.current >= (paginationResult.pages - 1)) {
+            pagination.next.hide();
         } else {
-            this.elements.paginationNext.show();
+            pagination.next.show();
         }
 
         // prev
         if (this.page == 1) {
-            this.elements.paginationPrev.hide();
+            pagination.prev.hide();
         } else {
-            this.elements.paginationPrev.show();
+            pagination.prev.show();
         }
-
     }
 
     /**
@@ -219,15 +261,17 @@ export default class Catalog {
     getCatalog(page, onSuccess = null) {
         if (debug) console.log(`${this.constructor.name}::getCatalog('${page}')`);
 
-        this.apiCatalog.get(data => {
+        const { catalog, template } = this.elements;
+
+        this.catalog.get(data => {
             // used slow here to fake loading
-            this.elements.catalogSpinner.fadeOut('slow', () => {
+            catalog.spinner.fadeOut('slow', () => {
                 if (!data.error) {
 
                     this.setPagination(data.pagination);
 
                     data.result.map((item) => {
-                        let templateHtml = this.elements.templateProduct.html();
+                        let templateHtml = template.product.html();
 
                         // fine for now.
                         templateHtml = templateHtml.replace('${id}', item.id);
@@ -235,7 +279,7 @@ export default class Catalog {
                         templateHtml = templateHtml.replace('${price}', item.price);
                         templateHtml = templateHtml.replace('${id}', item.id);
 
-                        this.elements.catalog.append($(templateHtml));
+                        catalog.self.append($(templateHtml));
                     });
 
                     if (onSuccess) onSuccess();
