@@ -4,7 +4,6 @@
  * @description: Manages cart
  */
 
-import API from './api/api.js';
 import API_Cart from './api/cart.js';
 import API_Catalog from './api/catalog.js';
 
@@ -16,14 +15,14 @@ export default class Cart {
     /**
      * Function constructor() : Create Cart
      * 
-     * @param {API} api
+     * @param {API_Cart} cart
      * @param {API_Catalog} catalog 
      */
-    constructor(api, catalog) {
+    constructor(cart, catalog) {
         this.cart = [];
 
-        this.cart = new API_Cart(api);
-        this.catalog = catalog;
+        this.apiCart = cart;
+        this.apiCatalog = catalog;
 
         this.elements = {
             header: {
@@ -56,8 +55,7 @@ export default class Cart {
         if (debug) console.log(`${this.constructor.name}::initialize()`);
 
         const { cart } = this.elements;
-
-
+        
         cart.self.on('click', '.items .close', ((e) => this.onItemRemove(e)));
         cart.checkout.click(this.events.onCheckout.bind(this));
 
@@ -103,7 +101,7 @@ export default class Cart {
             cart.items.find('.item').remove();
         }
 
-        this.cart.get(this.onRecv.bind(this));
+        this.apiCart.get(this.onRecv.bind(this));
     }
 
     /**
@@ -139,7 +137,7 @@ export default class Cart {
         const missingProducts = data.filter((item) => {
             // we get the price and name from local catalog;
             // there is many solutions, this is fine for that exmaple.
-            const localProduct = this.catalog.getLocalProductById(item.id);
+            const localProduct = this.apiCatalog.getLocalProductById(item.id);
 
             // use extra info from local product
             if (localProduct) {
@@ -152,7 +150,7 @@ export default class Cart {
             return true;
         });
 
-        this.catalog.getByIds((missing) => {
+        this.apiCatalog.getByIds((missing) => {
             data.map((item) => {
                 Object.assign(item, missing.find(x => x.id == item.id));
                 this.addItem(item, false);
@@ -226,7 +224,7 @@ export default class Cart {
             console.log(product);
         }
 
-        this.cart.addItem((data) => {
+        this.apiCart.addItem((data) => {
             if (!data.error) {
                 this.addItem(product, true, true);
 
@@ -249,7 +247,7 @@ export default class Cart {
         const el = $(e.currentTarget);
         const item = el.parentsUntil('.item').parent();
 
-        this.cart.removeItem((data) => {
+        this.apiCart.removeItem((data) => {
             if (!data.error) {
                 const item = data;
 

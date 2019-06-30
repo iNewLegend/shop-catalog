@@ -4,15 +4,12 @@
  * @description: Manages catalog
  */
 
-import API from './api/api.js';
 import API_Catalog from './api/catalog.js';
-
-import Cart from './cart.js'
 
 const debug = true;
 
 export default class Catalog {
-    static openCartOnUpdate = true;
+    
 
     static amountMaxValue = 999;
     static amountMinValue = 1;
@@ -20,27 +17,14 @@ export default class Catalog {
     /**
      * Function constructor() : Create Catalog
      * 
-     * @param {API} api 
+     * @param {API_Catalog} catalog 
      */
-    constructor(api) {
-        this.catalog = new API_Catalog(api);
-
-        this.cart = new Cart(api, this.catalog);
+    constructor(catalog) {
+        this.apiCatalog = catalog;
 
         this.page = 0;
 
         this.elements = {
-            header: {
-                toggler: $('header #toggler')
-            },
-
-            sidebar: {
-                self: $('#sidebar'),
-                closeButton: $('#sidebar #close'),
-            },
-
-            overlay: $('#overlay'),
-
             pagination: {
                 self: $('#pagination'),
                 prev: $("#pagination .prev"),
@@ -59,7 +43,8 @@ export default class Catalog {
         };
 
         this.events = {
-            onCheckout: () => {},
+            onInitialize: () => {},
+            onItemAdd: (product) => {},
         }
     }
 
@@ -69,12 +54,7 @@ export default class Catalog {
     initialize() {
         if (debug) console.log(`${this.constructor.name}::initialize()`);
 
-        const { header, overlay, sidebar, pagination, catalog } = this.elements;
-
-        overlay.click(() => this.sidebarToggle(false));
-
-        header.toggler.click(() => this.sidebarToggle(true));
-        sidebar.closeButton.click(() => this.sidebarToggle(false));
+        const { pagination, catalog } = this.elements;
 
         pagination.next.click(() => this.onPageChange((this.page + 1)));
         pagination.prev.click(() => this.onPageChange((this.page - 1)));
@@ -82,27 +62,27 @@ export default class Catalog {
         catalog.self.on('change', '.product .amount', ((e) => this.onProudctAmountChange(e)));
         catalog.self.on('click', '.product button', ((e) => this.onProductAdd(e)));
 
-        this.cart.on('checkout', () => {
-            this.sidebarToggle(false);
-            this.events.onCheckout();
-        });
-
         this.getCatalog(0, () => {
-            this.cart.initialize();
+            this.events.onInitialize();
         });
     }
 
     /**
      * Function on() : Delcare event callback
      * 
-     * @param {'checkout'} event 
+     * @param {'initialize'|'itemAdd'} event 
      * @param {{function()} } callback 
      */
     on(event, callback) {
         switch (event) {
-            case 'checkout': {
-                this.events.onCheckout = callback;
+            case 'initialize': {
+                this.events.onInitialize = callback;
             } break;
+
+            case 'itemAdd': {
+                this.events.onItemAdd = callback;
+            } break;
+
 
             default: {
                 alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
@@ -147,15 +127,12 @@ export default class Catalog {
         const id = parseInt(domProduct.attr('data-id'));
         const amount = parseInt(domProduct.find('.amount').val());
 
-        let product = this.catalog.getLocalProductById(id);
+        let product = this.apiCatalog.getLocalProductById(id);
 
         Object.assign(product, { id, amount });
 
-        this.cart.onItemAdd(product, () => {
-            if (Catalog.openCartOnUpdate) {
-                this.sidebarToggle(true);
-            }
-        });
+        // call callback
+        this.events.onItemAdd(product)
 
         // put it back to 1.
         domProduct.find('.amount').val('1');
@@ -181,33 +158,6 @@ export default class Catalog {
         }
 
         el.val(val);
-    }
-
-    /**
-     * Function sidebarToggle() : Change the sidebar state
-     * 
-     * @param {boolean} state 
-     */
-    sidebarToggle(state) {
-        if (debug) console.log(`${this.constructor.name}::sidebarToggle('${state}')`);
-
-        // this is function can move to app.js
-
-        const { sidebar, overlay } = this.elements;
-
-        if (state) {
-            overlay.fadeIn();
-            sidebar.self.addClass('show');
-
-            this.cart.onOpen();
-
-            return;
-        }
-
-        overlay.fadeOut();
-        sidebar.self.removeClass('show');
-
-        this.cart.onClose();
     }
 
     /**
@@ -263,7 +213,7 @@ export default class Catalog {
 
         const { catalog, template } = this.elements;
 
-        this.catalog.get(data => {
+        this.apiCatalog.get(data => {
             // used slow here to fake loading
             catalog.spinner.fadeOut('slow', () => {
                 if (!data.error) {
