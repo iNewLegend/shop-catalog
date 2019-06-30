@@ -182,7 +182,26 @@ header #toggler {
     float: right;
 }
 
+
+header #toggler img {
+    width: 35px;
+    height: 35px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    display: none;
+}
+
+header #toggler .spinner {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    margin: 0;
+}
+
 header #toggler .amount {
+    display: none;
     position: relative;
     bottom: 8px;
     font-size: 13px;
@@ -193,18 +212,6 @@ header #toggler .amount {
     padding: 2px 7px;
 }
 
-header #toggler img {
-    width: 35px;
-    height: 35px;
-    -webkit-user-select: none;
-    /* Chrome all / Safari all */
-    -moz-user-select: none;
-    /* Firefox all */
-    -ms-user-select: none;
-    /* IE 10+ */
-    user-select: none;
-    /* Likely futu */
-}
 
 #sidebar {
     z-index: 10;

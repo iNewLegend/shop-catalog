@@ -23,8 +23,9 @@
             <ul>
                 <li><a href="."><h2>My Shop</h2></a></li>
                 <li id="toggler" class="pointer">
-                    <img src="img/cart.png"><span class="amount bg-light"
-                        style="display: none">0</span>
+                    <img class="cart" src="img/cart.png">
+                    <span class="amount bg-light" style="display: none">0</span>
+                    <div class="spinner" style="border-top-color: lightskyblue"></div>
                 </li>
             </ul>
         </header>
@@ -57,13 +58,12 @@
         <section class="main">
 
         </section>
-
+        
         <!-- template for main page (catalog) -->
         <template id="page-main">
             <div class="container" style="max-width: 1080px;">
                 <div id="catalog" class="row">
-                    <div id="spinner" class="spinner" style="border-top-color:
-                        lightskyblue"></div>
+                    <div class="spinner" style="border-top-color: lightskyblue"></div>
                 </div>
 
                 <div id="pagination" class="pagination" style="display: none">
@@ -91,8 +91,7 @@
                     <h5>Price: <span class="price">${price}$</span></h5>
                     <div class="row">
                         <button class="bg-primary">Add To Cart</button>
-                        <input class="amount" type="number" name="amount"
-                            value="1" min="1">
+                        <input class="amount" type="number" name="amount" value="1" min="1">
                     </div>
                 </div>
             </div>

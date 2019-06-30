@@ -53,10 +53,7 @@ export default class Page {
      * @param {string} innerHtml 
      */
     set(innerHtml) {
-        if (debug) {
-            console.log(`${this.constructor.name}::set() -> `);
-            console.dir({innerHtml});
-        }
+        if (debug) console.log(`${this.constructor.name}::set('innerHtml: '${Boolean(innerHtml)}')`);
 
         this.innerHtml = innerHtml;
 

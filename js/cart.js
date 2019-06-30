@@ -26,7 +26,9 @@ export default class Cart {
 
         this.elements = {
             header: {
-                togglerAmount: $('header #toggler .amount')
+                cart: $('header #toggler .cart'),
+                amount: $('header #toggler .amount'),
+                spinner: $('header #toggler .spinner')
             },
 
             cart: {
@@ -63,6 +65,100 @@ export default class Cart {
     }
 
     /**
+     * Function onRecv() : Called when cart received
+     * 
+     * @param {[]} data 
+     */
+    onRecv(data) {
+        if (debug) console.log(`${this.constructor.name}::onRecv('${JSON.stringify(data)}')`);
+
+        const { cart, spinner } = this.elements.header;
+
+        // not all the products that are in cart exist localy since we used pages in that system,
+        // so we findout what missing and request it from the server.
+        const missingProducts = data.filter((item) => {
+            // we get the price and name from local catalog;
+            // there is many solutions, this is fine for that exmaple.
+            const localProduct = this.apiCatalog.getLocalProductById(item.id);
+
+            // use extra info from local product
+            if (localProduct) {
+                item.price = localProduct.price;
+                item.name = localProduct.name;
+
+                return false;
+            }
+
+            return true;
+        });
+
+        this.apiCatalog.getByIds((missing) => {
+            data.map((item) => {
+                Object.assign(item, missing.find(x => x.id == item.id));
+                this.doAddItem(item, false);
+            });
+
+            // since we put false parameter in addItem, we need notify manually
+            this.onChange();
+        }, missingProducts.map(x => x.id));
+        
+        cart.show();
+        spinner.hide();
+    }
+
+    
+    /**
+     * Function onChange() : Called when cart changed
+     */
+    onChange() {
+        if (debug) console.log(`${this.constructor.name}::onChange()`);
+
+        this.cart.total = 0;
+        this.cart.items.forEach((item) => {
+            this.cart.total += item.amount * item.price;
+        });
+
+        const { cart, header } = this.elements;
+
+        // remove empty item slots from cart
+        this.cart.items = this.cart.items.filter(function (el) {
+            return el != null;
+        });
+
+        this.efficientEmptyState(Boolean(this.cart.items.length));
+
+        // set the price
+        cart.totalPrice.html(this.cart.total.toFixed(2));
+
+        // set amount of products ONLY!!! to toggler
+        header.amount.html(this.cart.items.length);
+    }
+
+    /**
+     * Function onItemRemove() : Called on item remove
+     * 
+     * @param {event} e 
+     */
+    onItemRemove(e) {
+        if (debug) console.log(`${this.constructor.name}::onItemRemove()`);
+
+        // maybe there is better way.
+        const el = $(e.currentTarget);
+        const item = el.parentsUntil('.item').parent();
+
+        this.apiCart.removeItem((data) => {
+            if (!data.error) {
+                const item = data;
+
+                this.doRemoveItem(item, true);
+            } else {
+                alert(data.message);
+            }
+        }, parseInt(item.attr('data-id')));
+
+    }
+
+    /**
      * Function on() : Delcare event callback
      * 
      * @param {'checkout'} event 
@@ -89,8 +185,10 @@ export default class Cart {
 
         const { cart, header } = this.elements;
 
+        header.spinner.show();
+
         // clear toggler amount
-        header.togglerAmount.html(0);
+        header.amount.html(0);
 
         // clear visual cart
         this.cart.items = [];
@@ -125,75 +223,10 @@ export default class Cart {
     }
 
     /**
-     * Function onRecv() : Called when cart received
-     * 
-     * @param {[]} data 
+     * Function open() :  Open the cart
      */
-    onRecv(data) {
-        if (debug) console.log(`${this.constructor.name}::onRecv('${JSON.stringify(data)}')`);
-
-        // not all the products that are in cart exist localy since we used pages in that system,
-        // so we findout what missing and request it from the server.
-        const missingProducts = data.filter((item) => {
-            // we get the price and name from local catalog;
-            // there is many solutions, this is fine for that exmaple.
-            const localProduct = this.apiCatalog.getLocalProductById(item.id);
-
-            // use extra info from local product
-            if (localProduct) {
-                item.price = localProduct.price;
-                item.name = localProduct.name;
-
-                return false;
-            }
-
-            return true;
-        });
-
-        this.apiCatalog.getByIds((missing) => {
-            data.map((item) => {
-                Object.assign(item, missing.find(x => x.id == item.id));
-                this.addItem(item, false);
-            });
-
-            // since we put false parameter in addItem, we need notify manually
-            this.onChange();
-        }, missingProducts.map(x => x.id));
-    }
-
-    
-    /**
-     * Function onChange() : Called when cart changed
-     */
-    onChange() {
-        if (debug) console.log(`${this.constructor.name}::onChange()`);
-
-        this.cart.total = 0;
-        this.cart.items.forEach((item) => {
-            this.cart.total += item.amount * item.price;
-        });
-
-        const { cart, header } = this.elements;
-
-        // remove empty item slots from cart
-        this.cart.items = this.cart.items.filter(function (el) {
-            return el != null;
-        });
-
-        this.efficientEmptyState(Boolean(this.cart.items.length));
-
-        // set the price
-        cart.totalPrice.html(this.cart.total.toFixed(2));
-
-        // set amount of products ONLY!!! to toggler
-        header.togglerAmount.html(this.cart.items.length);
-    }
-
-    /**
-     * Function onOpen() : Called when cart open
-     */
-    onOpen() {
-        if (debug) console.log(`${this.constructor.name}::onOpen()`);
+    open() {
+        if (debug) console.log(`${this.constructor.name}::open()`);
 
         if (Cart.reloadCartEachOpen) {
             this.get();
@@ -201,10 +234,10 @@ export default class Cart {
     }
 
     /**
-     * Function onClose() : Called when cart close
+     * Function close() : Close the cart
      */
-    onClose() {
-        if (debug) console.log(`${this.constructor.name}::onClose()`);
+    close() {
+        if (debug) console.log(`${this.constructor.name}::close()`);
 
         const { cart } = this.elements;
 
@@ -213,20 +246,43 @@ export default class Cart {
     }
 
     /**
-     * Function onItemAdd() : Called on item add 
+     * Function efficientEmptyState() : Update when cart have items or not.
+     * 
+     * @param {boolean} state 
+     */
+    efficientEmptyState(state) {
+        if (debug) console.log(`${this.constructor.name}::efficientEmptyState('${state}')`);
+
+        const { cart, header } = this.elements;
+
+        if (state) {
+            cart.empty.hide();
+            cart.checkout.addClass('open');
+            cart.itemsTotal.addClass('open');
+            header.amount.show();
+        } else {
+            cart.empty.show();
+            cart.checkout.removeClass('open');
+            cart.itemsTotal.removeClass('open');
+            header.amount.hide();
+        }
+    }
+
+    /**
+     * Function itemAdd() : Add items or update
      * 
      * @param {{}} product 
      * @param {function()} onSuccess
      */
-    onItemAdd(product, onSuccess = null) {
+    itemAdd(product, onSuccess = null) {
         if (debug) {
-            console.log(`${this.constructor.name}::onItemAdd() ->`);
+            console.log(`${this.constructor.name}::doItemAdd() ->`);
             console.log(product);
         }
 
         this.apiCart.addItem((data) => {
             if (!data.error) {
-                this.addItem(product, true, true);
+                this.doAddItem(product, true, true);
 
                 if (onSuccess) onSuccess();
             } else {
@@ -236,37 +292,13 @@ export default class Cart {
     }
 
     /**
-     * Function onItemRemove() : Called on item remove
-     * 
-     * @param {event} e 
-     */
-    onItemRemove(e) {
-        if (debug) console.log(`${this.constructor.name}::onItemRemove()`);
-
-        // maybe there is better way.
-        const el = $(e.currentTarget);
-        const item = el.parentsUntil('.item').parent();
-
-        this.apiCart.removeItem((data) => {
-            if (!data.error) {
-                const item = data;
-
-                this.removeItem(item, true);
-            } else {
-                alert(data.message);
-            }
-        }, parseInt(item.attr('data-id')));
-
-    }
-
-    /**
-     * function insertItem() : Insert new item dom and virtual
+     * function doInsertItem() : Insert new item dom and virtual
      * 
      * @param {{}} item 
      */
-    insertItem(item) {
+    doInsertItem(item) {
         if (debug) {
-            console.log(`${this.constructor.name}::insertItem() ->`);
+            console.log(`${this.constructor.name}::doInsertItem() ->`);
             console.log(item);
         }
 
@@ -291,15 +323,15 @@ export default class Cart {
     }
 
     /**
-     * Function updateItem() : Update Cart Item dom and virtual
+     * Function doUpdateItem() : Update Cart Item dom and virtual
      * 
      * @param {{}} item 
      * @param {*} key 
      * @param {$} domItem 
      */
-    updateItem(item, key, domItem) {
+    doUpdateItem(item, key, domItem) {
         if (debug) {
-            console.log(`${this.constructor.name}::updateItem() ->`);
+            console.log(`${this.constructor.name}::doUpdateItem() ->`);
             console.dir({ item, key, domItem });
         }
 
@@ -321,15 +353,15 @@ export default class Cart {
     }
 
     /**
-     * Function addItem() : Adds item to cart
+     * Function doAddItem() : Adds item to cart
      * 
      * @param {{}} item 
      * @param {boolean} notifyCartChanged 
      * @param {boolean} highlight 
      */
-    addItem(item, notifyCartChanged = true, highlight = false) {
+    doAddItem(item, notifyCartChanged = true, highlight = false) {
         if (debug) {
-            console.log(`${this.constructor.name}::addItem() ->`);
+            console.log(`${this.constructor.name}::doAddItem() ->`);
             console.log({ item, notifyCartChanged, highlight });
         }
 
@@ -342,15 +374,15 @@ export default class Cart {
         let domItem = getDomItem();
 
         if (foundItemKey) {
-            this.updateItem(item, foundItemKey, domItem)
+            this.doUpdateItem(item, foundItemKey, domItem)
         } else {
-            this.insertItem(item);
+            this.doInsertItem(item);
             // for highlight
             domItem = getDomItem();
         }
 
         if (highlight) {
-            this.highlightItem(domItem);
+            this.doHighlightItem(domItem);
         }
 
         if (notifyCartChanged) {
@@ -360,14 +392,14 @@ export default class Cart {
     }
 
     /**
-     * Function removeItem() : Remove's item from cart
+     * Function doRemoveItem() : Remove's item from cart
      * 
      * @param {{}} item 
      * @param {boolean} notifyCartChanged 
      */
-    removeItem(item, notifyCartChanged = true) {
+    doRemoveItem(item, notifyCartChanged = true) {
         if (debug) {
-            console.log(`${this.constructor.name}::removeItem() ->`);
+            console.log(`${this.constructor.name}::doRemoveItem() ->`);
             console.log({ item, notifyCartChanged });
         }
 
@@ -392,34 +424,13 @@ export default class Cart {
     }
 
     /**
-     * Function highlightItem() : highlight item in cart
+     * Function doHighlightItem() : highlight item in cart
      * 
      * @param {$} domItem 
      */
-    highlightItem(domItem) {
+    doHighlightItem(domItem) {
+        if (debug) console.log(`${this.constructor.name}::doHighlightItem('${JSON.stringify(domItem)}')`);
+
         domItem.css('animation', 'highlight 3s');
-    }
-
-    /**
-     * Function efficientEmptyState() : Update when cart have items or not.
-     * 
-     * @param {boolean} state 
-     */
-    efficientEmptyState(state) {
-        if (debug) console.log(`${this.constructor.name}::efficientEmptyState('${state}')`);
-
-        const { cart, header } = this.elements;
-
-        if (state) {
-            cart.empty.hide();
-            cart.checkout.addClass('open');
-            cart.itemsTotal.addClass('open');
-            header.togglerAmount.show();
-        } else {
-            cart.empty.show();
-            cart.checkout.removeClass('open');
-            cart.itemsTotal.removeClass('open');
-            header.togglerAmount.hide();
-        }
     }
 }

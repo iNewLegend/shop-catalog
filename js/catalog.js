@@ -34,7 +34,7 @@ export default class Catalog {
 
             catalog: {
                 self: $('#catalog'),
-                spinner: $('#catalog #spinner'),
+                spinner: $('#catalog .spinner'),
             },
 
             template: {
@@ -66,30 +66,6 @@ export default class Catalog {
             this.events.onInitialize();
         });
     }
-
-    /**
-     * Function on() : Delcare event callback
-     * 
-     * @param {'initialize'|'itemAdd'} event 
-     * @param {{function()} } callback 
-     */
-    on(event, callback) {
-        switch (event) {
-            case 'initialize': {
-                this.events.onInitialize = callback;
-            } break;
-
-            case 'itemAdd': {
-                this.events.onItemAdd = callback;
-            } break;
-
-
-            default: {
-                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
-            }
-        }
-    }
-
 
     /**
      * Function onPageChange() : Called on page change
@@ -161,6 +137,65 @@ export default class Catalog {
     }
 
     /**
+     * Function on() : Delcare event callback
+     * 
+     * @param {'initialize'|'itemAdd'} event 
+     * @param {{function()} } callback 
+     */
+    on(event, callback) {
+        switch (event) {
+            case 'initialize': {
+                this.events.onInitialize = callback;
+            } break;
+
+            case 'itemAdd': {
+                this.events.onItemAdd = callback;
+            } break;
+
+
+            default: {
+                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+            }
+        }
+    }
+
+    /**
+     * Function getCatalog() : Get catalog from the server.
+     * 
+     * @param {number} page 
+     * @param {function()} onSuccess
+     */
+    getCatalog(page, onSuccess = null) {
+        if (debug) console.log(`${this.constructor.name}::getCatalog('${page}')`);
+
+        const { catalog, template } = this.elements;
+
+        this.apiCatalog.get(data => {
+            // used slow here to fake loading
+            catalog.spinner.fadeOut('slow', () => {
+                if (!data.error) {
+
+                    this.setPagination(data.pagination);
+
+                    data.result.map((item) => {
+                        let templateHtml = template.product.html();
+
+                        // fine for now.
+                        templateHtml = templateHtml.replace('${id}', item.id);
+                        templateHtml = templateHtml.replace('${name}', item.name);
+                        templateHtml = templateHtml.replace('${price}', item.price);
+                        templateHtml = templateHtml.replace('${id}', item.id);
+
+                        catalog.self.append($(templateHtml));
+                    });
+
+                    if (onSuccess) onSuccess();
+                }
+            });
+        }, page);
+    }
+
+    /**
      * Function setPagination() : Set pagination to dom.
      * 
      * @param {{}} paginationResult 
@@ -200,41 +235,5 @@ export default class Catalog {
         } else {
             pagination.prev.show();
         }
-    }
-
-    /**
-     * Function getCatalog() : Get catalog from the server.
-     * 
-     * @param {number} page 
-     * @param {function()} onSuccess
-     */
-    getCatalog(page, onSuccess = null) {
-        if (debug) console.log(`${this.constructor.name}::getCatalog('${page}')`);
-
-        const { catalog, template } = this.elements;
-
-        this.apiCatalog.get(data => {
-            // used slow here to fake loading
-            catalog.spinner.fadeOut('slow', () => {
-                if (!data.error) {
-
-                    this.setPagination(data.pagination);
-
-                    data.result.map((item) => {
-                        let templateHtml = template.product.html();
-
-                        // fine for now.
-                        templateHtml = templateHtml.replace('${id}', item.id);
-                        templateHtml = templateHtml.replace('${name}', item.name);
-                        templateHtml = templateHtml.replace('${price}', item.price);
-                        templateHtml = templateHtml.replace('${id}', item.id);
-
-                        catalog.self.append($(templateHtml));
-                    });
-
-                    if (onSuccess) onSuccess();
-                }
-            });
-        }, page);
     }
 }

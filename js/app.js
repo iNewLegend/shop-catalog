@@ -17,6 +17,9 @@ const debug = true;
 class App {
     static openCartOnUpdate = true;
 
+    /**
+     * Function constructor() : Create App
+     */
     constructor() {
         if (debug) console.log(`${this.constructor.name}::constructor()`);
 
@@ -56,6 +59,9 @@ class App {
         this.page = new Page(this.elements.sections.main);
     }
 
+    /**
+     * Function initialize() : Initialize App
+     */
     initialize() {
         if (debug) console.log(`${this.constructor.name}::initialize()`);
 
@@ -64,35 +70,11 @@ class App {
         overlay.click(() => this.sidebarToggle(false));
 
         header.toggler.click(() => this.sidebarToggle(true));
+        
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
         this.page.set(template.page.main.html());
         this.page.ready(this.onCatalogLoad.bind(this));
-    }
-
-    /**
-     * Function sidebarToggle() : Change the sidebar state
-     * 
-     * @param {boolean} state 
-     */
-    sidebarToggle(state) {
-        if (debug) console.log(`${this.constructor.name}::sidebarToggle('${state}')`);
-
-        const { sidebar, overlay } = this.elements;
-
-        if (state) {
-            overlay.fadeIn();
-            sidebar.self.addClass('show');
-
-            this.cart.onOpen();
-
-            return;
-        }
-
-        overlay.fadeOut();
-        sidebar.self.removeClass('show');
-
-        this.cart.onClose();
     }
 
     /**
@@ -128,7 +110,7 @@ class App {
             console.dir(product);
         }
 
-        this.cart.onItemAdd(product, () => {
+        this.cart.itemAdd(product, () => {
             if (App.openCartOnUpdate) {
                 this.sidebarToggle(true);
             }
@@ -150,6 +132,32 @@ class App {
             if (debug) console.log(`${this.constructor.name}::onCheckout() -> load !`);
         });
     }
+
+    /**
+     * Function sidebarToggle() : Change the sidebar state
+     * 
+     * @param {boolean} state 
+     */
+    sidebarToggle(state) {
+        if (debug) console.log(`${this.constructor.name}::sidebarToggle('${state}')`);
+
+        const { sidebar, overlay } = this.elements;
+
+        if (state) {
+            overlay.fadeIn();
+            sidebar.self.addClass('show');
+
+            this.cart.open();
+
+            return;
+        }
+
+        overlay.fadeOut();
+        sidebar.self.removeClass('show');
+
+        this.cart.close();
+    }
+
 }
 
 (new App().initialize());
