@@ -6,11 +6,9 @@
 
 import API_Catalog from './api/catalog.js';
 
-const debug = true;
+import Logger from './modules/logger.js';
 
 export default class Catalog {
-    
-
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
@@ -20,6 +18,9 @@ export default class Catalog {
      * @param {API_Catalog} catalog 
      */
     constructor(catalog) {
+        this.logger = new Logger(this, true);
+        this.logger.startEmpty();
+
         this.apiCatalog = catalog;
 
         this.page = 0;
@@ -52,7 +53,7 @@ export default class Catalog {
      * Function initialize() : Initialize catalog
      */
     initialize() {
-        if (debug) console.log(`${this.constructor.name}::initialize()`);
+        this.logger.startEmpty();
 
         const { pagination, catalog } = this.elements;
 
@@ -73,7 +74,7 @@ export default class Catalog {
      * @param {number} page 
      */
     onPageChange(page) {
-        if (debug) console.log(`${this.constructor.name}::onPageChange('${page}')`);
+        this.logger.startWith({ page });
 
         const { catalog, pagination } = this.elements;
 
@@ -94,7 +95,7 @@ export default class Catalog {
      * @param {event} e 
      */
     onProductAdd(e) {
-        if (debug) console.log(`${this.constructor.name}::onProductAdd()`);
+        this.logger.startWith({ e });
 
         // maybe there is better way.
         const el = $(e.currentTarget);
@@ -120,6 +121,8 @@ export default class Catalog {
      * @param {event} e 
      */
     onProudctAmountChange(e) {
+        this.logger.startWith({ e });
+
         // maybe there is better way.
         const el = $(e.currentTarget);
 
@@ -143,6 +146,8 @@ export default class Catalog {
      * @param {{function()} } callback 
      */
     on(event, callback) {
+        this.logger.startWith({ event, callback });
+
         switch (event) {
             case 'initialize': {
                 this.events.onInitialize = callback;
@@ -166,7 +171,7 @@ export default class Catalog {
      * @param {function()} onSuccess
      */
     getCatalog(page, onSuccess = null) {
-        if (debug) console.log(`${this.constructor.name}::getCatalog('${page}')`);
+        this.logger.startWith({ page, onSuccess });
 
         const { catalog, template } = this.elements;
 
@@ -201,7 +206,7 @@ export default class Catalog {
      * @param {{}} paginationResult 
      */
     setPagination(paginationResult) {
-        if (debug) console.log(`${this.constructor.name}::setPagination('${JSON.stringify(paginationResult)}')`);
+        this.logger.startWith({ paginationResult });
 
         const { pagination } = this.elements;
 

@@ -4,8 +4,9 @@
  * @description: inseatd of using jquery ajax, i choosed this.
  */
 
+import Logger from '../modules/logger.js';
+
 export default class API {
-    debug = true;
 
     /**
      * Function constructor() : Create API
@@ -13,7 +14,8 @@ export default class API {
      * @param {string} apiBaseUrl 
      */
     constructor(apiBaseUrl = 'http://localhost:8080/api/?cmd=') {
-        if (this.debug) console.log(`${this.constructor.name}::constructor('${apiBaseUrl}')`);
+        this.logger = new Logger(this, true);
+        this.logger.startWith({apiBaseUrl});
 
         this.apiBaseUrl = apiBaseUrl;
     }
@@ -28,7 +30,8 @@ export default class API {
      * @return {any}
      */
     async fetch(path, method, body = null) {
-        if (this.debug) console.log(`${this.constructor.name}::fetch('${path}', '${method}', ${Boolean(body)})`);
+        this.logger.startWith({ path, method, body });
+        //if (this.debug) console.log(`${this.constructor.name}::fetch('${path}', '${method}', ${Boolean(body)})`);
 
         const params = { 'credentials': 'include' }; // cookies
 
@@ -42,10 +45,6 @@ export default class API {
                 body: JSON.stringify(body)
             });
 
-            if (this.debug && body) {
-                console.log(`${this.constructor.name}::fetch() ->`);
-                console.dir(body);
-            }
         } else {
             Object.assign(params, { headers });
         }
@@ -53,12 +52,9 @@ export default class API {
         // since i made it async function
         const response = await fetch(this.apiBaseUrl + path, params);
         const data = await response.json();
-        
-        if (this.debug) {
-            console.log(`${this.constructor.name}::fetch() R>`);
-            console.dir(data);
-        }
 
+        this.logger.recv({ path }, data);
+        
         if (data.error)  {
             data.message = this.translateError(data.message);
 
@@ -78,6 +74,8 @@ export default class API {
      * @return {string}
      */
     translateError(message) {
+        this.logger.startWith({ message });
+
         if (typeof message == 'object') {
             message = message.map(element => {
                 return this.translateError(element);
@@ -100,6 +98,8 @@ export default class API {
      * @return {any}
      */
     get(path) {
+        this.logger.startWith({ path });
+
         return this.fetch(path, 'get');
     }
 
@@ -112,6 +112,8 @@ export default class API {
      * @return {any}
      */
     post(path, params) {
+        this.logger.startWith({ path, params });
+
         return this.fetch(path, 'post', params);
     }
 }

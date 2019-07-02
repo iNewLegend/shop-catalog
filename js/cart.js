@@ -7,7 +7,7 @@
 import API_Cart from './api/cart.js';
 import API_Catalog from './api/catalog.js';
 
-const debug = true;
+import Logger from './modules/logger.js';
 
 export default class Cart {
     static reloadCartEachOpen = false; // highlight new cart item while this option set to true will not work.
@@ -19,6 +19,9 @@ export default class Cart {
      * @param {API_Catalog} catalog 
      */
     constructor(cart, catalog) {
+        this.logger = new Logger(this, true);
+        this.logger.startWith({ cart, catalog });
+        
         this.cart = [];
 
         this.apiCart = cart;
@@ -54,7 +57,7 @@ export default class Cart {
      * Function initialize() : Initialize Cart
      */
     initialize() {
-        if (debug) console.log(`${this.constructor.name}::initialize()`);
+        this.logger.startEmpty();
 
         const { cart } = this.elements;
         
@@ -70,7 +73,7 @@ export default class Cart {
      * @param {[]} data 
      */
     onRecv(data) {
-        if (debug) console.log(`${this.constructor.name}::onRecv('${JSON.stringify(data)}')`);
+        this.logger.object(data, 'data');
 
         const { cart, spinner } = this.elements.header;
 
@@ -111,7 +114,7 @@ export default class Cart {
      * Function onChange() : Called when cart changed
      */
     onChange() {
-        if (debug) console.log(`${this.constructor.name}::onChange()`);
+        this.logger.startEmpty();
 
         this.cart.total = 0;
         this.cart.items.forEach((item) => {
@@ -140,7 +143,7 @@ export default class Cart {
      * @param {event} e 
      */
     onItemRemove(e) {
-        if (debug) console.log(`${this.constructor.name}::onItemRemove()`);
+        this.logger.startWith({ e });
 
         // maybe there is better way.
         const el = $(e.currentTarget);
@@ -165,6 +168,8 @@ export default class Cart {
      * @param {{function()} } callback 
      */
     on(event, callback) {
+        this.logger.startWith({ event, callback });
+        
         switch (event) {
             case 'checkout': {
                 this.events.onCheckout = callback;
@@ -181,7 +186,7 @@ export default class Cart {
      * Function get() : Get cart from server
      */
     get() {
-        if (debug) console.log(`${this.constructor.name}::get()`);
+        this.logger.startEmpty();
 
         const { cart, header } = this.elements;
 
@@ -208,7 +213,7 @@ export default class Cart {
      * @param {number} id 
      */
     getItemKeyById(id) {
-        if (debug) console.log(`${this.constructor.name}::getItemKeyById('${id}')`);
+        this.logger.startWith({ id });
 
         let foundItemKey = null;
 
@@ -226,7 +231,7 @@ export default class Cart {
      * Function open() :  Open the cart
      */
     open() {
-        if (debug) console.log(`${this.constructor.name}::open()`);
+        this.logger.startEmpty();
 
         if (Cart.reloadCartEachOpen) {
             this.get();
@@ -237,7 +242,7 @@ export default class Cart {
      * Function close() : Close the cart
      */
     close() {
-        if (debug) console.log(`${this.constructor.name}::close()`);
+        this.logger.startEmpty();
 
         const { cart } = this.elements;
 
@@ -251,7 +256,7 @@ export default class Cart {
      * @param {boolean} state 
      */
     efficientEmptyState(state) {
-        if (debug) console.log(`${this.constructor.name}::efficientEmptyState('${state}')`);
+        this.logger.startWith({ state });
 
         const { cart, header } = this.elements;
 
@@ -275,10 +280,7 @@ export default class Cart {
      * @param {function()} onSuccess
      */
     itemAdd(product, onSuccess = null) {
-        if (debug) {
-            console.log(`${this.constructor.name}::doItemAdd() ->`);
-            console.log(product);
-        }
+        this.logger.startWith({ product, onSuccess });
 
         this.apiCart.addItem((data) => {
             if (!data.error) {
@@ -297,10 +299,7 @@ export default class Cart {
      * @param {{}} item 
      */
     doInsertItem(item) {
-        if (debug) {
-            console.log(`${this.constructor.name}::doInsertItem() ->`);
-            console.log(item);
-        }
+        this.logger.startWith({ item });
 
         const { template, cart } = this.elements;
 
@@ -330,10 +329,7 @@ export default class Cart {
      * @param {$} domItem 
      */
     doUpdateItem(item, key, domItem) {
-        if (debug) {
-            console.log(`${this.constructor.name}::doUpdateItem() ->`);
-            console.dir({ item, key, domItem });
-        }
+        this.logger.startWith({ item, key, domItem });
 
         // get virtual item cart
         const virtualItem = this.cart.items[key];
@@ -360,10 +356,7 @@ export default class Cart {
      * @param {boolean} highlight 
      */
     doAddItem(item, notifyCartChanged = true, highlight = false) {
-        if (debug) {
-            console.log(`${this.constructor.name}::doAddItem() ->`);
-            console.log({ item, notifyCartChanged, highlight });
-        }
+        this.logger.startWith({ item, notifyCartChanged, highlight });
 
         const { cart } = this.elements;
 
@@ -398,10 +391,7 @@ export default class Cart {
      * @param {boolean} notifyCartChanged 
      */
     doRemoveItem(item, notifyCartChanged = true) {
-        if (debug) {
-            console.log(`${this.constructor.name}::doRemoveItem() ->`);
-            console.log({ item, notifyCartChanged });
-        }
+        this.logger.startWith({ item, notifyCartChanged });
 
         const { cart } = this.elements;
 
@@ -429,7 +419,7 @@ export default class Cart {
      * @param {$} domItem 
      */
     doHighlightItem(domItem) {
-        if (debug) console.log(`${this.constructor.name}::doHighlightItem('${JSON.stringify(domItem)}')`);
+        this.logger.startWith({ domItem });
 
         domItem.css('animation', 'highlight 3s');
     }

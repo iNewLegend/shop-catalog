@@ -6,6 +6,8 @@
 
 const debug = true;
 
+import Logger from './logger.js';
+
 export default class Page {
 
     /**
@@ -14,10 +16,8 @@ export default class Page {
      * @param {$} rootDom 
      */
     constructor(rootDom) {
-        if (debug) {
-            console.log(`${this.constructor.name}::constructor() -> `);
-            console.dir(rootDom[0]);
-        }
+        this.logger = new Logger(this);
+        this.logger.startWith({ rootDom });
 
         this.events = {
             onReady: () => {},
@@ -34,7 +34,7 @@ export default class Page {
      * Function onLoad() : Called on Inner dom loaded
      */
     onReady() {
-        if (debug) console.log(`${this.constructor.name}::onReady()`);
+        this.logger.startEmpty()
             
         this.events.onReady();
     }
@@ -53,7 +53,7 @@ export default class Page {
      * @param {string} innerHtml 
      */
     set(innerHtml) {
-        if (debug) console.log(`${this.constructor.name}::set('innerHtml: '${Boolean(innerHtml)}')`);
+        this.logger.startWith({ innerHtml });
 
         this.innerHtml = innerHtml;
 
@@ -64,7 +64,7 @@ export default class Page {
      * Function render() : Re-render inner dom.
      */
     render() {
-        if (debug) console.log(`${this.constructor.name}::render()`);
+        this.logger.startEmpty()
 
         this.innerDom = $(this.innerHtml);
 

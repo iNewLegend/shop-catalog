@@ -5,7 +5,7 @@
 
 import API from './api.js';
 
-const debug = true;
+import Logger from '../modules/logger.js';
 
 export default class API_Catalog {
 
@@ -16,7 +16,8 @@ export default class API_Catalog {
      */
 
     constructor(api) {
-        if (debug) console.log(`${this.constructor.name}::constructor()`);
+        this.logger = new Logger(this);
+        this.logger.startEmpty();
 
         /**@type API */
         this.api = api;
@@ -31,7 +32,7 @@ export default class API_Catalog {
      * @param {number} page 
      */
     get(callback, page = 0) {
-        if (debug) console.log(`${this.constructor.name}::get('${page}')`);
+        this.logger.startWith({ page });
 
         this.api.get(`catalog/index/${page}`).then(data => {
             if (!data.error) {
@@ -49,7 +50,7 @@ export default class API_Catalog {
      * @param {number[]} ids 
      */
     getByIds(callback, ids) {
-        if (debug) console.log(`${this.constructor.name}::get('${ids}')`);
+        this.logger.startWith({ ids });
 
         // on empty, fake empty callback.
         if (ids.length <= 0) {
@@ -68,7 +69,7 @@ export default class API_Catalog {
      * @return {{}|null}
      */
     getLocalProductById(id) {
-        if (debug) console.log(`${this.constructor.name}::getLocalProductById('${id}')`);
+        this.logger.startWith({ id });
 
         for (let i in this.catalog) {
             if (this.catalog[i].id == id) {

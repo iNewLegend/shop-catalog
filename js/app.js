@@ -2,11 +2,11 @@
  * @file: js/app.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
-
 import API from './api/api.js';
 import API_Catalog from './api/catalog.js';
 import API_Cart from './api/cart.js';
 
+import Logger from './modules/logger.js';
 import Page from './modules/page.js';
 
 import Catalog from './catalog.js';
@@ -21,7 +21,8 @@ class App {
      * Function constructor() : Create App
      */
     constructor() {
-        if (debug) console.log(`${this.constructor.name}::constructor()`);
+        this.logger = new Logger(this, true);
+        this.logger.startEmpty();
 
         const remoteAdress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/api/?cmd='
 
@@ -63,7 +64,7 @@ class App {
      * Function initialize() : Initialize App
      */
     initialize() {
-        if (debug) console.log(`${this.constructor.name}::initialize()`);
+        this.logger.startEmpty();
 
         const { header, overlay, sidebar, template } = this.elements;
 
@@ -81,7 +82,7 @@ class App {
      * Function onCatalogLoad() : Called on catalog load
      */
     onCatalogLoad() {
-        if (debug) console.log(`${this.constructor.name}::onCatalogLoad()`);
+        this.logger.startEmpty();
 
         this.catalog = new Catalog(this.apis.catalog);
         this.catalog.on('initialize', this.onCatalogInitialize.bind(this));
@@ -94,7 +95,7 @@ class App {
      * Function onCatalogInitialize() : Called on catalog Initialized
      */
     onCatalogInitialize() {
-        if (debug) console.log(`${this.constructor.name}::onCatalogInitialize()`);
+        this.logger.startEmpty();
 
         this.cart = new Cart(this.apis.cart, this.apis.catalog);
         this.cart.on('checkout', this.onCartCheckout.bind(this));
@@ -105,10 +106,7 @@ class App {
      * Function onCatalogItemAdd() : Called on catalog item add
      */
     onCatalogItemAdd(product) {
-        if (debug) {
-            console.log(`${this.constructor.name}::onCatalogItemAdd()`);
-            console.dir(product);
-        }
+        this.logger.startWith({ product });
 
         this.cart.itemAdd(product, () => {
             if (App.openCartOnUpdate) {
@@ -121,7 +119,7 @@ class App {
      * Function onCartCheckout() : Called on cart checkout
      */
     onCartCheckout() {
-        if (debug) console.log(`${this.constructor.name}::onCartCheckout()`);
+        this.logger.startEmpty();
 
         this.sidebarToggle(false);
 
@@ -139,7 +137,7 @@ class App {
      * @param {boolean} state 
      */
     sidebarToggle(state) {
-        if (debug) console.log(`${this.constructor.name}::sidebarToggle('${state}')`);
+        this.logger.startWith({ state });
 
         const { sidebar, overlay } = this.elements;
 

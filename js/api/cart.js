@@ -5,7 +5,7 @@
 
 import API from './api.js';
 
-const debug = true;
+import Logger from '../modules/logger.js';
 
 export default class API_Cart {
 
@@ -15,7 +15,8 @@ export default class API_Cart {
      * @param {API} api
      */
    constructor(api) {
-       if (debug) console.log(`${this.constructor.name}::constructor()`);
+       this.logger = new Logger(this);
+       this.logger.startEmpty();
 
        this.api = api;
    }
@@ -26,7 +27,7 @@ export default class API_Cart {
     * @param {function()} callback 
     */
    get(callback) {
-       if (debug) console.log(`${this.constructor.name}::get()`);
+        this.logger.startEmpty();
 
        this.api.get('cart/index').then(data => callback(data));
    }
@@ -39,7 +40,7 @@ export default class API_Cart {
     * @param {number} amount 
     */
    addItem(callback, id, amount = 1) {
-       if (debug) console.log(`${this.constructor.name}::addCartItem('${id}', '${amount}')`);
+       this.logger.startWith({ id, amount });
 
        const params = { id, amount };
 
@@ -53,7 +54,7 @@ export default class API_Cart {
     * @param {number} id 
     */
    removeItem(callback, id) {
-       if (debug) console.log(`${this.constructor.name}::removeCartItem('${id}'`);
+        this.logger.startWith({ id });
 
        this.api.post('cart/removeItem', { id }).then((data) => callback(data));
    }
