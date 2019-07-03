@@ -4,7 +4,8 @@
  * @description: inseatd of using jquery ajax, i choosed this.
  */
 
-import Logger from '../modules/logger.js';
+import * as Services from '../services/terminal.js';
+import * as Modules from '../modules/logger.js';
 
 export default class API {
 
@@ -14,7 +15,9 @@ export default class API {
      * @param {string} apiBaseUrl 
      */
     constructor(apiBaseUrl = 'http://localhost:8080/api/?cmd=') {
-        this.logger = new Logger(this, true);
+        this.logger = new Modules.Logger(this, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
+
         this.logger.startWith({apiBaseUrl});
 
         this.apiBaseUrl = apiBaseUrl;

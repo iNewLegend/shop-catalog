@@ -1,0 +1,80 @@
+#terminal {
+    position: fixed;
+    z-index: 9999999999;
+    bottom: -100vh; /* lol */
+    width: 100%;
+    height: 25vh;
+    opacity: 0.98;
+    padding: 3px 15px;
+    color: #fff;
+    font-weight: 300;
+    background: #1e1e1efc;
+    font-family: monospace;
+    transition: bottom .2s ease-in-out;
+    overflow: auto;
+}
+
+#terminal.active {
+    bottom: 0px;
+}
+
+#terminal .buttons {
+    width: 100%;
+    position: fixed;
+} 
+
+#terminal .buttons .resize {
+    position: relative;
+    top: 35.3%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 25px;
+
+    cursor: row-resize;
+}
+
+#terminal .buttons .close {
+    position: relative;
+    top: 7px;
+    left: -3px;
+    transform: translate(-50%, -50%);
+    float: right;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#terminal span.plain {
+    color: #a3a3a3;
+}
+
+#terminal span.object {
+    color: #82a2a2 !important;
+}
+
+#terminal .tilda, #terminal .text {
+    color: #ff9797 !important;
+}
+
+#terminal p {
+    margin: 0;
+}
+
+#terminal pre {
+    font-family: monospace, monospace;
+    font-size: 12px;
+    margin: 0px;
+    line-height: 12px;
+}
+
+#terminal::-webkit-scrollbar {
+    display: none;
+}

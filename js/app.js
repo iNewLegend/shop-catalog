@@ -6,11 +6,16 @@ import API from './api/api.js';
 import API_Catalog from './api/catalog.js';
 import API_Cart from './api/cart.js';
 
-import Logger from './modules/logger.js';
+
 import Page from './modules/page.js';
 
 import Catalog from './catalog.js';
 import Cart from './cart.js';
+
+import * as Services from './services/terminal.js';
+import * as Modules from './modules/logger.js';
+
+//import Logger from './services/terminal.js'
 
 const debug = true;
 
@@ -21,7 +26,14 @@ class App {
      * Function constructor() : Create App
      */
     constructor() {
-        this.logger = new Logger(this, true);
+        // change to Services.Terminal.Initalize();
+        this.services = {
+            terminal: new Services.Terminal()
+        };
+        
+        this.logger = new Modules.Logger(this, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
+
         this.logger.startEmpty();
 
         const remoteAdress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/api/?cmd='
@@ -32,6 +44,7 @@ class App {
             catalog: new API_Catalog(api),
             cart: new API_Cart(api),
         }
+        
 
         this.elements = {
             header: {

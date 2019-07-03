@@ -7,7 +7,8 @@
 import API_Cart from './api/cart.js';
 import API_Catalog from './api/catalog.js';
 
-import Logger from './modules/logger.js';
+import * as Services from './services/terminal.js';
+import * as Modules from './modules/logger.js';
 
 export default class Cart {
     static reloadCartEachOpen = false; // highlight new cart item while this option set to true will not work.
@@ -19,8 +20,8 @@ export default class Cart {
      * @param {API_Catalog} catalog 
      */
     constructor(cart, catalog) {
-        this.logger = new Logger(this, true);
-        this.logger.startWith({ cart, catalog });
+        this.logger = new Modules.Logger(this, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
         
         this.cart = [];
 

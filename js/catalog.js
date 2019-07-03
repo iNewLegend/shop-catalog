@@ -6,7 +6,10 @@
 
 import API_Catalog from './api/catalog.js';
 
-import Logger from './modules/logger.js';
+import * as Services from './services/terminal.js';
+import * as Modules from './modules/logger.js';
+
+const debug = true;
 
 export default class Catalog {
     static amountMaxValue = 999;
@@ -18,8 +21,8 @@ export default class Catalog {
      * @param {API_Catalog} catalog 
      */
     constructor(catalog) {
-        this.logger = new Logger(this, true);
-        this.logger.startEmpty();
+        this.logger = new Modules.Logger(this, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.apiCatalog = catalog;
 

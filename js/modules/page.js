@@ -4,9 +4,8 @@
  * @description: 
  */
 
-const debug = true;
-
-import Logger from './logger.js';
+//import * as Services from '../services/terminal.js';
+import * as Modules from '../modules/logger.js';
 
 export default class Page {
 
@@ -16,7 +15,9 @@ export default class Page {
      * @param {$} rootDom 
      */
     constructor(rootDom) {
-        this.logger = new Logger(this);
+        this.logger = new Modules.Logger(this, true);
+        //this.logger.setOutputHandler(Services.Terminal.onOutput);
+
         this.logger.startWith({ rootDom });
 
         this.events = {

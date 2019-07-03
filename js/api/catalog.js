@@ -5,7 +5,8 @@
 
 import API from './api.js';
 
-import Logger from '../modules/logger.js';
+import * as Services from '../services/terminal.js';
+import * as Modules from '../modules/logger.js';
 
 export default class API_Catalog {
 
@@ -16,8 +17,8 @@ export default class API_Catalog {
      */
 
     constructor(api) {
-        this.logger = new Logger(this);
-        this.logger.startEmpty();
+        this.logger = new Modules.Logger(this, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         /**@type API */
         this.api = api;
