@@ -53,16 +53,16 @@
     font-weight: bold;
 }
 
-#terminal span.plain {
-    color: #a3a3a3;
-}
-
 #terminal span.object {
     color: #82a2a2 !important;
 }
 
 #terminal .tilda, #terminal .text {
     color: #ff9797 !important;
+}
+
+#terminal .null {
+    color: #ffe88b;
 }
 
 #terminal p {

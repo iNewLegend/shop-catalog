@@ -13,18 +13,18 @@ import Services from '../services/services.js';
 
 export default class Websocket {
 
-    constructor(address, port, controller = null, autoInit = false) {
+    constructor(address, port, autoInit = false) {
         this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
-        this.logger.startWith({ address, port, controller, autoInit });
+        this.logger.startWith({ address, port, autoInit });
 
         this.binds = [];
     
         this.webSocket = null;
-        this.connectionString = `ws://${address}:${port}/${controller ? controller : ''}`;
+        this.connectionString = `ws://${address}:${port}/`;
 
-        this.logger.object(`connection string: '${this.connectionString}'`);
+        this.logger.debug(`connection string: '${this.connectionString}'`);
 
 
         if (autoInit) this.initalize();

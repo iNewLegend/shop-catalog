@@ -6,7 +6,7 @@
 
 import API from './api/api.js';
 
-import Modules from './modules/modules.js';  
+import Modules from './modules/modules.js';
 import Services from './services/services.js';
 
 const debug = true;
@@ -47,8 +47,8 @@ export default class Catalog {
         };
 
         this.events = {
-            onInitialize: () => {},
-            onItemAdd: (product) => {},
+            onInitialRecv: () => { },
+            onProductAdd: (product) => { },
         }
     }
 
@@ -60,23 +60,28 @@ export default class Catalog {
 
         const { pagination, catalog } = this.elements;
 
-        pagination.next.click(() => this.onPageChange((this.page + 1)));
-        pagination.prev.click(() => this.onPageChange((this.page - 1)));
+        pagination.next.click(() => this._onPageChange((this.page + 1)));
+        pagination.prev.click(() => this._onPageChange((this.page - 1)));
 
-        catalog.self.on('change', '.product .amount', ((e) => this.onProudctAmountChange(e)));
-        catalog.self.on('click', '.product button', ((e) => this.onProductAdd(e)));
+        catalog.self.on('change', '.product .amount', ((e) => this._onProudctAmountChange(e)));
+        catalog.self.on('click', '.product button', ((e) => this._onProductAdd(e)));
 
-        this.getCatalog(0, () => {
-            this.events.onInitialize();
-        });
+        this._getCatalog(0, this._onInitialRecv.bind(this));
     }
 
     /**
-     * Function onPageChange() : Called on page change
+     * Function onInitialRecv() : Called on success of intial getCatalog request
+     */
+    _onInitialRecv() {
+        this.events.onInitialRecv();
+    }
+
+    /**
+     * Function _onPageChange() : Called on page change
      * 
      * @param {number} page 
      */
-    onPageChange(page) {
+    _onPageChange(page) {
         this.logger.startWith({ page });
 
         const { catalog, pagination } = this.elements;
@@ -89,15 +94,15 @@ export default class Catalog {
         pagination.self.hide();
         pagination.placeHolder.empty();
 
-        this.getCatalog(page);
+        this._getCatalog(page);
     }
 
     /**
-     * Function onProductAdd() : Called on "Add to cart button"
+     * Function _onProductAdd() : Called on "Add to cart button"
      * 
      * @param {event} e 
      */
-    onProductAdd(e) {
+    _onProductAdd(e) {
         this.logger.startWith({ e });
 
         // maybe there is better way.
@@ -112,18 +117,18 @@ export default class Catalog {
         Object.assign(product, { id, amount });
 
         // call callback
-        this.events.onItemAdd(product)
+        this.events.onProductAdd(product)
 
         // put it back to 1.
         domProduct.find('.amount').val('1');
     }
 
     /**
-     * Function onProudctAmountChange() : Called on "Product Amount Change"
+     * Function _onProudctAmountChange() : Called on "Product Amount Change"
      * 
      * @param {event} e 
      */
-    onProudctAmountChange(e) {
+    _onProudctAmountChange(e) {
         this.logger.startWith({ e });
 
         // maybe there is better way.
@@ -131,7 +136,7 @@ export default class Catalog {
 
         let val = el.val();
 
-        if (debug) console.log(`${this.constructor.name}::onProudctAmountChange('${val}')`);
+        if (debug) console.log(`${this.constructor.name}::_onProudctAmountChange('${val}')`);
 
         if (val > Catalog.amountMaxValue) {
             val = Catalog.amountMaxValue;
@@ -143,37 +148,12 @@ export default class Catalog {
     }
 
     /**
-     * Function on() : Delcare event callback
-     * 
-     * @param {'initialize'|'itemAdd'} event 
-     * @param {{function()} } callback 
-     */
-    on(event, callback) {
-        this.logger.startWith({ event, callback });
-
-        switch (event) {
-            case 'initialize': {
-                this.events.onInitialize = callback;
-            } break;
-
-            case 'itemAdd': {
-                this.events.onItemAdd = callback;
-            } break;
-
-
-            default: {
-                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
-            }
-        }
-    }
-
-    /**
-     * Function getCatalog() : Get catalog from the server.
+     * Function _getCatalog() : Get catalog from the server.
      * 
      * @param {number} page 
      * @param {function()} onSuccess
      */
-    getCatalog(page, onSuccess = null) {
+    _getCatalog(page, onSuccess = null) {
         this.logger.startWith({ page, onSuccess });
 
         const { catalog, template } = this.elements;
@@ -183,7 +163,7 @@ export default class Catalog {
             catalog.spinner.fadeOut('slow', () => {
                 if (!data.error) {
 
-                    this.setPagination(data.pagination);
+                    this._setPagination(data.pagination);
 
                     data.result.map((item) => {
                         let templateHtml = template.product.html();
@@ -204,11 +184,11 @@ export default class Catalog {
     }
 
     /**
-     * Function setPagination() : Set pagination to dom.
+     * Function _setPagination() : Set pagination to dom.
      * 
      * @param {{}} paginationResult 
      */
-    setPagination(paginationResult) {
+    _setPagination(paginationResult) {
         this.logger.startWith({ paginationResult });
 
         const { pagination } = this.elements;
@@ -219,7 +199,7 @@ export default class Catalog {
             const anchor = $(`<a href="#">${i + 1}</a>`)
 
             anchor.click(function (val) {
-                this.onPageChange(val);
+                this._onPageChange(val);
             }.bind(this, parseInt(anchor.html())));
 
             pagination.placeHolder.append(anchor);
@@ -242,6 +222,31 @@ export default class Catalog {
             pagination.prev.hide();
         } else {
             pagination.prev.show();
+        }
+    }
+
+    /**
+     * Function on() : Delcare event callback
+     * 
+     * @param {'initialRecv'|'productAdd'} event 
+     * @param {{function()} } callback 
+     */
+    on(event, callback) {
+        this.logger.startWith({ event, callback });
+
+        switch (event) {
+            case 'initialRecv': {
+                this.events.onInitialRecv = callback;
+            } break;
+
+            case 'productAdd': {
+                this.events.onProductAdd = callback;
+            } break;
+
+
+            default: {
+                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+            }
         }
     }
 }

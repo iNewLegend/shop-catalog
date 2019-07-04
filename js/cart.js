@@ -6,7 +6,7 @@
 
 import API from './api/api.js';
 
-import Modules from './modules/modules.js';  
+import Modules from './modules/modules.js';
 import Services from './services/services.js';
 
 export default class Cart {
@@ -21,7 +21,7 @@ export default class Cart {
     constructor(cart, catalog) {
         this.logger = new Modules.Logger(this, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
-        
+
         this.cart = [];
 
         this.apiCart = cart;
@@ -49,7 +49,7 @@ export default class Cart {
         };
 
         this.events = {
-            onCheckout: () => {}
+            onCheckout: () => { }
         }
     }
 
@@ -60,19 +60,19 @@ export default class Cart {
         this.logger.startEmpty();
 
         const { cart } = this.elements;
-        
-        cart.self.on('click', '.items .close', ((e) => this.onItemRemove(e)));
+
+        cart.self.on('click', '.items .close', ((e) => this._onItemRemove(e)));
         cart.checkout.click(this.events.onCheckout.bind(this));
 
-        this.get();
+        this._get();
     }
 
     /**
-     * Function onRecv() : Called when cart received
+     * Function _onRecv() : Called when cart received
      * 
      * @param {[]} data 
      */
-    onRecv(data) {
+    _onRecv(data) {
         this.logger.object(data, 'data');
 
         const { cart, spinner } = this.elements.header;
@@ -98,22 +98,22 @@ export default class Cart {
         this.apiCatalog.getByIds((missing) => {
             data.map((item) => {
                 Object.assign(item, missing.find(x => x.id == item.id));
-                this.doAddItem(item, false);
+                this._doAddItem(item, false);
             });
 
             // since we put false parameter in addItem, we need notify manually
-            this.onChange();
+            this._onChange();
         }, missingProducts.map(x => x.id));
-        
+
         cart.show();
         spinner.hide();
     }
 
-    
+
     /**
-     * Function onChange() : Called when cart changed
+     * Function _onChange() : Called when cart changed
      */
-    onChange() {
+    _onChange() {
         this.logger.startEmpty();
 
         this.cart.total = 0;
@@ -138,11 +138,11 @@ export default class Cart {
     }
 
     /**
-     * Function onItemRemove() : Called on item remove
+     * Function _onItemRemove() : Called on item remove
      * 
      * @param {event} e 
      */
-    onItemRemove(e) {
+    _onItemRemove(e) {
         this.logger.startWith({ e });
 
         // maybe there is better way.
@@ -153,7 +153,7 @@ export default class Cart {
             if (!data.error) {
                 const item = data;
 
-                this.doRemoveItem(item, true);
+                this._doRemoveItem(item, true);
             } else {
                 alert(data.message);
             }
@@ -162,30 +162,140 @@ export default class Cart {
     }
 
     /**
-     * Function on() : Delcare event callback
+     * function _doInsertItem() : Insert new item dom and virtual
      * 
-     * @param {'checkout'} event 
-     * @param {{function()} } callback 
+     * @param {{}} item 
      */
-    on(event, callback) {
-        this.logger.startWith({ event, callback });
-        
-        switch (event) {
-            case 'checkout': {
-                this.events.onCheckout = callback;
-            } break;
+    _doInsertItem(item) {
+        this.logger.startWith({ item });
 
-            default: {
-                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
-            }
+        const { template, cart } = this.elements;
+
+        // add to virtual cart
+        this.cart.items.push(item);
+
+        // get dom
+        let templateHtml = template.cartItem.html();
+
+        // format template
+        templateHtml = templateHtml.replace('${id}', item.id);
+        templateHtml = templateHtml.replace('${name}', item.name);
+        templateHtml = templateHtml.replace('${price}', item.price);
+        templateHtml = templateHtml.replace('${id}', item.id);
+        templateHtml = templateHtml.replace('${amount}', item.amount);
+        templateHtml = templateHtml.replace('${sum}', (item.amount * item.price).toFixed(2));
+
+        // update dom
+        cart.items.append($(templateHtml));
+    }
+
+    /**
+     * Function _doUpdateItem() : Update Cart Item dom and virtual
+     * 
+     * @param {{}} item 
+     * @param {*} key 
+     * @param {$} domItem 
+     */
+    _doUpdateItem(item, key, domItem) {
+        this.logger.startWith({ item, key, domItem });
+
+        // get virtual item cart
+        const virtualItem = this.cart.items[key];
+
+        // update virtual item amount
+        virtualItem.amount += item.amount;
+
+        // update virtual cart
+        this.cart.items[key] = virtualItem;
+
+        const domAmount = domItem.find('.amount');
+        const domSum = domItem.find('.sum .value');
+
+        // update dom
+        domAmount.html(parseInt(virtualItem.amount));
+        domSum.html((parseFloat((virtualItem.amount * item.price)).toFixed(2)));
+    }
+
+    /**
+     * Function _doAddItem() : Adds item to cart
+     * 
+     * @param {{}} item 
+     * @param {boolean} notifyCartChanged 
+     * @param {boolean} highlight 
+     */
+    _doAddItem(item, notifyCartChanged = true, highlight = false) {
+        this.logger.startWith({ item, notifyCartChanged, highlight });
+
+        const { cart } = this.elements;
+
+        const foundItemKey = this._getItemKeyById(item.id);
+
+        const getDomItem = () => cart.items.find(`.item[data-id='${item.id}']`);
+
+        let domItem = getDomItem();
+
+        if (foundItemKey) {
+            this._doUpdateItem(item, foundItemKey, domItem)
+        } else {
+            this._doInsertItem(item);
+            // for highlight
+            domItem = getDomItem();
+        }
+
+        if (highlight) {
+            this._doHighlightItem(domItem);
+        }
+
+        if (notifyCartChanged) {
+            this._onChange();
+
         }
     }
 
+    /**
+     * Function _doRemoveItem() : Remove's item from cart
+     * 
+     * @param {{}} item 
+     * @param {boolean} notifyCartChanged 
+     */
+    _doRemoveItem(item, notifyCartChanged = true) {
+        this.logger.startWith({ item, notifyCartChanged });
+
+        const { cart } = this.elements;
+
+        const foundProductKey = this._getItemKeyById(item.id);
+
+        if (foundProductKey) {
+            // update virtual cart
+            delete this.cart.items[foundProductKey];
+
+            // update dom cart
+            cart.items.find(`.item[data-id='${item.id}']`).remove();
+
+        } else {
+            alert(`${this.constructor.name}::removeItem() -> item with id: '${item.id}' not found in cart.`);
+        }
+
+        if (notifyCartChanged) {
+            this._onChange();
+        }
+    }
+
+    /**
+     * Function _doHighlightItem() : highlight item in cart
+     * 
+     * @param {$} domItem 
+     */
+    _doHighlightItem(domItem) {
+        this.logger.startWith({ domItem });
+
+        domItem.css('animation', 'highlight 3s');
+    }
 
     /**
      * Function get() : Get cart from server
      */
-    get() {
+    _get() {
         this.logger.startEmpty();
 
         const { cart, header } = this.elements;
@@ -204,15 +314,15 @@ export default class Cart {
             cart.items.find('.item').remove();
         }
 
-        this.apiCart.get(this.onRecv.bind(this));
+        this.apiCart.get(this._onRecv.bind(this));
     }
 
     /**
-     * Function getItemKeyById() : Get Item key from cart by id.
+     * Function _getItemKeyById() : Get Item key from cart by id.
      * 
      * @param {number} id 
      */
-    getItemKeyById(id) {
+    _getItemKeyById(id) {
         this.logger.startWith({ id });
 
         let foundItemKey = null;
@@ -228,13 +338,34 @@ export default class Cart {
     }
 
     /**
+     * Function on() : Delcare event callback
+     * 
+     * @param {'checkout'} event 
+     * @param {{function()} } callback 
+     */
+    on(event, callback) {
+        this.logger.startWith({ event, callback });
+
+        switch (event) {
+            case 'checkout': {
+                this.events.onCheckout = callback;
+            } break;
+
+            default: {
+                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+            }
+        }
+    }
+
+
+    /**
      * Function open() :  Open the cart
      */
     open() {
         this.logger.startEmpty();
 
         if (Cart.reloadCartEachOpen) {
-            this.get();
+            this._get();
         }
     }
 
@@ -284,143 +415,12 @@ export default class Cart {
 
         this.apiCart.addItem((data) => {
             if (!data.error) {
-                this.doAddItem(product, true, true);
+                this._doAddItem(product, true, true);
 
                 if (onSuccess) onSuccess();
             } else {
                 alert(data.message);
             }
         }, product.id, product.amount);
-    }
-
-    /**
-     * function doInsertItem() : Insert new item dom and virtual
-     * 
-     * @param {{}} item 
-     */
-    doInsertItem(item) {
-        this.logger.startWith({ item });
-
-        const { template, cart } = this.elements;
-
-        // add to virtual cart
-        this.cart.items.push(item);
-
-        // get dom
-        let templateHtml = template.cartItem.html();
-
-        // format template
-        templateHtml = templateHtml.replace('${id}', item.id);
-        templateHtml = templateHtml.replace('${name}', item.name);
-        templateHtml = templateHtml.replace('${price}', item.price);
-        templateHtml = templateHtml.replace('${id}', item.id);
-        templateHtml = templateHtml.replace('${amount}', item.amount);
-        templateHtml = templateHtml.replace('${sum}', (item.amount * item.price).toFixed(2));
-
-        // update dom
-        cart.items.append($(templateHtml));
-    }
-
-    /**
-     * Function doUpdateItem() : Update Cart Item dom and virtual
-     * 
-     * @param {{}} item 
-     * @param {*} key 
-     * @param {$} domItem 
-     */
-    doUpdateItem(item, key, domItem) {
-        this.logger.startWith({ item, key, domItem });
-
-        // get virtual item cart
-        const virtualItem = this.cart.items[key];
-
-        // update virtual item amount
-        virtualItem.amount += item.amount;
-
-        // update virtual cart
-        this.cart.items[key] = virtualItem;
-
-        const domAmount = domItem.find('.amount');
-        const domSum = domItem.find('.sum .value');
-
-        // update dom
-        domAmount.html(parseInt(virtualItem.amount));
-        domSum.html((parseFloat((virtualItem.amount * item.price)).toFixed(2)));
-    }
-
-    /**
-     * Function doAddItem() : Adds item to cart
-     * 
-     * @param {{}} item 
-     * @param {boolean} notifyCartChanged 
-     * @param {boolean} highlight 
-     */
-    doAddItem(item, notifyCartChanged = true, highlight = false) {
-        this.logger.startWith({ item, notifyCartChanged, highlight });
-
-        const { cart } = this.elements;
-
-        const foundItemKey = this.getItemKeyById(item.id);
-        
-        const getDomItem = () => cart.items.find(`.item[data-id='${item.id}']`);
-
-        let domItem = getDomItem();
-
-        if (foundItemKey) {
-            this.doUpdateItem(item, foundItemKey, domItem)
-        } else {
-            this.doInsertItem(item);
-            // for highlight
-            domItem = getDomItem();
-        }
-
-        if (highlight) {
-            this.doHighlightItem(domItem);
-        }
-
-        if (notifyCartChanged) {
-            this.onChange();
-
-        }
-    }
-
-    /**
-     * Function doRemoveItem() : Remove's item from cart
-     * 
-     * @param {{}} item 
-     * @param {boolean} notifyCartChanged 
-     */
-    doRemoveItem(item, notifyCartChanged = true) {
-        this.logger.startWith({ item, notifyCartChanged });
-
-        const { cart } = this.elements;
-
-        const foundProductKey = this.getItemKeyById(item.id);
-
-        if (foundProductKey) {
-            // update virtual cart
-            delete this.cart.items[foundProductKey];
-
-            // update dom cart
-            cart.items.find(`.item[data-id='${item.id}']`).remove();
-
-        } else {
-            alert(`${this.constructor.name}::removeItem() -> item with id: '${item.id}' not found in cart.`);
-        }
-
-        if (notifyCartChanged) {
-            this.onChange();
-        }
-    }
-
-    /**
-     * Function doHighlightItem() : highlight item in cart
-     * 
-     * @param {$} domItem 
-     */
-    doHighlightItem(domItem) {
-        this.logger.startWith({ domItem });
-
-        domItem.css('animation', 'highlight 3s');
     }
 }

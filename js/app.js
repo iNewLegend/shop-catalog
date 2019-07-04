@@ -21,7 +21,6 @@ class App {
      */
     constructor() {
         Services.Terminal.initalize();
-
         
         this.logger = new Modules.Logger(this, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
@@ -37,6 +36,17 @@ class App {
             cart: new API.Cart(http),
         }
         
+        /*
+        this.ws = new API.Websocket('localhost', '51196');
+
+        this.ws.bind('open', 'open', function test(e) {
+            this.logger.startWith(e);
+
+            this.ws.send({name: 'welcome', method: 'index', type: 'get'});
+        }.bind(this));
+
+        this.ws.initalize();
+        */
 
         this.elements = {
             header: {
@@ -90,8 +100,8 @@ class App {
         this.logger.startEmpty();
 
         this.catalog = new Catalog(this.apis.catalog);
-        this.catalog.on('initialize', this.onCatalogInitialize.bind(this));
-        this.catalog.on('itemAdd', this.onCatalogItemAdd.bind(this));
+        this.catalog.on('initialRecv', this.onCatalogInitialRecv.bind(this));
+        this.catalog.on('productAdd', this.onCatalogProductAdd.bind(this));
 
         this.catalog.initialize();
     }
@@ -99,7 +109,7 @@ class App {
     /**
      * Function onCatalogInitialize() : Called on catalog Initialized
      */
-    onCatalogInitialize() {
+    onCatalogInitialRecv() {
         this.logger.startEmpty();
 
         this.cart = new Cart(this.apis.cart, this.apis.catalog);
@@ -108,9 +118,9 @@ class App {
     }
 
     /**
-     * Function onCatalogItemAdd() : Called on catalog item add
+     * Function onCatalogPrudctAdd() : Called on catalog item add
      */
-    onCatalogItemAdd(product) {
+    onCatalogProductAdd(product) {
         this.logger.startWith({ product });
 
         this.cart.itemAdd(product, () => {

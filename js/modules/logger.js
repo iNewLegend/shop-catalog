@@ -25,6 +25,16 @@ export default class Logger {
         this.color = this.getRandomColor();
 
         this.outputHandler = console.log.bind();
+
+        this.defaultStyle = [
+            'color: grey;font-size:7px',
+            'display: block',
+            `color: ${this.color}`,
+            'color: black',
+            'font-weight: bold',
+            'color: black',
+            'font-size: 16px;color: red;font-weight:800'
+        ];
     }
 
     /**
@@ -54,6 +64,11 @@ export default class Logger {
         return caller.split('.')[1].split(' ')[0];
     }
 
+    /**
+     * Set output handler
+     * 
+     * @param {function(...args)} outputHandler 
+     */
     setOutputHandler(outputHandler) {
         this.outputHandler = outputHandler;
     }
@@ -63,22 +78,8 @@ export default class Logger {
      * 
      * @param {string} text 
      */
-    out(text, plain = false) {
-        if (plain) {
-            this.outputHandler(text, 'plain');
-
-            return;
-        }
-
-        this.outputHandler(text, 
-            'color: grey;font-size:7px',
-            'display: block',
-            `color: ${this.color}`,
-            'color: black',
-            'font-weight: bold',
-            'color: black',
-            'font-size: 16px;color: red;font-weight:800'
-        );
+    out(...args) {
+        this.outputHandler.apply(this, args);
     }
 
     /**
@@ -87,11 +88,12 @@ export default class Logger {
      * @param {string} output 
      */
     startEmpty(output = '') {
-        if (! this.state) return;
-        
+        if (!this.state) return;
+
         const source = this.getCallerName();
 
-        this.out(`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`);
+        this.out.apply(this, [`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
+        //this.out(`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`);
     }
 
     /**
@@ -100,12 +102,12 @@ export default class Logger {
      * @param {*} output 
      */
     startWith(params) {
-        if (! this.state) return;
+        if (!this.state) return;
 
         const source = this.getCallerName();
 
         if (typeof params == "string") {
-            console.log(`%c(sw)-> %c%c${this.name}%c::${source}() ->> string '${params}'`, `color: ${this.color}`, 'color: black');
+            this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::${source}() ->> string '${params}'`].concat(this.defaultStyle));
 
             return;
         }
@@ -116,29 +118,36 @@ export default class Logger {
 
             if (typeof value === 'object') {
                 // print in next line
-                this.out(`%c(sw)-> %c%c${this.name}%c::%c${source}%c() ->> ${key} %c↓`);
-                console.dir(value);
-
+                this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
+                //console.dir(value);
+                this.out(value);
 
             } else {
                 // print in same line
-                this.out(`%c(sw)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${value}'%c`);
+                this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
             }
 
             return;
         }
 
-        this.out(`%c(sw)-> %c%c${this.name}%c::%c${source}%c(${Object.keys(params).join(', ')}) %c↓`);
+        this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c(${Object.keys(params).join(', ')}) %c↓`].concat(this.defaultStyle));
 
         for (let key in params) {
             if (typeof params[key] === 'object') {
                 params[key] = JSON.stringify(params[key]);
             } else if (typeof params[key] == 'function') {
-                params[key] = params[key].name.split(' ')[1] + '()';
+                if (params[key].name.length === 0) {
+                    params[key] = 'anonymous function()';
+                } else {
+                    //alert(params[key].name + ' ' + params[key].toString());
+                    params[key] = params[key].name.split(' ')[1] + '()';
+                }
+                
+                
             }
 
             // print long (multiline) object
-            this.out("%c" + key + ": `" + params[key] + "`", "color: grey", true);
+            this.out.apply(this, ["%c" + key + ": `" + params[key] + "`", 'color: #a3a3a3']);
         }
 
     }
@@ -150,15 +159,15 @@ export default class Logger {
      * @param {{}|[]} data 
      */
     recv(params, data) {
-        if (! this.state) return;
+        if (!this.state) return;
 
         const source = this.getCallerName();
 
         for (let key in params) {
-            this.out(`%c(rv)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${params[key]}' %c↓`);
+            this.out.apply(this, [`%c(rv)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${params[key]}' %c↓`].concat(this.defaultStyle));
         }
 
-        this.out(data, true);
+        this.out(data);
     }
 
     /**
@@ -168,8 +177,8 @@ export default class Logger {
      * @param {string} notice 
      */
     object(params, notice = '') {
-        if (! this.state) return;
-        
+        if (!this.state) return;
+
         const source = this.getCallerName();
 
         params = Object.create(params);
@@ -178,8 +187,22 @@ export default class Logger {
             if (typeof params[key] === 'object') {
                 params[key] = JSON.stringify(params[key]);
             }
-            
-            this.out(`%c(ob)-> %c%c${this.name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[key]}'%c`);
+
+            this.out.apply(this, [`%c(ob)-> %c%c${this.name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[key]}'%c`].concat(this.defaultStyle));
         }
     }
+
+    /**
+     * Function debug() : Notify debug.
+     * `
+     * @param {string} output 
+     */
+    debug(output) {
+        if (!this.state) return;
+
+        const source = this.getCallerName();
+
+        this.out.apply(this, [`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
+    }
+
 }

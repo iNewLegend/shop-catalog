@@ -31,7 +31,7 @@ export default class Http {
      * 
      * @return {any}
      */
-    async fetch(path, method, body = null) {
+    async _fetch(path, method, body = null) {
         this.logger.startWith({ path, method, body });
 
         const params = { 'credentials': 'include' }; // cookies
@@ -70,6 +70,8 @@ export default class Http {
     /**
      * Function translateError() : Used to translate server error.
      * 
+     * @todo Function should be exported to api.js
+     * 
      * @param {({}|string)} message 
      * 
      * @return {string}
@@ -101,7 +103,7 @@ export default class Http {
     get(path) {
         this.logger.startWith({ path });
 
-        return this.fetch(path, 'get');
+        return this._fetch(path, 'get');
     }
 
     /**
@@ -115,6 +117,6 @@ export default class Http {
     post(path, params) {
         this.logger.startWith({ path, params });
 
-        return this.fetch(path, 'post', params);
+        return this._fetch(path, 'post', params);
     }
 }

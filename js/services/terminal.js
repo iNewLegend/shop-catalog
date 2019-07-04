@@ -6,130 +6,19 @@
 
 import Modules from '../modules/modules.js';
 
+import JQuery_GetSelector from '../library/jquery.js';
+
 const LOCAL_STORAGE_KEY = 'local_storage_key';
 
 export default class Terminal {
     static instance = null;
- 
+
     state = false;
-    
+
     resize = {
         state: false,
-        capturePosY: 0, 
+        capturePosY: 0,
         captureHeight: 0,
-    }
-
-    /**
-     * Function onOutput() : Output handler
-     * 
-     * @param {string} text 
-     */
-    static onOutput(text) {
-        const _this = Terminal.instance;
-
-        console.log.apply(this, arguments)
-
-        const { terminal } = _this.elements;
-
-        let formated = [];
-        let objectFlag, tildaFlag, quoteFlag, dbQuotesFlag, spanFlag, skipFlag = false;
-        let spansCount = 0;
-
-        if (typeof text == 'object') {
-            text = JSON.stringify(text, null, 2);
-
-            text = `<pre>${text}</pre>`;
-        }
-
-        for (let i = 0; i < text.length; ++i) {
-            if (skipFlag) {
-                skipFlag = false;
-                continue;
-            }
-
-            if (text[i] === '{' || text[i] === '}') {
-                if (!objectFlag) {
-                    formated.push(`<span class="object">{`);
-                } else {
-                    formated.push(`}</span>`);
-                }
-
-                objectFlag = !objectFlag;
-
-                continue;
-            } else if (text[i] === '`') {
-                if (!tildaFlag) {
-                    formated.push(`${text[i]}<span class="tilda">`);
-                } else {
-                    formated.push(`</span>${text[i]}`);
-                }
-
-                tildaFlag = !tildaFlag;
-
-                continue;
-            } else if (text[i] === "'") {
-                if (!quoteFlag) {
-                    formated.push(`${text[i]}<span class="text quote">`);
-                } else {
-                    formated.push(`</span>${text[i]}`);
-                }
-
-                quoteFlag = !quoteFlag;
-
-                continue;
-            } else if (text[i] === '"') {
-                if (!dbQuotesFlag) {
-                    formated.push(`${text[i]}<span class="text double-quote">`);
-                } else {
-                    formated.push(`</span>${text[i]}`);
-                }
-
-                dbQuotesFlag = !dbQuotesFlag;
-
-                continue;
-            } else if (text[i] == '%' && text[i + 1] == 'c') {
-                if (arguments[1] === 'plain') {
-                    i++;
-                    continue;
-                }
-
-                skipFlag = true;
-
-                if (!spanFlag) {
-                    formated.push(`<span style="${arguments[1 + spansCount]}">`);
-                } else {
-                    formated.push('</span>');
-                }
-
-                spanFlag = !spanFlag;
-                ++spansCount;
-
-                continue;
-            }
-
-            skipFlag = false;
-            formated.push(text[i]);
-        }
-
-        text = formated.join('');
-
-        if (arguments[1] === 'plain') {
-            text = '<span class="plain">' + text + '</span>';
-        }
-
-        terminal.self.append(`<p>${text}</p>`);
-
-        terminal.self.stop();
-        terminal.self.animate({
-            scrollTop: terminal.self.get(0).scrollHeight
-        });
-    }
-
-    /**
-     * Funciton initalize() : Create Instance
-     */
-    static initalize() {
-        new Terminal();
     }
 
     /**
@@ -137,7 +26,7 @@ export default class Terminal {
      */
     constructor() {
         if (Terminal.instance == null) {
-            
+
             this.logger = new Modules.Logger('Services.Terminal', true);
             this.logger.startEmpty();
 
@@ -171,6 +60,9 @@ export default class Terminal {
         const { body, terminal } = this.elements;
         const { buttons } = terminal;
 
+        // add .GetSelector to jQuery
+        JQuery_GetSelector($);
+
         body.keydown(this._onKeyDown.bind(this));
         body.mousemove(this._onMouseMove.bind(this));
         body.mouseup(this._onMouseUp.bind(this));
@@ -187,7 +79,7 @@ export default class Terminal {
 
         if (storageHeight) {
             terminal.self.css('height', storageHeight);
-        } 
+        }
 
         // null on first time open
         if (this._stroage('active') === null | this._stroage('active') === 'true') {
@@ -222,7 +114,7 @@ export default class Terminal {
             this.logger.object({ x: e.pageX, y: e.pageY });
 
             const { self } = this.elements.terminal;
-            
+
             let newHeight = this.resize.capturePosY - e.pageY + this.resize.captureHeight;
 
             if (newHeight < 50) {
@@ -237,7 +129,7 @@ export default class Terminal {
                     this._stroage('height', newHeight);
                 }
             }, 500);
-            
+
         }
     }
 
@@ -248,8 +140,8 @@ export default class Terminal {
      */
     _onMouseUp(e) {
         //this.logger.startWith({ e });
-        
-        this._onTerminalReiszeMouseUp();
+
+        this._onTerminalReiszeMouseUp(e);
     }
 
 
@@ -258,11 +150,11 @@ export default class Terminal {
      */
     _onTerminalScroll() {
         //this.logger.startEmpty();
-        
+
         const { self } = this.elements.terminal;
         const pLastChild = $("#terminal p:last-child");
 
-        if(self.height() > pLastChild.position().top + 15) {
+        if (self.height() > pLastChild.position().top + 15) {
             pLastChild.stop();
             pLastChild.fadeOut().fadeIn();
         }
@@ -277,7 +169,7 @@ export default class Terminal {
         this.logger.startWith({ e });
         this.logger.object({ x: e.pageX, y: e.pageY });
 
-        const { self } = this.elements.terminal; 
+        const { self } = this.elements.terminal;
 
         this.resize.state = true;
         this.resize.capturePosY = e.pageY;
@@ -322,7 +214,7 @@ export default class Terminal {
         }
 
         return this.localStorage.getItem(key);
-    } 
+    }
 
     /**
      * Function open() : Open's the terminal
@@ -353,4 +245,124 @@ export default class Terminal {
 
         this.state = false;
     }
+}
+
+
+/**
+ * Function onOutput() : Output handler
+ * 
+ * @param {string} text 
+ * 
+ * @todo change paramter text to something else.
+ */
+Terminal.onOutput = function (text) {
+    const _this = Terminal.instance;
+
+    let plain = false;
+
+    const { terminal } = _this.elements;
+
+    let formated = [];
+    let objectFlag, tildaFlag, quoteFlag, dbQuotesFlag, spanFlag, skipFlag = false;
+    let spansCount = 0;
+
+    console.log.apply(this, arguments);
+
+    // if jQuery element
+    if (text instanceof jQuery) {
+        text = `[jQuery Element]: '${text.getSelector()}'`;
+    } else if (typeof text == 'object') {
+        text = JSON.stringify(text, null, 4);
+
+        text = `<pre>${text}</pre>`;
+    }
+
+    for (let i = 0; i < text.length; ++i) {
+        if (skipFlag) {
+            skipFlag = false;
+            continue;
+        }
+
+        if (text[i] === '{' || text[i] === '}') {
+            if (!objectFlag) {
+                formated.push(`<span class="object">{`);
+            } else {
+                formated.push(`}</span>`);
+            }
+
+            objectFlag = !objectFlag;
+
+            continue;
+        } else if (text[i] === '`') {
+            if (!tildaFlag) {
+                formated.push(`${text[i]}<span class="tilda">`);
+            } else {
+                formated.push(`</span>${text[i]}`);
+            }
+
+            tildaFlag = !tildaFlag;
+
+            continue;
+        } else if (text[i] === "'") {
+            if (!quoteFlag) {
+                formated.push(`${text[i]}<span class="text quote">`);
+            } else {
+                formated.push(`</span>${text[i]}`);
+            }
+
+            quoteFlag = !quoteFlag;
+
+            continue;
+        } else if (text[i] === '"') {
+            if (!dbQuotesFlag) {
+                formated.push(`${text[i]}<span class="text double-quote">`);
+            } else {
+                formated.push(`</span>${text[i]}`);
+            }
+
+            dbQuotesFlag = !dbQuotesFlag;
+
+            continue;
+        } else if (text[i] == '%' && text[i + 1] == 'c') {
+            if (plain) {
+                i++;
+                continue;
+            }
+
+            skipFlag = true;
+
+            if (!spanFlag) {
+                formated.push(`<span style="${arguments[1 + spansCount]}">`);
+            } else {
+                formated.push('</span>');
+            }
+
+            spanFlag = !spanFlag;
+            ++spansCount;
+
+            continue;
+        }
+
+        skipFlag = false;
+        formated.push(text[i]);
+    }
+
+
+    text = formated.join('');
+
+    text = text.replace(new RegExp('null', 'g'), '<span class="null">null</span>');
+
+    terminal.self.append(`<p>${text}</p>`);
+
+    terminal.self.stop();
+    terminal.self.animate({
+        scrollTop: terminal.self.get(0).scrollHeight
+    });
+}
+
+/**
+ * Funciton initalize() : Create Instance
+ */
+Terminal.initalize = function () {
+    new Terminal();
 }
