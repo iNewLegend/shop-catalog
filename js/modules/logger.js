@@ -2,11 +2,10 @@
  * @file: modules/logger.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description:
+ * @todo: on constructor add prefix for owner
  */
 
-class Modules {};
-
-class Logger {
+export default class Logger {
     /**
      * Function constructor() : Create logger class
      * 
@@ -184,5 +183,3 @@ class Logger {
         }
     }
 }
-
-export { Logger }

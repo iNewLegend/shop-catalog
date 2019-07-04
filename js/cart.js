@@ -4,11 +4,10 @@
  * @description: Manages cart
  */
 
-import API_Cart from './api/cart.js';
-import API_Catalog from './api/catalog.js';
+import API from './api/api.js';
 
-import * as Services from './services/terminal.js';
-import * as Modules from './modules/logger.js';
+import Modules from './modules/modules.js';  
+import Services from './services/services.js';
 
 export default class Cart {
     static reloadCartEachOpen = false; // highlight new cart item while this option set to true will not work.
@@ -16,8 +15,8 @@ export default class Cart {
     /**
      * Function constructor() : Create Cart
      * 
-     * @param {API_Cart} cart
-     * @param {API_Catalog} catalog 
+     * @param {API.Cart} cart
+     * @param {API.Catalog} catalog 
      */
     constructor(cart, catalog) {
         this.logger = new Modules.Logger(this, true);

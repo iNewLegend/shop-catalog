@@ -4,10 +4,10 @@
  * @description: Manages catalog
  */
 
-import API_Catalog from './api/catalog.js';
+import API from './api/api.js';
 
-import * as Services from './services/terminal.js';
-import * as Modules from './modules/logger.js';
+import Modules from './modules/modules.js';  
+import Services from './services/services.js';
 
 const debug = true;
 
@@ -18,7 +18,7 @@ export default class Catalog {
     /**
      * Function constructor() : Create Catalog
      * 
-     * @param {API_Catalog} catalog 
+     * @param {API.Catalog} catalog 
      */
     constructor(catalog) {
         this.logger = new Modules.Logger(this, true);

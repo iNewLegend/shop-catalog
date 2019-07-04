@@ -3,24 +3,23 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 
-import API from './api.js';
+import { Http } from './api.js';
 
-import * as Services from '../services/terminal.js';
-import * as Modules from '../modules/logger.js';
+import Modules from '../modules/modules.js';  
+import Services from '../services/services.js';
 
-
-export default class API_Cart {
+export default class Cart {
 
     /**
      * Function constructor() Create Cart Api 
      * 
-     * @param {API} api
+     * @param {Http} http
      */
-    constructor(api) {
-        this.logger = new Modules.Logger(this, true);
+    constructor(http) {
+        this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
-        this.api = api;
+        this.http = http;
     }
 
     /**
@@ -31,7 +30,7 @@ export default class API_Cart {
     get(callback) {
         this.logger.startEmpty();
 
-        this.api.get('cart/index').then(data => callback(data));
+        this.http.get('cart/index').then(data => callback(data));
     }
 
     /**
@@ -46,7 +45,7 @@ export default class API_Cart {
 
         const params = { id, amount };
 
-        this.api.post('cart/addItem', params).then((data) => callback(data));
+        this.http.post('cart/addItem', params).then((data) => callback(data));
     }
 
     /**
@@ -58,6 +57,7 @@ export default class API_Cart {
     removeItem(callback, id) {
         this.logger.startWith({ id });
 
-        this.api.post('cart/removeItem', { id }).then((data) => callback(data));
+        this.http.post('cart/removeItem', { id }).then((data) => callback(data));
     }
 }
+

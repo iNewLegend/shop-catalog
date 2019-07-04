@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
     <head>
         <meta charset="utf-8">
         <title>MyShop</title>
@@ -11,6 +12,7 @@
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/mobile.css">
+        <link rel="stylesheet" href="css/terminal.css">
         <meta name="theme-color" content="#fafafa">
     </head>
 
@@ -21,7 +23,9 @@
         <!-- Add your site or application content here -->
         <header>
             <ul>
-                <li><a href="."><h2>My Shop</h2></a></li>
+                <li><a href=".">
+                        <h2>My Shop</h2>
+                    </a></li>
                 <li id="toggler" class="pointer">
                     <img class="cart" src="img/cart.png">
                     <span class="amount bg-light" style="display: none">0</span>
@@ -58,7 +62,13 @@
         <section class="main">
 
         </section>
-        
+
+        <div id="terminal">
+            <div class="buttons">
+                <button class="resize">︽</button>
+                <button class="close" title="Close terminal">X</button>
+            </div>
+        </div>
         <!-- template for main page (catalog) -->
         <template id="page-main">
             <div class="container" style="max-width: 1080px;">
@@ -91,7 +101,8 @@
                     <h5>Price: <span class="price">${price}$</span></h5>
                     <div class="row">
                         <button class="bg-primary">Add To Cart</button>
-                        <input class="amount" type="number" name="amount" value="1" min="1">
+                        <input class="amount" type="number" name="amount"
+                            value="1" min="1">
                     </div>
                 </div>
             </div>

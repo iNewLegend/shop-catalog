@@ -3,9 +3,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: 
  */
-
-//import * as Services from '../services/terminal.js';
-import * as Modules from '../modules/logger.js';
+import Logger from './logger.js';
 
 export default class Page {
 
@@ -15,8 +13,7 @@ export default class Page {
      * @param {$} rootDom 
      */
     constructor(rootDom) {
-        this.logger = new Modules.Logger(this, true);
-        //this.logger.setOutputHandler(Services.Terminal.onOutput);
+        this.logger = new Logger(this, true);
 
         this.logger.startWith({ rootDom });
 

@@ -3,25 +3,24 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 
-import API from './api.js';
+import { Http } from './api.js';
 
-import * as Services from '../services/terminal.js';
-import * as Modules from '../modules/logger.js';
+import Modules from '../modules/modules.js';  
+import Services from '../services/services.js';
 
-export default class API_Catalog {
+export default class Catalog {
 
     /**
      * Function constructor() Create Catalog Api 
      * 
-     * @param {API} api
+     * @param {Http} api
      */
 
-    constructor(api) {
-        this.logger = new Modules.Logger(this, true);
+    constructor(http) {
+        this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
-        /**@type API */
-        this.api = api;
+        this.http = http;
 
         this.catalog = [];
     }
@@ -35,7 +34,7 @@ export default class API_Catalog {
     get(callback, page = 0) {
         this.logger.startWith({ page });
 
-        this.api.get(`catalog/index/${page}`).then(data => {
+        this.http.get(`catalog/index/${page}`).then(data => {
             if (!data.error) {
                 this.catalog = data.result;
             }
@@ -57,7 +56,7 @@ export default class API_Catalog {
         if (ids.length <= 0) {
             callback([]);
         } else {
-            this.api.get(`catalog/get/${ids}`).then(data => {
+            this.http.get(`catalog/get/${ids}`).then(data => {
                 callback(data)
             });
         }

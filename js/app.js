@@ -1,21 +1,15 @@
 /**
  * @file: js/app.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: Main File
  */
 import API from './api/api.js';
-import API_Catalog from './api/catalog.js';
-import API_Cart from './api/cart.js';
 
-
-import Page from './modules/page.js';
-
-import Catalog from './catalog.js';
 import Cart from './cart.js';
+import Catalog from './catalog.js';
 
-import * as Services from './services/terminal.js';
-import * as Modules from './modules/logger.js';
-
-//import Logger from './services/terminal.js'
+import Modules from './modules/modules.js';  
+import Services from './services/services.js';
 
 const debug = true;
 
@@ -26,10 +20,8 @@ class App {
      * Function constructor() : Create App
      */
     constructor() {
-        // change to Services.Terminal.Initalize();
-        this.services = {
-            terminal: new Services.Terminal()
-        };
+        Services.Terminal.initalize();
+
         
         this.logger = new Modules.Logger(this, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
@@ -38,11 +30,11 @@ class App {
 
         const remoteAdress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/api/?cmd='
 
-        const api = new API(remoteAdress);
+        const http = new API.Http(remoteAdress);
 
         this.apis = {
-            catalog: new API_Catalog(api),
-            cart: new API_Cart(api),
+            catalog: new API.Catalog(http),
+            cart: new API.Cart(http),
         }
         
 
@@ -70,7 +62,7 @@ class App {
             }
         }
 
-        this.page = new Page(this.elements.sections.main);
+        this.page = new Modules.Page(this.elements.sections.main);
     }
 
     /**
