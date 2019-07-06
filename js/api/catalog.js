@@ -20,6 +20,8 @@ export default class Catalog {
         this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
+        this.logger.startWith({ http });
+
         this.http = http;
 
         this.catalog = [];
@@ -32,7 +34,7 @@ export default class Catalog {
      * @param {number} page 
      */
     get(callback, page = 0) {
-        this.logger.startWith({ page });
+        this.logger.startWith({ callback, page });
 
         this.http.get(`catalog/index/${page}`).then(data => {
             if (!data.error) {
@@ -50,7 +52,7 @@ export default class Catalog {
      * @param {number[]} ids 
      */
     getByIds(callback, ids) {
-        this.logger.startWith({ ids });
+        this.logger.startWith({ callback, ids });
 
         // on empty, fake empty callback.
         if (ids.length <= 0) {

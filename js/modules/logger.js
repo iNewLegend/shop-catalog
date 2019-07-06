@@ -37,6 +37,56 @@ export default class Logger {
         ];
     }
 
+    _functionView(fn) {
+        let fReturn = 'anonymous function()';
+
+        if (fn.name.length !== 0) {
+            fReturn = fn.name.split(' ')[1] + '()';
+        }
+
+        return fReturn;
+    }
+
+    _printFunctionNotify(type, source, output) {
+        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
+    }
+
+    _printInLineElement(type, source, key, value) {
+        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
+    }
+
+    _printInLineFunction(type, source, key, fn)  {
+        fn = this._functionView(fn);
+
+        this._printInLineElement(type, source, key, fn);
+    }
+
+    _printInLineString(type, source, string) {
+        this._printInLineElement(type, source, '(string)', string);
+    }
+
+    _printNextlineObject(type, source, key, obj) {
+        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
+        // print in next line
+        this.out(obj);
+    }
+
+    _printMultiLineObject(source, obj) {
+        // print long (multiline) object
+        this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c(${Object.keys(obj).join(', ')}) %c↓`].concat(this.defaultStyle));
+
+        for (let key in obj) {
+            if (typeof obj[key] === 'object') {
+                obj[key] = JSON.stringify(obj[key]);
+            } else if (typeof obj[key] == 'function') {
+                obj[key] = this._functionView(obj[key]);                
+            }
+
+            
+            this.out.apply(this, ["%c" + key + ": `" + obj[key] + "`", 'color: #a3a3a3']);
+        }
+    }
+    
     /**
      * Function getRandomColor() : Return random color
      */
@@ -90,10 +140,7 @@ export default class Logger {
     startEmpty(output = '') {
         if (!this.state) return;
 
-        const source = this.getCallerName();
-
-        this.out.apply(this, [`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
-        //this.out(`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`);
+        this._printFunctionNotify('se', this.getCallerName(), output);
     }
 
     /**
@@ -104,52 +151,27 @@ export default class Logger {
     startWith(params) {
         if (!this.state) return;
 
+        const type = 'se';
         const source = this.getCallerName();
 
         if (typeof params == "string") {
-            this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::${source}() ->> string '${params}'`].concat(this.defaultStyle));
+            this._printInLineString(type, source, params);
 
-            return;
-        }
-
-        if (Object.keys(params).length === 1) {
+        } else if(Object.keys(params).length === 1) {
             const key = Object.keys(params)[0];
-            const value = Object.values(params)[0];
+            let value = Object.values(params)[0];
 
+            // function check is repated logic, handle it.
             if (typeof value === 'object') {
-                // print in next line
-                this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
-                //console.dir(value);
-                this.out(value);
-
+                this._printNextlineObject(type, source, key, value);
+            } else if (typeof value == 'function') {
+                this._printInLineFunction(type, source, key, value)
             } else {
-                // print in same line
-                this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
+                this._printInLineElement(type, source, key, value);
             }
-
-            return;
+        } else {
+            this._printMultiLineObject(source, params);
         }
-
-        this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c(${Object.keys(params).join(', ')}) %c↓`].concat(this.defaultStyle));
-
-        for (let key in params) {
-            if (typeof params[key] === 'object') {
-                params[key] = JSON.stringify(params[key]);
-            } else if (typeof params[key] == 'function') {
-                if (params[key].name.length === 0) {
-                    params[key] = 'anonymous function()';
-                } else {
-                    //alert(params[key].name + ' ' + params[key].toString());
-                    params[key] = params[key].name.split(' ')[1] + '()';
-                }
-                
-                
-            }
-
-            // print long (multiline) object
-            this.out.apply(this, ["%c" + key + ": `" + params[key] + "`", 'color: #a3a3a3']);
-        }
-
     }
 
     /**
@@ -200,9 +222,7 @@ export default class Logger {
     debug(output) {
         if (!this.state) return;
 
-        const source = this.getCallerName();
-
-        this.out.apply(this, [`%c(se)-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
+        this._printFunctionNotify('db', this.getCallerName(), output);
     }
 
 }

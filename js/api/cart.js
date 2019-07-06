@@ -19,6 +19,8 @@ export default class Cart {
         this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
+        this.logger.startWith({ http });
+        
         this.http = http;
     }
 
@@ -28,7 +30,7 @@ export default class Cart {
      * @param {function()} callback 
      */
     get(callback) {
-        this.logger.startEmpty();
+        this.logger.startWith({ callback });
 
         this.http.get('cart/index').then(data => callback(data));
     }
@@ -41,7 +43,7 @@ export default class Cart {
      * @param {number} amount 
      */
     addItem(callback, id, amount = 1) {
-        this.logger.startWith({ id, amount });
+        this.logger.startWith({ callback, id, amount });
 
         const params = { id, amount };
 
@@ -55,7 +57,7 @@ export default class Cart {
      * @param {number} id 
      */
     removeItem(callback, id) {
-        this.logger.startWith({ id });
+        this.logger.startWith({ callback, id });
 
         this.http.post('cart/removeItem', { id }).then((data) => callback(data));
     }
