@@ -9,7 +9,7 @@ import Websocket from './websocket.js';
 import Catalog from './catalog.js';
 import Cart  from './cart.js';
 
-var API = {};
+const API = {};
 
 API.Http = Http;
 API.Websocket = Websocket;

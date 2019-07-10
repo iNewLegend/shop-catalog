@@ -27,7 +27,7 @@ export default class Cart {
     /**
      * Function get() : Get cart
      * 
-     * @param {function()} callback 
+     * @param {{function()}} callback 
      */
     get(callback) {
         this.logger.startWith({ callback });
@@ -38,7 +38,7 @@ export default class Cart {
     /**
      * Function addItem() : Add item to cart
      * 
-     * @param {function()} callback 
+     * @param {{function()}} callback 
      * @param {number} id 
      * @param {number} amount 
      */
@@ -53,7 +53,7 @@ export default class Cart {
     /**
      * Function removeItem() : Remove item from cart
      * 
-     * @param {function()} callback 
+     * @param {{function()}} callback 
      * @param {number} id 
      */
     removeItem(callback, id) {

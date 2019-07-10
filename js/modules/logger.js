@@ -1,16 +1,18 @@
 /**
- * @file: modules/logger.js
+ * @file: js/modules/logger.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description:
  * @todo: on constructor add prefix for owner
  */
 
 export default class Logger {
+    static colorsInUse = [];
+
     /**
      * Function constructor() : Create logger class
      * 
      * @param {*} owner 
-     * @param {*} state 
+     * @param {boolean} state 
      */
     constructor(owner, state = false) {
         this.state = state;
@@ -22,7 +24,18 @@ export default class Logger {
             this.name = owner.constructor.name;
         }
 
+        if (state) {
+            this._initialize();
+        }
+    }
+
+    /**
+     * Function _initialize() : Initialize logger class
+     */
+    _initialize() {
         this.color = this.getRandomColor();
+        
+        Logger.colorsInUse.push(this.color);
 
         this.outputHandler = console.log.bind();
 
@@ -37,6 +50,11 @@ export default class Logger {
         ];
     }
 
+    /**
+     * Function _functionView() : Return function preview
+     * 
+     * @param {{function()}} fn 
+     */
     _functionView(fn) {
         let fReturn = 'anonymous function()';
 
@@ -47,33 +65,78 @@ export default class Logger {
         return fReturn;
     }
 
+    /**
+     * Function _printFunctionNotify() : Print simple log for notify source (function)
+     * 
+     * @param {string} type 
+     * @param {string} source 
+     * @param {*} output 
+     */
     _printFunctionNotify(type, source, output) {
         this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
     }
 
+    /**
+     * Function _printInLineElement() : Print in line element
+     * 
+     * @param {string} type 
+     * @param {string} source 
+     * @param {string} key 
+     * @param {*} value 
+     */
     _printInLineElement(type, source, key, value) {
         this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
     }
 
+    /**
+     * Function __printInLineFunction() : Print in line function
+     * 
+     * @param {string} type 
+     * @param {string} source 
+     * @param {string} key 
+     * @param {{function()}} fn 
+     */
     _printInLineFunction(type, source, key, fn)  {
         fn = this._functionView(fn);
 
         this._printInLineElement(type, source, key, fn);
     }
 
+    /**
+     * Function _printInLineString() : Print in line string
+     * 
+     * @param {string} type 
+     * @param {string} source 
+     * @param {string} string 
+     */
     _printInLineString(type, source, string) {
         this._printInLineElement(type, source, '(string)', string);
     }
 
+    /**
+     * Function _printNextlineObject() : Print object in next line
+     * 
+     * @param {string} type 
+     * @param {string} source 
+     * @param {string} key 
+     * @param {{}} obj 
+     */
     _printNextlineObject(type, source, key, obj) {
         this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
         // print in next line
         this.out(obj);
     }
 
-    _printMultiLineObject(source, obj) {
+    /**
+     * Function _printMultiLineObject() : Print object in multiline format
+     * 
+     * @param {string} type 
+     * @param {string} source 
+     * @param {{}} obj 
+     */
+    _printMultiLineObject(type, source, obj) {
         // print long (multiline) object
-        this.out.apply(this, [`%c(sw)-> %c%c${this.name}%c::%c${source}%c(${Object.keys(obj).join(', ')}) %c↓`].concat(this.defaultStyle));
+        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c(${Object.keys(obj).join(', ')}) %c↓`].concat(this.defaultStyle));
 
         for (let key in obj) {
             if (typeof obj[key] === 'object') {
@@ -88,6 +151,19 @@ export default class Logger {
     }
     
     /**
+     * Function _getCallerName() : Return caller name
+     */
+    _getCallerName() {
+        const caller = Error().stack.split('\n')[3].trim();
+
+        if (caller.startsWith('at new')) {
+            return 'constructor';
+        }
+
+        return caller.split('.')[1].split(' ')[0];
+    }
+
+    /**
      * Function getRandomColor() : Return random color
      */
     getRandomColor() {
@@ -98,20 +174,54 @@ export default class Logger {
             color += letters[Math.floor(Math.random() * 16)];
         }
 
-        return color;
-    }
+        /**
+         * Function hexColorDelta() : Return color diffrence in ratio decmial point
+         * 
+         * @param {string} hex1 
+         * @param {string} hex2
+         * 
+         * @see http://jsfiddle.net/96sME/ 
+         */
+        const hexColorDelta = function(hex1, hex2) {
+            hex1 = hex1.replace('#', '');
+            hex2 = hex2.replace('#', '');
 
-    /**
-     * Function getCallerName() : Return caller name
-     */
-    getCallerName() {
-        const caller = Error().stack.split('\n')[3].trim();
-
-        if (caller.startsWith('at new')) {
-            return 'constructor';
+            // get red/green/blue int values of hex1
+            var r1 = parseInt(hex1.substring(0, 2), 16);
+            var g1 = parseInt(hex1.substring(2, 4), 16);
+            var b1 = parseInt(hex1.substring(4, 6), 16);
+            // get red/green/blue int values of hex2
+            var r2 = parseInt(hex2.substring(0, 2), 16);
+            var g2 = parseInt(hex2.substring(2, 4), 16);
+            var b2 = parseInt(hex2.substring(4, 6), 16);
+            // calculate differences between reds, greens and blues
+            var r = 255 - Math.abs(r1 - r2);
+            var g = 255 - Math.abs(g1 - g2);
+            var b = 255 - Math.abs(b1 - b2);
+            // limit differences between 0 and 1
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            // 0 means opposit colors, 1 means same colors
+            return (r + g + b) / 3;
         }
 
-        return caller.split('.')[1].split(' ')[0];
+        let similar = Logger.colorsInUse.some((value) => {
+            // it return the ratio of diffrence... closer to 1.0 is less difference.
+            
+            if (hexColorDelta(color, value) < 0.8) {
+                return false;
+            }
+
+            return true;
+        });
+
+        // if the color is similar, try again.
+        if (similar) {
+            return this.getRandomColor();
+        }
+
+        return color;
     }
 
     /**
@@ -140,7 +250,7 @@ export default class Logger {
     startEmpty(output = '') {
         if (!this.state) return;
 
-        this._printFunctionNotify('se', this.getCallerName(), output);
+        this._printFunctionNotify('se', this._getCallerName(), output);
     }
 
     /**
@@ -152,7 +262,7 @@ export default class Logger {
         if (!this.state) return;
 
         const type = 'se';
-        const source = this.getCallerName();
+        const source = this._getCallerName();
 
         if (typeof params == "string") {
             this._printInLineString(type, source, params);
@@ -170,7 +280,7 @@ export default class Logger {
                 this._printInLineElement(type, source, key, value);
             }
         } else {
-            this._printMultiLineObject(source, params);
+            this._printMultiLineObject(type, source, params);
         }
     }
 
@@ -183,7 +293,7 @@ export default class Logger {
     recv(params, data) {
         if (!this.state) return;
 
-        const source = this.getCallerName();
+        const source = this._getCallerName();
 
         for (let key in params) {
             this.out.apply(this, [`%c(rv)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${params[key]}' %c↓`].concat(this.defaultStyle));
@@ -201,7 +311,7 @@ export default class Logger {
     object(params, notice = '') {
         if (!this.state) return;
 
-        const source = this.getCallerName();
+        const source = this._getCallerName();
 
         params = Object.create(params);
 
@@ -222,7 +332,22 @@ export default class Logger {
     debug(output) {
         if (!this.state) return;
 
-        this._printFunctionNotify('db', this.getCallerName(), output);
+        this._printFunctionNotify('db', this._getCallerName(), output);
+    }
+
+    /**
+     * Function throw() : Throws error
+     * 
+     * @param {string} output 
+     * @param {string} name 
+     * @param {*} params 
+     */
+    throw(output, name = null, params = null) {
+        this._printFunctionNotify('tw', this._getCallerName(), output);
+        
+        if (params) this._printNextlineObject('tw', this._getCallerName(), name, params);
+
+        throw (new Error().stack);
     }
 
 }

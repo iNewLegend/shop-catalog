@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
     <head>
         <meta charset="utf-8">
         <title>MyShop</title>
@@ -23,9 +22,10 @@
         <!-- Add your site or application content here -->
         <header>
             <ul>
-                <li><a href=".">
-                        <h2>My Shop</h2>
-                    </a></li>
+                <li>
+                    <a href="."><h2>My Shop</h2></a>
+                </li>
+
                 <li id="toggler" class="pointer">
                     <img class="cart" src="img/cart.png">
                     <span class="amount bg-light" style="display: none">0</span>
@@ -40,22 +40,8 @@
                     <h2>YOUR CART</h2>
                     <button id="close">&#12297;</button>
                 </div>
-
-                <div id="cart">
-                    <h1 id="empty" style="text-align: center">Your cart is
-                        empty.</h1>
-
-                    <ul class="items">
-                        <li class="total">
-                            <h2>TOTAL</h2>
-                            <h3>$<span class="price">0</span></h3>
-                        </li>
-                    </ul>
-
-                    <button class="checkout bg-info">CHECKOUT</button>
-                </div>
-
             </div>
+
             <div id="overlay" class="pointer"></div>
         </section>
 
@@ -63,66 +49,13 @@
 
         </section>
 
+        <!-- this is should be in terminal service it self -->
         <div id="terminal">
             <div class="buttons">
                 <button class="resize">︽</button>
                 <button class="close" title="Close terminal">X</button>
             </div>
         </div>
-        <!-- template for main page (catalog) -->
-        <template id="page-main">
-            <div class="container" style="max-width: 1080px;">
-                <div id="catalog" class="row">
-                    <div class="spinner" style="border-top-color: lightskyblue"></div>
-                </div>
-
-                <div id="pagination" class="pagination" style="display: none">
-                    <div class="pagination">
-                        <a class="prev" href="#">&laquo;</a>
-                        <span class="placeholder">
-                        </span>
-                        <a class="next" href="#">&raquo;</a>
-                    </div>
-                </div>
-            </div>
-        </template>
-
-        <template id="page-checkout">
-            <h1 style="text-align: center">Checkout</h1>
-        </template>
-
-        <!-- template for catalog product-->
-        <template id="product">
-            <div class="product" data-id="${id}">
-                <img src="img/product-${id}.jpg">
-                <h4 class="name color-secondary">${name}</h4>
-
-                <div class="footer">
-                    <h5>Price: <span class="price">${price}$</span></h5>
-                    <div class="row">
-                        <button class="bg-primary">Add To Cart</button>
-                        <input class="amount" type="number" name="amount"
-                            value="1" min="1">
-                    </div>
-                </div>
-            </div>
-        </template>
-
-        <!-- template for cart item-->
-        <template id="cart-item">
-            <li class="item" data-id="${id}">
-                <div class="thumbnail"><img src="img/product-${id}.jpg"></div>
-                <div class="info">
-                    <h2>${name}</h2>
-                    <button class="color-primary close">&times;</button>
-                    <div class="amount-price">
-                        <span class="amount">${amount}</span> x <strong>${price}</strong>
-                        <p class="sum">$<span class="value">${sum}</span></p>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-            </li>
-        </template>
 
         <script src="js/vendor/jquery-3.4.1.min.js"></script>
         <script type="module" src="js/app.js"></script>

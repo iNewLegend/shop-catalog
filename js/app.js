@@ -3,25 +3,20 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
+
 import API from './api/api.js';
-
-import Cart from './cart.js';
-import Catalog from './catalog.js';
-
-import Modules from './modules/modules.js';  
+import Modules from './modules/modules.js';
 import Services from './services/services.js';
-
-const debug = true;
+import Components from './components/components.js';
+import Pages from './pages/pages.js';
 
 class App {
-    static openCartOnUpdate = true;
-
     /**
      * Function constructor() : Create App
      */
     constructor() {
         Services.Terminal.initalize();
-        
+
         this.logger = new Modules.Logger(this, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
@@ -35,22 +30,14 @@ class App {
             catalog: new API.Catalog(http),
             cart: new API.Cart(http),
         }
-        
-        /*
-        this.ws = new API.Websocket('localhost', '51196');
-
-        this.ws.bind('open', 'open', function test(e) {
-            this.logger.startWith(e);
-
-            this.ws.send({name: 'welcome', method: 'index', type: 'get'});
-        }.bind(this));
-
-        this.ws.initalize();
-        */
 
         this.elements = {
             header: {
-                toggler: $('header #toggler')
+                toggler: $('header #toggler'),
+
+                cart: $('header #toggler .cart'),
+                amount: $('header #toggler .amount'),
+                spinner: $('header #toggler .spinner')
             },
 
             sidebar: {
@@ -62,17 +49,17 @@ class App {
 
             sections: {
                 main: $("section.main")
-            },
-
-            template: {
-                page: {
-                    main: $('template#page-main'),
-                    checkout: $('template#page-checkout')
-                }
             }
         }
 
-        this.page = new Modules.Page(this.elements.sections.main);
+        this.container = new Modules.PageContainer(this.elements.sections.main);
+
+        this.container.ready(this._onContainerReady.bind(this));
+
+        this.pages = {
+            catalog: new Pages.Catalog(this.apis.catalog),
+            checkout: new Pages.Checkout()
+        }    
     }
 
     /**
@@ -81,68 +68,115 @@ class App {
     initialize() {
         this.logger.startEmpty();
 
-        const { header, overlay, sidebar, template } = this.elements;
+        const { header, overlay, sidebar } = this.elements;
 
         overlay.click(() => this.sidebarToggle(false));
 
         header.toggler.click(() => this.sidebarToggle(true));
-        
+
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
-        this.page.set(template.page.main.html());
-        this.page.ready(this.onCatalogLoad.bind(this));
+        this.container.set(this.pages.catalog);
     }
 
     /**
-     * Function onCatalogLoad() : Called on catalog load
+     * Function _onContainerReady() : Called when container ready.
+     * 
+     * @param {Modules.Page} pageModule 
      */
-    onCatalogLoad() {
+    _onContainerReady(pageModule) {
+        this.logger.startWith({ pageModule: pageModule.constructor.name });
+
+        if (pageModule instanceof Pages.Catalog) {
+            this.pages.catalog.on('productAdd', this._onCatalogProductAdd.bind(this));
+
+            this.cart = new Components.Cart(this.apis.cart, this.apis.catalog);
+            
+            this.cart.on('get', this._onCartGet.bind(this));
+            this.cart.on('received', this._onCartReceived.bind(this));
+            this.cart.on('amountChange', this._onCartAmountChange.bind(this));
+            this.cart.on('emptyState', this._onCartEmptyState.bind(this));
+            this.cart.on('checkout', this._onCartCheckout.bind(this));
+
+            this.elements.sidebar.self.append(this.cart.render());
+
+            this.cart.initialize();
+        }
+    }
+
+    /**
+     * Function _onCartGet() : Called on request cart from the server
+     */
+    _onCartGet() {
         this.logger.startEmpty();
 
-        this.catalog = new Catalog(this.apis.catalog);
-        this.catalog.on('initialRecv', this.onCatalogInitialRecv.bind(this));
-        this.catalog.on('productAdd', this.onCatalogProductAdd.bind(this));
+        const { spinner } = this.elements.header;
 
-        this.catalog.initialize();
+        spinner.show();
     }
 
     /**
-     * Function onCatalogInitialize() : Called on catalog Initialized
+     * Function _onCartReceived() : Called after cart received
      */
-    onCatalogInitialRecv() {
+    _onCartReceived() {
         this.logger.startEmpty();
 
-        this.cart = new Cart(this.apis.cart, this.apis.catalog);
-        this.cart.on('checkout', this.onCartCheckout.bind(this));
-        this.cart.initialize();
+        const { cart, spinner } = this.elements.header;
+        
+        cart.show();
+        spinner.hide();
     }
 
     /**
-     * Function onCatalogPrudctAdd() : Called on catalog item add
+     * Function _onCartAmountChange() : Called on cart amount change.
+     * 
+     * @param {Number} count 
      */
-    onCatalogProductAdd(product) {
-        this.logger.startWith({ product });
+    _onCartAmountChange(count) {
+        this.logger.startWith({ count });
 
-        this.cart.itemAdd(product, () => {
-            if (App.openCartOnUpdate) {
-                this.sidebarToggle(true);
-            }
-        });
+        const { amount } = this.elements.header;
+
+        amount.html(count);
+    }
+
+    /**
+     * Function _onCartEmptyState() : Called on cart empty state change (cart have items|cart does have items)
+     * 
+     * @param {Boolean} state 
+     */
+    _onCartEmptyState(state) {
+        this.logger.startWith({ state });
+        
+        const { amount } = this.elements.header;
+
+        state ? amount.show() : amount.hide();
     }
 
     /**
      * Function onCartCheckout() : Called on cart checkout
      */
-    onCartCheckout() {
+    _onCartCheckout() {
         this.logger.startEmpty();
 
         this.sidebarToggle(false);
 
-        const { template } = this.elements;
+        this.container.set(this.pages.checkout);
+        this.container.ready(function onCheckoutLoaded() {
+            this.logger.debug(`i was loaded`);
+        }.bind(this));
+    }
 
-        this.page.set(template.page.checkout.html());
-        this.page.ready(() => {
-            if (debug) console.log(`${this.constructor.name}::onCheckout() -> load !`);
+    /**
+     * Function onCatalogPrudctAdd() : Called on catalog item add
+     */
+    _onCatalogProductAdd(product) {
+        this.logger.startWith({ product });
+
+        this.cart.itemAdd(product, () => {
+            if (Components.Cart.openCartOnUpdate) {
+                this.sidebarToggle(true);
+            }
         });
     }
 
@@ -159,16 +193,14 @@ class App {
         if (state) {
             overlay.fadeIn();
             sidebar.self.addClass('show');
-
+            
             this.cart.open();
+        } else {
+            overlay.fadeOut();
+            sidebar.self.removeClass('show');
 
-            return;
+            this.cart.close();
         }
-
-        overlay.fadeOut();
-        sidebar.self.removeClass('show');
-
-        this.cart.close();
     }
 
 }

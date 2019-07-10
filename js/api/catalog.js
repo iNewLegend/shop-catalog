@@ -30,7 +30,7 @@ export default class Catalog {
     /**
      * Function get() : Get catalog from the server
      * 
-     * @param {function()} callback 
+     * @param {{function()}} callback 
      * @param {number} page 
      */
     get(callback, page = 0) {
@@ -48,7 +48,7 @@ export default class Catalog {
     /**
      * Function getById() : Return product with specific id's
      * 
-     * @param {function()} callback 
+     * @param {{function()}} callback 
      * @param {number[]} ids 
      */
     getByIds(callback, ids) {

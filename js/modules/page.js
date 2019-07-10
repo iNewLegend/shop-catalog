@@ -1,75 +1,96 @@
 /**
- * @file: modules/page.js
+ * @file: js/modules/page.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: 
+ * @description: Modules Namespace O__o
  */
+
 import Logger from './logger.js';
+import Services from '../services/services.js';
 
 export default class Page {
+    /**
+     * @type Logger
+     */
+    logger = null;
 
     /**
-     * Function constructor() : Create Template 
-     * 
-     * @param {$} rootDom 
+     * @type Element
      */
-    constructor(rootDom) {
-        this.logger = new Logger(this, true);
+    dom = null;
+    
 
-        this.logger.startWith({ rootDom });
+    /**
+     * Function constructor() : Create page module 
+     */
+    constructor() {
+        // not good.
+        this.logger = new Logger(`Modules.Page.${this.constructor.name}`, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
+
+        this.logger.startWith(this.constructor.name);
 
         this.events = {
-            onReady: () => {},
+            onReady: (pageModule) => { },
         }
-
-        this.innerHtml = '';
-        this.innerDom = null;
-        this.rootDom = rootDom;
-
-        this.innerIntitalDom = $(this.rootDom.html());
     }
 
     /**
-     * Function onLoad() : Called on Inner dom loaded
+     * Function onReady() : Called when this.dom is ready
      */
     onReady() {
-        this.logger.startEmpty()
-            
+        this.logger.startWith(this.constructor.name);
+
         this.events.onReady();
+
+        if (this._onReady) {
+            this._onReady();
+        }
     }
 
     /**
      * function ready() : Set ready callback
-     * @param {{function()} } callback 
+     * 
+     * @param {{function()}} callback 
      */
     ready(callback) {
+        this.logger.startWith({ callback });
+
         this.events.onReady = callback;
     }
 
     /**
-     * Function set() : Set's inner html
-     * 
-     * @param {string} innerHtml 
+     * Function createElement() : Create and render element.
      */
-    set(innerHtml) {
-        this.logger.startWith({ innerHtml });
+    createElement() {
+        if (this._render) {
+            this.dom = $(this.render());
 
-        this.innerHtml = innerHtml;
+            return this.dom;
+        }
 
-        this.render();
+        return null;
     }
 
     /**
-     * Function render() : Re-render inner dom.
+     * Function destroyElement() : Destroy the element.
+     */
+    destroyElement() {
+        if (this.dom) {
+            this.dom.remove();
+        }
+    }
+
+    /**
+     * Render the element.
      */
     render() {
-        this.logger.startEmpty()
+        const element = $(this._render());
 
-        this.innerDom = $(this.innerHtml);
+        element.ready(this.onReady.bind(this))
 
-        this.innerDom.ready(() => this.onReady());
-
-        this.rootDom.empty();
-        this.rootDom.append(this.innerIntitalDom);
-        this.rootDom.append(this.innerDom);
+        return $(`
+            <div class="page">
+            </div>
+        `).append(element);
     }
 }

@@ -6,7 +6,7 @@
 
 import Modules from '../modules/modules.js';
 
-import JQuery_GetSelector from '../library/jquery.js';
+import JQuery from '../library/jquery.js';
 
 const LOCAL_STORAGE_KEY = 'local_storage_key';
 
@@ -27,7 +27,7 @@ export default class Terminal {
     constructor() {
         if (Terminal.instance == null) {
 
-            this.logger = new Modules.Logger('Services.Terminal', true);
+            this.logger = new Modules.Logger(`Services.${this.constructor.name}`, true);
             this.logger.startEmpty();
 
             this.localStorage = window.localStorage;
@@ -61,7 +61,7 @@ export default class Terminal {
         const { buttons } = terminal;
 
         // add .GetSelector to jQuery
-        JQuery_GetSelector($);
+        JQuery.addGetSelector($);
 
         body.keydown(this._onKeyDown.bind(this));
         body.mousemove(this._onMouseMove.bind(this));
@@ -93,7 +93,7 @@ export default class Terminal {
      * @param {Event} e 
      */
     _onKeyDown(e) {
-        this.logger.startWith({ e });
+        //this.logger.startWith({ e });
 
         // tilda
         if (e.which === 192) {
@@ -182,7 +182,7 @@ export default class Terminal {
      * @param {Event} e 
      */
     _onTerminalReiszeMouseUp(e) {
-        this.logger.startWith({ e });
+        //this.logger.startWith({ e });
 
         this.resize.state = false;
     }

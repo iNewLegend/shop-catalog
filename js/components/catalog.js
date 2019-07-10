@@ -1,15 +1,12 @@
 /**
- * @file: js/catalog.js
+ * @file: js/components/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages catalog
  */
 
-import API from './api/api.js';
-
-import Modules from './modules/modules.js';
-import Services from './services/services.js';
-
-const debug = true;
+import API from '../api/api.js';
+import Modules from '../modules/modules.js';
+import Services from '../services/services.js';
 
 export default class Catalog {
     static amountMaxValue = 999;
@@ -21,12 +18,24 @@ export default class Catalog {
      * @param {API.Catalog} catalog 
      */
     constructor(catalog) {
-        this.logger = new Modules.Logger(this, true);
+        this.logger = new Modules.Logger(`Components.${this.constructor.name}`, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.apiCatalog = catalog;
 
         this.page = 0;
+
+        this.events = {
+            onInitialRecv: () => { },
+            onProductAdd: (product) => { },
+        }
+    }
+
+    /**
+     * Function initialize() : Initialize catalog
+     */
+    initialize() {
+        this.logger.startEmpty();
 
         this.elements = {
             pagination: {
@@ -46,25 +55,11 @@ export default class Catalog {
             }
         };
 
-        this.events = {
-            onInitialRecv: () => { },
-            onProductAdd: (product) => { },
-        }
-    }
+        this.elements.pagination.next.click(() => this._onPageChange((this.page + 1)));
+        this.elements.pagination.prev.click(() => this._onPageChange((this.page - 1)));
 
-    /**
-     * Function initialize() : Initialize catalog
-     */
-    initialize() {
-        this.logger.startEmpty();
-
-        const { pagination, catalog } = this.elements;
-
-        pagination.next.click(() => this._onPageChange((this.page + 1)));
-        pagination.prev.click(() => this._onPageChange((this.page - 1)));
-
-        catalog.self.on('change', '.product .amount', ((e) => this._onProudctAmountChange(e)));
-        catalog.self.on('click', '.product button', ((e) => this._onProductAdd(e)));
+        this.elements.catalog.self.on('change', '.product .amount', ((e) => this._onProudctAmountChange(e)));
+        this.elements.catalog.self.on('click', '.product button', ((e) => this._onProductAdd(e)));
 
         this._getCatalog(0, this._onInitialRecv.bind(this));
     }
@@ -136,7 +131,7 @@ export default class Catalog {
 
         let val = el.val();
 
-        if (debug) console.log(`${this.constructor.name}::_onProudctAmountChange('${val}')`);
+        this.logger.debug(`val: '${val}'`);
 
         if (val > Catalog.amountMaxValue) {
             val = Catalog.amountMaxValue;
@@ -151,7 +146,7 @@ export default class Catalog {
      * Function _getCatalog() : Get catalog from the server.
      * 
      * @param {number} page 
-     * @param {function()} onSuccess
+     * @param {{function()}} onSuccess
      */
     _getCatalog(page, onSuccess = null) {
         this.logger.startWith({ page, onSuccess });
@@ -165,16 +160,8 @@ export default class Catalog {
 
                     this._setPagination(data.pagination);
 
-                    data.result.map((item) => {
-                        let templateHtml = template.product.html();
-
-                        // fine for now.
-                        templateHtml = templateHtml.replace('${id}', item.id);
-                        templateHtml = templateHtml.replace('${name}', item.name);
-                        templateHtml = templateHtml.replace('${price}', item.price);
-                        templateHtml = templateHtml.replace('${id}', item.id);
-
-                        catalog.self.append($(templateHtml));
+                    data.result.map((product) => {
+                        catalog.self.append(this.renderProduct(product));
                     });
 
                     if (onSuccess) onSuccess();
@@ -229,7 +216,7 @@ export default class Catalog {
      * Function on() : Delcare event callback
      * 
      * @param {'initialRecv'|'productAdd'} event 
-     * @param {{function()} } callback 
+     * @param {{function()}} callback 
      */
     on(event, callback) {
         this.logger.startWith({ event, callback });
@@ -248,5 +235,50 @@ export default class Catalog {
                 alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
             }
         }
+    }
+    
+    /**
+     * Function renderProduct() : Return html markup for product
+     * 
+     * @param {{}} product 
+     */
+    renderProduct(product) {
+        const { id, name, price } = product;
+
+        return (`
+            <div class="product" data-id="${id}">
+                <img src="img/product-${id}.jpg">
+                <h4 class="name color-secondary">${name}</h4>
+
+                <div class="footer">
+                    <h5>Price: <span class="price">${price}$</span></h5>
+                    <div class="row">
+                        <button class="bg-primary">Add To Cart</button>
+                        <input class="amount" type="number" name="amount"
+                            value="1" min="1">
+                    </div>
+                </div>
+            </div>
+        `)
+    }
+
+    /**
+     * Function render() : Return html markup for catalog it self
+     */
+    render() {
+        return (`
+            <div id="catalog" class="row">
+                <div class="spinner" style="border-top-color: lightskyblue"></div>
+            </div>
+
+            <div id="pagination" class="pagination" style="display: none">
+                <div class="pagination">
+                    <a class="prev" href="#">&laquo;</a>
+                    <span class="placeholder">
+                    </span>
+                    <a class="next" href="#">&raquo;</a>
+                </div>
+            </div>
+        `);
     }
 }

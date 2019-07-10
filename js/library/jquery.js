@@ -1,7 +1,14 @@
-// Made by https://stackoverflow.com/posts/15623322/revisions
+/**
+ * @file: library/jquery.js
+ * @author: see each function.
+ * @description: JQuery Addons
+ */
 
-// add .GetSelector to $
-export default function JQuery_GetSelector($) {
+export function JQuery_GetSelector($) {
+    // https://stackoverflow.com/posts/15623322/revisions
+
+    if (typeof $.get_selector === 'function') return;
+
     var get_selector = function (element) {
         var pieces = [];
 
@@ -36,3 +43,40 @@ export default function JQuery_GetSelector($) {
         }
     };
 }
+//------------------------------------------------------------------------------------------------------------------------
+
+export function JQuery_AttrChange($) {
+    // https://stackoverflow.com/questions/1950038/jquery-fire-event-if-css-class-changed
+
+
+    var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
+    $.fn.attrchange = function (callback) {
+        if (MutationObserver) {
+            var options = {
+                subtree: false,
+                attributes: true
+            };
+
+            var observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (e) {
+                    callback.call(e.target, e.attributeName);
+                });
+            });
+
+            return this.each(function () {
+                observer.observe(this, options);
+            });
+
+        }
+    }
+
+}
+//------------------------------------------------------------------------------------------------------------------------
+
+const LibJQuery = {
+    addAttrChange: JQuery_AttrChange,
+    addGetSelector: JQuery_GetSelector
+}
+
+export default LibJQuery;

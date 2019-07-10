@@ -4,10 +4,9 @@
  * @description: Services Namespace O__o
  */
 
-
 import Terminal from './terminal.js';
 
-var Services = {};
+const Services = {};
 
 Services.Terminal = Terminal;
 

@@ -1,16 +1,16 @@
 /**
- * @file: js/cart.js
+ * @file: js/components/cart.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages cart
  */
 
-import API from './api/api.js';
-
-import Modules from './modules/modules.js';
-import Services from './services/services.js';
+import API from '../api/api.js';
+import Modules from '../modules/modules.js';
+import Services from '../services/services.js';
 
 export default class Cart {
-    static reloadCartEachOpen = false; // highlight new cart item while this option set to true will not work.
+    static openCartOnUpdate = true;
+    static reloadCartEachOpen = false; // highlight of new cart item, while this option set to true, will not work.
 
     /**
      * Function constructor() : Create Cart
@@ -19,7 +19,7 @@ export default class Cart {
      * @param {API.Catalog} catalog 
      */
     constructor(cart, catalog) {
-        this.logger = new Modules.Logger(this, true);
+        this.logger = new Modules.Logger(`Components.${this.constructor.name}`, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.cart = [];
@@ -27,30 +27,15 @@ export default class Cart {
         this.apiCart = cart;
         this.apiCatalog = catalog;
 
-        this.elements = {
-            header: {
-                cart: $('header #toggler .cart'),
-                amount: $('header #toggler .amount'),
-                spinner: $('header #toggler .spinner')
-            },
-
-            cart: {
-                self: $('#cart'),
-                empty: $('#cart #empty'),
-                items: $('#cart .items'),
-                itemsTotal: $('#cart .items .total'),
-                totalPrice: $('#cart .total .price'),
-                checkout: $('#cart .checkout')
-            },
-
-            template: {
-                cartItem: $('template#cart-item'),
-            },
-        };
-
         this.events = {
+            onGet: () => { },
+            onReceived: () => { },
+            onAmountChange: (amount) => { },
+            onEmptyState: (state) => { },
             onCheckout: () => { }
         }
+
+        this.elements = {};
     }
 
     /**
@@ -59,10 +44,17 @@ export default class Cart {
     initialize() {
         this.logger.startEmpty();
 
-        const { cart } = this.elements;
+        this.elements = {
+            self: $('.cart'),
+            empty: $('.cart #empty'),
+            items: $('.cart .items'),
+            itemsTotal: $('.cart .items .total'),
+            totalPrice: $('.cart .total .price'),
+            checkout: $('.cart .checkout')
+        };
 
-        cart.self.on('click', '.items .close', ((e) => this._onItemRemove(e)));
-        cart.checkout.click(this.events.onCheckout.bind(this));
+        this.elements.self.on('click', '.items .close', ((e) => this._onItemRemove(e)));
+        this.elements.checkout.click(this.events.onCheckout.bind(this));
 
         this._get();
     }
@@ -74,8 +66,6 @@ export default class Cart {
      */
     _onRecv(data) {
         this.logger.object(data, 'data');
-
-        const { cart, spinner } = this.elements.header;
 
         // not all the products that are in cart exist localy since we used pages in that system,
         // so we findout what missing and request it from the server.
@@ -105,8 +95,7 @@ export default class Cart {
             this._onChange();
         }, missingProducts.map(x => x.id));
 
-        cart.show();
-        spinner.hide();
+        this.events.onReceived();
     }
 
 
@@ -121,7 +110,7 @@ export default class Cart {
             this.cart.total += item.amount * item.price;
         });
 
-        const { cart, header } = this.elements;
+        const { totalPrice } = this.elements;
 
         // remove empty item slots from cart
         this.cart.items = this.cart.items.filter(function (el) {
@@ -131,10 +120,10 @@ export default class Cart {
         this.efficientEmptyState(Boolean(this.cart.items.length));
 
         // set the price
-        cart.totalPrice.html(this.cart.total.toFixed(2));
+        totalPrice.html(this.cart.total.toFixed(2));
 
-        // set amount of products ONLY!!! to toggler
-        header.amount.html(this.cart.items.length);
+        // set amount of products type
+        this.events.onAmountChange(this.cart.items.length);
     }
 
     /**
@@ -169,24 +158,13 @@ export default class Cart {
     _doInsertItem(item) {
         this.logger.startWith({ item });
 
-        const { template, cart } = this.elements;
+        const { items } = this.elements;
 
         // add to virtual cart
         this.cart.items.push(item);
 
-        // get dom
-        let templateHtml = template.cartItem.html();
-
-        // format template
-        templateHtml = templateHtml.replace('${id}', item.id);
-        templateHtml = templateHtml.replace('${name}', item.name);
-        templateHtml = templateHtml.replace('${price}', item.price);
-        templateHtml = templateHtml.replace('${id}', item.id);
-        templateHtml = templateHtml.replace('${amount}', item.amount);
-        templateHtml = templateHtml.replace('${sum}', (item.amount * item.price).toFixed(2));
-
         // update dom
-        cart.items.append($(templateHtml));
+        items.append(this.renderItem(item));
     }
 
     /**
@@ -226,11 +204,11 @@ export default class Cart {
     _doAddItem(item, notifyCartChanged = true, highlight = false) {
         this.logger.startWith({ item, notifyCartChanged, highlight });
 
-        const { cart } = this.elements;
+        const { items } = this.elements;
 
         const foundItemKey = this._getItemKeyById(item.id);
 
-        const getDomItem = () => cart.items.find(`.item[data-id='${item.id}']`);
+        const getDomItem = () => items.find(`.item[data-id='${item.id}']`);
 
         let domItem = getDomItem();
 
@@ -261,7 +239,7 @@ export default class Cart {
     _doRemoveItem(item, notifyCartChanged = true) {
         this.logger.startWith({ item, notifyCartChanged });
 
-        const { cart } = this.elements;
+        const { items } = this.elements;
 
         const foundProductKey = this._getItemKeyById(item.id);
 
@@ -270,7 +248,7 @@ export default class Cart {
             delete this.cart.items[foundProductKey];
 
             // update dom cart
-            cart.items.find(`.item[data-id='${item.id}']`).remove();
+            items.find(`.item[data-id='${item.id}']`).remove();
 
         } else {
             alert(`${this.constructor.name}::removeItem() -> item with id: '${item.id}' not found in cart.`);
@@ -298,20 +276,20 @@ export default class Cart {
     _get() {
         this.logger.startEmpty();
 
-        const { cart, header } = this.elements;
+        const { items } = this.elements;
 
-        header.spinner.show();
+        this.events.onGet();
 
         // clear toggler amount
-        header.amount.html(0);
+        this.events.onAmountChange(0);
 
         // clear visual cart
         this.cart.items = [];
         this.cart.total = 0;
 
         // clear dom cart except .total
-        if (cart.items.length > 0) {
-            cart.items.find('.item').remove();
+        if (items.length > 0) {
+            items.find('.item').remove();
         }
 
         this.apiCart.get(this._onRecv.bind(this));
@@ -340,13 +318,29 @@ export default class Cart {
     /**
      * Function on() : Delcare event callback
      * 
-     * @param {'checkout'} event 
-     * @param {{function()} } callback 
+     * @param {'get'|'received'|'amountChange'|'emptyState'|'checkout'} event 
+     * @param {{function()}} callback 
      */
     on(event, callback) {
         this.logger.startWith({ event, callback });
 
         switch (event) {
+            case 'get': {
+                this.events.onGet = callback;
+            } break;
+
+            case 'received': {
+                this.events.onReceived = callback;
+            } break;
+
+            case 'amountChange': {
+                this.events.onAmountChange = callback;
+            } break;
+
+            case 'emptyState': {
+                this.events.onEmptyState = callback;
+            } break;
+
             case 'checkout': {
                 this.events.onCheckout = callback;
             } break;
@@ -370,15 +364,15 @@ export default class Cart {
     }
 
     /**
-     * Function close() : Close the cart
+     * Function close() : close the cart
      */
     close() {
         this.logger.startEmpty();
 
-        const { cart } = this.elements;
+        const { items } = this.elements;
 
         // clear highlight
-        cart.items.find('.item').css('animation', 'none');
+        items.find('.item').css('animation', 'none');
     }
 
     /**
@@ -389,26 +383,26 @@ export default class Cart {
     efficientEmptyState(state) {
         this.logger.startWith({ state });
 
-        const { cart, header } = this.elements;
+        const { empty, checkout, itemsTotal } = this.elements;
 
         if (state) {
-            cart.empty.hide();
-            cart.checkout.addClass('open');
-            cart.itemsTotal.addClass('open');
-            header.amount.show();
+            empty.hide();
+            checkout.addClass('open');
+            itemsTotal.addClass('open');
         } else {
-            cart.empty.show();
-            cart.checkout.removeClass('open');
-            cart.itemsTotal.removeClass('open');
-            header.amount.hide();
+            empty.show();
+            checkout.removeClass('open');
+            itemsTotal.removeClass('open');
         }
+
+        this.events.onEmptyState(state);
     }
 
     /**
      * Function itemAdd() : Add items or update
      * 
      * @param {{}} product 
-     * @param {function()} onSuccess
+     * @param {{function()}} onSuccess
      */
     itemAdd(product, onSuccess = null) {
         this.logger.startWith({ product, onSuccess });
@@ -422,5 +416,51 @@ export default class Cart {
                 alert(data.message);
             }
         }, product.id, product.amount);
+    }
+
+    /**
+     * Function renderItem() : Return html markup for item
+     * 
+     * @param {{}} item 
+     */
+    renderItem(item) {
+        const { id, name, amount, price } = item;
+        const sum = (amount * price).toFixed(2);
+
+        return (`
+            <li class="item" data-id="${id}">
+                <div class="thumbnail"><img src="img/product-${id}.jpg"></div>
+                <div class="info">
+                    <h2>${name}</h2>
+                    <button class="color-primary close">&times;</button>
+                    <div class="amount-price">
+                        <span class="amount">${amount}</span> x <strong>${price}</strong>
+                        <p class="sum">$<span class="value">${sum}</span></p>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </li>
+        `);
+    }
+
+    /**
+     * Function render() : Return html markup for cart it self
+     */
+    render() {
+        return (`
+            <div class="cart">
+                <h1 id="empty" style="text-align: center">Your cart is
+                    empty.</h1>
+
+                <ul class="items">
+                    <li class="total">
+                        <h2>TOTAL</h2>
+                        <h3>$<span class="price">0</span></h3>
+                    </li>
+                </ul>
+
+                <button class="checkout bg-info">CHECKOUT</button>
+            </div>
+        `);
     }
 }
