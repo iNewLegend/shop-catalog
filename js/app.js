@@ -33,6 +33,7 @@ class App {
 
         this.elements = {
             header: {
+                logo: $('header #logo'),
                 toggler: $('header #toggler'),
 
                 cart: $('header #toggler .cart'),
@@ -74,6 +75,8 @@ class App {
 
         header.toggler.click(() => this.sidebarToggle(true));
 
+        header.logo.click(() => this.container.set(this.pages.catalog));
+
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
         this.container.set(this.pages.catalog);
@@ -90,17 +93,19 @@ class App {
         if (pageModule instanceof Pages.Catalog) {
             this.pages.catalog.on('productAdd', this._onCatalogProductAdd.bind(this));
 
-            this.cart = new Components.Cart(this.apis.cart, this.apis.catalog);
+            if (! this.cart) {
+                this.cart = new Components.Cart(this.apis.cart, this.apis.catalog);
             
-            this.cart.on('get', this._onCartGet.bind(this));
-            this.cart.on('received', this._onCartReceived.bind(this));
-            this.cart.on('amountChange', this._onCartAmountChange.bind(this));
-            this.cart.on('emptyState', this._onCartEmptyState.bind(this));
-            this.cart.on('checkout', this._onCartCheckout.bind(this));
+                this.cart.on('get', this._onCartGet.bind(this));
+                this.cart.on('received', this._onCartReceived.bind(this));
+                this.cart.on('amountChange', this._onCartAmountChange.bind(this));
+                this.cart.on('emptyState', this._onCartEmptyState.bind(this));
+                this.cart.on('checkout', this._onCartCheckout.bind(this));
 
-            this.elements.sidebar.self.append(this.cart.render());
+                this.elements.sidebar.self.append(this.cart.render());
 
-            this.cart.initialize();
+                this.cart.initialize();
+            }
         }
     }
 
@@ -162,7 +167,7 @@ class App {
         this.sidebarToggle(false);
 
         this.container.set(this.pages.checkout);
-        this.container.ready(function onCheckoutLoaded() {
+        this.pages.checkout.ready(function onCheckoutLoaded() {
             this.logger.debug(`i was loaded`);
         }.bind(this));
     }

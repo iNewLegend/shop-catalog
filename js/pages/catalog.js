@@ -18,7 +18,7 @@ export default class Catalog extends Modules.Page {
     constructor(api) {
         super();
 
-        this.logger = new Modules.Logger(`Pages.${this.constructor.name}`, true);
+        this.logger.name = `Pages.${this.constructor.name}`;
         this.logger.startWith({ api });
 
         this.catalog = new Components.Catalog(api);

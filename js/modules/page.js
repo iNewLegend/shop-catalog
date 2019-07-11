@@ -18,13 +18,12 @@ export default class Page {
      */
     dom = null;
     
-
     /**
      * Function constructor() : Create page module 
      */
     constructor() {
         // not good.
-        this.logger = new Logger(`Modules.Page.${this.constructor.name}`, true);
+        this.logger = new Logger(`Modules.Page`, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.logger.startWith(this.constructor.name);

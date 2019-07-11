@@ -16,12 +16,12 @@ export default class Logger {
      */
     constructor(owner, state = false) {
         this.state = state;
-        this.name = '';
+        this._name = '';
 
         if (typeof owner == 'string') {
-            this.name = owner;
+            this._name = owner;
         } else {
-            this.name = owner.constructor.name;
+            this._name = owner.constructor.name;
         }
 
         if (state) {
@@ -34,7 +34,7 @@ export default class Logger {
      */
     _initialize() {
         this.color = this.getRandomColor();
-        
+
         Logger.colorsInUse.push(this.color);
 
         this.outputHandler = console.log.bind();
@@ -73,7 +73,7 @@ export default class Logger {
      * @param {*} output 
      */
     _printFunctionNotify(type, source, output) {
-        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
+        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
     }
 
     /**
@@ -85,7 +85,7 @@ export default class Logger {
      * @param {*} value 
      */
     _printInLineElement(type, source, key, value) {
-        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
+        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
     }
 
     /**
@@ -96,7 +96,7 @@ export default class Logger {
      * @param {string} key 
      * @param {{function()}} fn 
      */
-    _printInLineFunction(type, source, key, fn)  {
+    _printInLineFunction(type, source, key, fn) {
         fn = this._functionView(fn);
 
         this._printInLineElement(type, source, key, fn);
@@ -122,7 +122,7 @@ export default class Logger {
      * @param {{}} obj 
      */
     _printNextlineObject(type, source, key, obj) {
-        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
+        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
         // print in next line
         this.out(obj);
     }
@@ -136,20 +136,20 @@ export default class Logger {
      */
     _printMultiLineObject(type, source, obj) {
         // print long (multiline) object
-        this.out.apply(this, [`%c(${type})-> %c%c${this.name}%c::%c${source}%c(${Object.keys(obj).join(', ')}) %c↓`].concat(this.defaultStyle));
+        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c(${Object.keys(obj).join(', ')}) %c↓`].concat(this.defaultStyle));
 
         for (let key in obj) {
             if (typeof obj[key] === 'object') {
                 obj[key] = JSON.stringify(obj[key]);
             } else if (typeof obj[key] == 'function') {
-                obj[key] = this._functionView(obj[key]);                
+                obj[key] = this._functionView(obj[key]);
             }
 
-            
+
             this.out.apply(this, ["%c" + key + ": `" + obj[key] + "`", 'color: #a3a3a3']);
         }
     }
-    
+
     /**
      * Function _getCallerName() : Return caller name
      */
@@ -182,7 +182,7 @@ export default class Logger {
          * 
          * @see http://jsfiddle.net/96sME/ 
          */
-        const hexColorDelta = function(hex1, hex2) {
+        const hexColorDelta = function (hex1, hex2) {
             hex1 = hex1.replace('#', '');
             hex2 = hex2.replace('#', '');
 
@@ -208,7 +208,7 @@ export default class Logger {
 
         let similar = Logger.colorsInUse.some((value) => {
             // it return the ratio of diffrence... closer to 1.0 is less difference.
-            
+
             if (hexColorDelta(color, value) < 0.8) {
                 return false;
             }
@@ -267,7 +267,7 @@ export default class Logger {
         if (typeof params == "string") {
             this._printInLineString(type, source, params);
 
-        } else if(Object.keys(params).length === 1) {
+        } else if (Object.keys(params).length === 1) {
             const key = Object.keys(params)[0];
             let value = Object.values(params)[0];
 
@@ -296,7 +296,7 @@ export default class Logger {
         const source = this._getCallerName();
 
         for (let key in params) {
-            this.out.apply(this, [`%c(rv)-> %c%c${this.name}%c::%c${source}%c() ->> ${key}: '${params[key]}' %c↓`].concat(this.defaultStyle));
+            this.out.apply(this, [`%c(rv)-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${params[key]}' %c↓`].concat(this.defaultStyle));
         }
 
         this.out(data);
@@ -320,7 +320,7 @@ export default class Logger {
                 params[key] = JSON.stringify(params[key]);
             }
 
-            this.out.apply(this, [`%c(ob)-> %c%c${this.name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[key]}'%c`].concat(this.defaultStyle));
+            this.out.apply(this, [`%c(ob)-> %c%c${this._name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[key]}'%c`].concat(this.defaultStyle));
         }
     }
 
@@ -344,10 +344,18 @@ export default class Logger {
      */
     throw(output, name = null, params = null) {
         this._printFunctionNotify('tw', this._getCallerName(), output);
-        
+
         if (params) this._printNextlineObject('tw', this._getCallerName(), name, params);
 
         throw (new Error().stack);
+    }
+
+    set name(val) {
+        this._name = val;
+    }
+
+    get name() {
+        return this._name;
     }
 
 }
