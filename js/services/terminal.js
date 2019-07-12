@@ -272,9 +272,15 @@ Terminal.onOutput = function (text) {
     if (text instanceof jQuery) {
         text = `[jQuery Element]: '${text.getSelector()}'`;
     } else if (typeof text == 'object') {
-        text = JSON.stringify(text, null, 4);
+        // for events.
+        if (text.hasOwnProperty('originalEvent')) {
+            text = `[Event]: type: '${text.type}' selector: '${text.handleObj.selector}'`;
+            
+        } else {
+            text = JSON.stringify(text, null, 4);
 
-        text = `<pre>${text}</pre>`;
+            text = `<pre>${text}</pre>`;
+        }
     }
 
     for (let i = 0; i < text.length; ++i) {
