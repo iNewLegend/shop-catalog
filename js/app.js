@@ -52,7 +52,7 @@ class App {
                 main: $("section.main")
             }
         }
-
+        
         this.container = new Modules.PageContainer(this.elements.sections.main);
 
         this.container.ready(this._onContainerReady.bind(this));
@@ -102,7 +102,7 @@ class App {
                 this.cart.on('emptyState', this._onCartEmptyState.bind(this));
                 this.cart.on('checkout', this._onCartCheckout.bind(this));
 
-                this.elements.sidebar.self.append(this.cart.render());
+                this.cart.render(this.elements.sidebar.self[0]);
 
                 this.cart.initialize();
             }
