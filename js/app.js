@@ -103,8 +103,6 @@ class App {
                 this.cart.on('checkout', this._onCartCheckout.bind(this));
 
                 this.cart.render(this.elements.sidebar.self[0]);
-
-                this.cart.initialize();
             }
         }
     }
