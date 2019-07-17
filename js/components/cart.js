@@ -35,26 +35,36 @@ export default class Cart {
             onCheckout: () => { }
         }
 
-        this.elements = {};
+
+        this._afterRender = () => {
+            this.elements = {
+                self: document.querySelector('div.cart'),
+                empty: document.querySelector('.cart #empty'),
+                items: document.querySelector('.cart .items'),
+                itemsTotal: document.querySelector('.cart .items .total'),
+                totalPrice: document.querySelector('.cart .total .price'),
+                checkout: document.querySelector('.cart .checkout')
+            };
+
+            this._initialize();
+        }
     }
 
     /**
-     * Function initialize() : Initialize Cart
+     * Function _initialize() : Initialize Cart
      */
-    initialize() {
+    _initialize() {
         this.logger.startEmpty();
 
-        this.elements = {
-            self: $('.cart'),
-            empty: $('.cart #empty'),
-            items: $('.cart .items'),
-            itemsTotal: $('.cart .items .total'),
-            totalPrice: $('.cart .total .price'),
-            checkout: $('.cart .checkout')
-        };
+        this.elements.self.addEventListener('click', (e) => {
+            e.preventDefault();
 
-        this.elements.self.on('click', '.items .close', ((e) => this._onItemRemove(e)));
-        this.elements.checkout.click(this.events.onCheckout.bind(this));
+            if (e.target.matches('.close')) {
+                this._onItemRemove(e);
+            } else if (e.target.matches('.checkout')) {
+                this.events.onCheckout();
+            }
+        });
 
         this._get();
     }
@@ -120,7 +130,7 @@ export default class Cart {
         this.efficientEmptyState(Boolean(this.cart.items.length));
 
         // set the price
-        totalPrice.html(this.cart.total.toFixed(2));
+        totalPrice.innerHTML = this.cart.total.toFixed(2);
 
         // set amount of products type
         this.events.onAmountChange(this.cart.items.length);
@@ -129,14 +139,13 @@ export default class Cart {
     /**
      * Function _onItemRemove() : Called on item remove
      * 
-     * @param {event} e 
+     * @param {Event} e 
      */
     _onItemRemove(e) {
         this.logger.startWith({ e });
 
         // maybe there is better way.
-        const el = $(e.currentTarget);
-        const item = el.parentsUntil('.item').parent();
+        const itemId = parseInt(e.target.closest('.item').getAttribute('data-id'));
 
         this.apiCart.removeItem((data) => {
             if (!data.error) {
@@ -146,8 +155,7 @@ export default class Cart {
             } else {
                 alert(data.message);
             }
-        }, parseInt(item.attr('data-id')));
-
+        }, itemId);
     }
 
     /**
@@ -164,15 +172,15 @@ export default class Cart {
         this.cart.items.push(item);
 
         // update dom
-        items.append(this.renderItem(item));
+        this.renderItem(item, items);
     }
 
     /**
      * Function _doUpdateItem() : Update Cart Item dom and virtual
      * 
      * @param {{}} item 
-     * @param {*} key 
-     * @param {$} domItem 
+     * @param {string} key 
+     * @param {Element} domItem 
      */
     _doUpdateItem(item, key, domItem) {
         this.logger.startWith({ item, key, domItem });
@@ -186,12 +194,12 @@ export default class Cart {
         // update virtual cart
         this.cart.items[key] = virtualItem;
 
-        const domAmount = domItem.find('.amount');
-        const domSum = domItem.find('.sum .value');
+        const domAmount = domItem.querySelector('.amount');
+        const domSum = domItem.querySelector('.sum .value');
 
         // update dom
-        domAmount.html(parseInt(virtualItem.amount));
-        domSum.html((parseFloat((virtualItem.amount * item.price)).toFixed(2)));
+        domAmount.innerHTML = parseInt(virtualItem.amount);
+        domSum.innerHTML = (parseFloat((virtualItem.amount * item.price)).toFixed(2));
     }
 
     /**
@@ -208,7 +216,7 @@ export default class Cart {
 
         const foundItemKey = this._getItemKeyById(item.id);
 
-        const getDomItem = () => items.find(`.item[data-id='${item.id}']`);
+        const getDomItem = () => items.querySelector(`.item[data-id='${item.id}']`);
 
         let domItem = getDomItem();
 
@@ -248,7 +256,7 @@ export default class Cart {
             delete this.cart.items[foundProductKey];
 
             // update dom cart
-            items.find(`.item[data-id='${item.id}']`).remove();
+            items.querySelector(`.item[data-id='${item.id}']`).remove();
 
         } else {
             alert(`${this.constructor.name}::removeItem() -> item with id: '${item.id}' not found in cart.`);
@@ -262,12 +270,12 @@ export default class Cart {
     /**
      * Function _doHighlightItem() : highlight item in cart
      * 
-     * @param {$} domItem 
+     * @param {Element} domItem 
      */
     _doHighlightItem(domItem) {
         this.logger.startWith({ domItem });
 
-        domItem.css('animation', 'highlight 3s');
+        domItem.style = 'animation: highlight 3s';
     }
 
     /**
@@ -289,7 +297,7 @@ export default class Cart {
 
         // clear dom cart except .total
         if (items.length > 0) {
-            items.find('.item').remove();
+            items.querySelector('.item').remove();
         }
 
         this.apiCart.get(this._onRecv.bind(this));
@@ -372,7 +380,9 @@ export default class Cart {
         const { items } = this.elements;
 
         // clear highlight
-        items.find('.item').css('animation', 'none');
+        items.querySelectorAll('.item').forEach(element => {
+            element.style = 'animation: none';
+        });
     }
 
     /**
@@ -386,13 +396,15 @@ export default class Cart {
         const { empty, checkout, itemsTotal } = this.elements;
 
         if (state) {
-            empty.hide();
-            checkout.addClass('open');
-            itemsTotal.addClass('open');
+            empty.style.display = 'none';
+
+            checkout.classList.add('open');
+            itemsTotal.classList.add('open');
         } else {
-            empty.show();
-            checkout.removeClass('open');
-            itemsTotal.removeClass('open');
+            empty.style.display = 'inherit';
+
+            checkout.classList.remove('open');
+            itemsTotal.classList.remove('open');
         }
 
         this.events.onEmptyState(state);
@@ -421,13 +433,14 @@ export default class Cart {
     /**
      * Function renderItem() : Return html markup for item
      * 
-     * @param {{}} item 
+     * @param {{}} item
+     * @param {Element} parent
      */
-    renderItem(item) {
+    renderItem(item, parent) {
         const { id, name, amount, price } = item;
         const sum = (amount * price).toFixed(2);
 
-        return (`
+        parent.insertAdjacentHTML('beforeend', (`
             <li class="item" data-id="${id}">
                 <div class="thumbnail"><img src="img/product-${id}.jpg"></div>
                 <div class="info">
@@ -440,17 +453,18 @@ export default class Cart {
                 </div>
                 <div class="clearfix"></div>
             </li>
-        `);
+        `));
     }
 
     /**
-     * Function render() : Return html markup for cart it self
+     * Function render() : Add component markup to parent innerHTML
+     * 
+     * @param {Element} parent
      */
-    render() {
-        return (`
+    render(parent) {
+        parent.insertAdjacentHTML('beforeend', (`
             <div class="cart">
-                <h1 id="empty" style="text-align: center">Your cart is
-                    empty.</h1>
+                <h1 id="empty" style="text-align: center">Your cart is empty.</h1>
 
                 <ul class="items">
                     <li class="total">
@@ -461,6 +475,8 @@ export default class Cart {
 
                 <button class="checkout bg-info">CHECKOUT</button>
             </div>
-        `);
+        `));
+
+        this._afterRender();
     }
 }
