@@ -29,31 +29,35 @@ export default class Catalog {
             onInitialRecv: () => { },
             onProductAdd: (product) => { },
         }
+
+        this._afterRender = () => {
+            this.elements = {
+                pagination: {
+                    self: $('#pagination'),
+                    prev: $("#pagination .prev"),
+                    next: $("#pagination .next"),
+                    placeHolder: $('#pagination .placeholder')
+                },
+
+                catalog: {
+                    self: $('#catalog'),
+                    spinner: $('#catalog .spinner'),
+                },
+
+                template: {
+                    product: $('template#product'),
+                }
+            };
+
+            this._initialize();
+        }
     }
 
     /**
-     * Function initialize() : Initialize catalog
+     * Function _initialize() : Initialize catalog
      */
-    initialize() {
+    _initialize() {
         this.logger.startEmpty();
-
-        this.elements = {
-            pagination: {
-                self: $('#pagination'),
-                prev: $("#pagination .prev"),
-                next: $("#pagination .next"),
-                placeHolder: $('#pagination .placeholder')
-            },
-
-            catalog: {
-                self: $('#catalog'),
-                spinner: $('#catalog .spinner'),
-            },
-
-            template: {
-                product: $('template#product'),
-            }
-        };
 
         this.elements.pagination.next.click(() => this._onPageChange((this.page + 1)));
         this.elements.pagination.prev.click(() => this._onPageChange((this.page - 1)));
@@ -236,7 +240,7 @@ export default class Catalog {
             }
         }
     }
-    
+
     /**
      * Function renderProduct() : Return html markup for product
      * 
@@ -264,9 +268,11 @@ export default class Catalog {
 
     /**
      * Function render() : Return html markup for catalog it self
+     * 
+     * @param {Element} parent
      */
-    render() {
-        return (`
+    render(parent) {
+        const markup = (`
             <div id="catalog" class="row">
                 <div class="spinner" style="border-top-color: lightskyblue"></div>
             </div>
@@ -280,5 +286,9 @@ export default class Catalog {
                 </div>
             </div>
         `);
+
+        this._afterRender();
+
+        return markup;
     }
 }

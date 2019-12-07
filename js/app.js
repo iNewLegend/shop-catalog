@@ -15,16 +15,15 @@ class App {
      * Function constructor() : Create App
      */
     constructor() {
-        Services.Terminal.initalize();
+        Services.Terminal.initialize();
 
         this.logger = new Modules.Logger(this, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.logger.startEmpty();
 
-        const remoteAdress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/api/?cmd='
-
-        const http = new API.Http(remoteAdress);
+        const remoteAddress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/api/?cmd=',
+            http = new API.Http(remoteAddress);
 
         this.apis = {
             catalog: new API.Catalog(http),
@@ -49,17 +48,19 @@ class App {
             overlay: $('#overlay'),
 
             sections: {
-                main: $("section.main")
+                main: $("section.main")[ 0 ]
             }
         }
         
-        this.container = new Modules.PageContainer(this.elements.sections.main);
+        this.container = new Modules.PageContainer(this.elements.sections.main, '<div class="page container"></div>');
 
-        this.container.ready(this._onContainerReady.bind(this));
+        this.container.on('render', this._onContainerRender.bind(this));
 
         this.pages = {
-            catalog: new Pages.Catalog(this.apis.catalog),
-            checkout: new Pages.Checkout()
+            catalog: new Pages.Catalog( this.container, '<div class="_Pages.Catalog"></div>', {
+                api: this.apis.catalog,  
+            } ),
+            checkout: new Pages.Checkout( this.container, '<div class="_Pages.Checkout"><h1>Check OUT.</h1></div>')
         }    
     }
 
@@ -80,6 +81,8 @@ class App {
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
         this.container.set(this.pages.catalog);
+
+        this.container.render();
     }
 
     /**
@@ -87,7 +90,7 @@ class App {
      * 
      * @param {Modules.Page} pageModule 
      */
-    _onContainerReady(pageModule) {
+    _onContainerRender(pageModule) {
         this.logger.startWith({ pageModule: pageModule.constructor.name });
 
         if (pageModule instanceof Pages.Catalog) {
@@ -157,7 +160,7 @@ class App {
     }
 
     /**
-     * Function onCartCheckout() : Called on cart checkout
+     * Function _onCartCheckout() : Called on cart checkout
      */
     _onCartCheckout() {
         this.logger.startEmpty();
@@ -171,7 +174,7 @@ class App {
     }
 
     /**
-     * Function onCatalogPrudctAdd() : Called on catalog item add
+     * Function _onCatalogProductAdd() : Called on catalog item add
      */
     _onCatalogProductAdd(product) {
         this.logger.startWith({ product });

@@ -35,7 +35,7 @@ Editor: vscode
 http://138.201.155.5/leo123/shop-catalog/
 
 # frontend:
-### es6 plain js: index.html (no extrernal libraries or freamworks except jQuery)
+### es6 plain js: index.html (no extrernal libraries or frameworks except jQuery)
 ### babel with webpack: index_babel.html
 
 # backend:

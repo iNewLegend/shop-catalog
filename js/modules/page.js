@@ -7,7 +7,31 @@
 import Logger from './logger.js';
 import Services from '../services/services.js';
 
-export default class Page {
+import Container from '../../dev/modules/container.js';
+import Context from '../../dev/modules/context.js';
+import BaseElement from '../../dev/modules/base-element.js';
+
+
+export default class Page extends Container {
+    initialize() {
+        this.logger = new Logger(`Modules.Page`, true);
+        this.logger.setOutputHandler(Services.Terminal.onOutput);
+
+        this.logger.startWith(this.constructor.name);
+    }
+
+    render() {
+        super.render();
+
+        const markup = this._render(),
+            context = new Context( pageMarkup ),
+            element = new BaseElement( this.element, context );
+
+        this.page = { context, markup, element };
+    }
+}
+
+class OldPage {
     /**
      * @type Logger
      */
@@ -27,6 +51,8 @@ export default class Page {
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.logger.startWith(this.constructor.name);
+
+        this.dom = document.createElement('div');
 
         this.events = {
             onReady: (pageModule) => { },

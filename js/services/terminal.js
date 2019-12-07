@@ -45,7 +45,7 @@ export default class Terminal {
                 }
             };
 
-            this._initalize();
+            this._initialize();
 
             Terminal.instance = this;
         }
@@ -54,9 +54,9 @@ export default class Terminal {
     }
 
     /**
-     * Function _initalize() : Initalize Terminal
+     * Function _initialize() : initialize Terminal
      */
-    _initalize() {
+    _initialize() {
         const { body, terminal } = this.elements;
         const { buttons } = terminal;
 
@@ -247,15 +247,13 @@ export default class Terminal {
     }
 }
 
-
 /**
  * Function onOutput() : Output handler
  * 
- * @param {string} text 
+ * @param {*} output 
  * 
- * @todo change paramter text to something else.
  */
-Terminal.onOutput = function (text) {
+Terminal.onOutput = function (output) {
     const _this = Terminal.instance;
 
     let plain = false;
@@ -269,27 +267,40 @@ Terminal.onOutput = function (text) {
     console.log.apply(this, arguments);
 
     // if jQuery element
-    if (text instanceof jQuery) {
-        text = `[jQuery Element]: '${text.getSelector()}'`;
-    } else if (typeof text == 'object') {
+    if (output instanceof jQuery) {
+        output = `[jQuery Element]: '${output.getSelector()}'`;
+    } else if (typeof output == 'object') {
         // for events.
-        if (text.hasOwnProperty('originalEvent')) {
-            text = `[Event]: type: '${text.type}' selector: '${text.handleObj.selector}'`;
-            
-        } else {
-            text = JSON.stringify(text, null, 4);
+        if (output instanceof Event) {
+            /**
+             * @type {Element}
+             */
+            const el = output.path[0];
+            let selector = el.nodeName;
 
-            text = `<pre>${text}</pre>`;
+            if (el.id) {
+                selector += '#' + el.id;
+            }
+
+            if (el.className) {
+                selector += '.' + [...el.classList].join('.');
+            }
+
+            output = `[Event]: type: '${output.type}' element: '${selector}'`;
+        } else {
+            output = JSON.stringify(output, null, 4);
+
+            output = `<pre>${output}</pre>`;
         }
     }
 
-    for (let i = 0; i < text.length; ++i) {
+    for (let i = 0; i < output.length; ++i) {
         if (skipFlag) {
             skipFlag = false;
             continue;
         }
 
-        if (text[i] === '{' || text[i] === '}') {
+        if (output[i] === '{' || output[i] === '}') {
             if (!objectFlag) {
                 formated.push(`<span class="object">{`);
             } else {
@@ -299,37 +310,37 @@ Terminal.onOutput = function (text) {
             objectFlag = !objectFlag;
 
             continue;
-        } else if (text[i] === '`') {
+        } else if (output[i] === '`') {
             if (!tildaFlag) {
-                formated.push(`${text[i]}<span class="tilda">`);
+                formated.push(`${output[i]}<span class="tilda">`);
             } else {
-                formated.push(`</span>${text[i]}`);
+                formated.push(`</span>${output[i]}`);
             }
 
             tildaFlag = !tildaFlag;
 
             continue;
-        } else if (text[i] === "'") {
+        } else if (output[i] === "'") {
             if (!quoteFlag) {
-                formated.push(`${text[i]}<span class="text quote">`);
+                formated.push(`${output[i]}<span class="text quote">`);
             } else {
-                formated.push(`</span>${text[i]}`);
+                formated.push(`</span>${output[i]}`);
             }
 
             quoteFlag = !quoteFlag;
 
             continue;
-        } else if (text[i] === '"') {
+        } else if (output[i] === '"') {
             if (!dbQuotesFlag) {
-                formated.push(`${text[i]}<span class="text double-quote">`);
+                formated.push(`${output[i]}<span class="text double-quote">`);
             } else {
-                formated.push(`</span>${text[i]}`);
+                formated.push(`</span>${output[i]}`);
             }
 
             dbQuotesFlag = !dbQuotesFlag;
 
             continue;
-        } else if (text[i] == '%' && text[i + 1] == 'c') {
+        } else if (output[i] == '%' && output[i + 1] == 'c') {
             if (plain) {
                 i++;
                 continue;
@@ -350,15 +361,15 @@ Terminal.onOutput = function (text) {
         }
 
         skipFlag = false;
-        formated.push(text[i]);
+        formated.push(output[i]);
     }
 
 
-    text = formated.join('');
+    output = formated.join('');
 
-    text = text.replace(new RegExp('null', 'g'), '<span class="null">null</span>');
+    output = output.replace(new RegExp('null', 'g'), '<span class="null">null</span>');
 
-    terminal.self.append(`<p>${text}</p>`);
+    terminal.self.append(`<p>${output}</p>`);
 
     terminal.self.stop();
     terminal.self.animate({
@@ -367,8 +378,8 @@ Terminal.onOutput = function (text) {
 }
 
 /**
- * Funciton initalize() : Create Instance
+ * Funciton initialize() : Create Instance
  */
-Terminal.initalize = function () {
+Terminal.initialize = function () {
     new Terminal();
 }

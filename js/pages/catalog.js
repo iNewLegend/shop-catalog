@@ -9,19 +9,17 @@ import Components from '../components/components.js';
 import API from '../api/api.js';
 
 export default class Catalog extends Modules.Page {
-    
-    /**
-     * Function constructor() Create Catalog Page
-     * 
-     * @param {API.Catalog} api 
-     */
-    constructor(api) {
-        super();
+
+    initialize( options ) {
+        super.initialize();
+        
+        const { api } = options;
 
         this.logger.name = `Pages.${this.constructor.name}`;
         this.logger.startWith({ api });
 
         this.catalog = new Components.Catalog(api);
+
     }
 
     /**

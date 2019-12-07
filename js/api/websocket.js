@@ -27,10 +27,10 @@ export default class Websocket {
         this.logger.debug(`connection string: '${this.connectionString}'`);
 
 
-        if (autoInit) this.initalize();
+        if (autoInit) this.initialize();
     }
 
-    initalize() {
+    initialize() {
         this.logger.startEmpty();
 
         this.webSocket = new WebSocket(this.connectionString);

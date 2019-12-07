@@ -2,6 +2,8 @@
 /**
  * @file    : controllers/catalog.php
  * @author  : Leonid Vinikov <czf.leo123@gmail.com>
+ * 
+ * @desc:   : Catalog Controller
  */
 
 namespace Controllers;
