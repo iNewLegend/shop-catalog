@@ -23,11 +23,13 @@ export default class Page extends Container {
     render() {
         super.render();
 
-        const markup = this._render(),
-            context = new Context( pageMarkup ),
-            element = new BaseElement( this.element, context );
+        // const markup = this._render(),
+        //     context = new Context( markup ),
+        //     element = new BaseElement( this.element, context );
+		//
+        // this.page = { context, markup, element };
 
-        this.page = { context, markup, element };
+        //this.page.element.render();
     }
 }
 
@@ -41,9 +43,9 @@ class OldPage {
      * @type Element
      */
     dom = null;
-    
+
     /**
-     * Function constructor() : Create page module 
+     * Function constructor() : Create page module
      */
     constructor() {
         // not good.
@@ -74,8 +76,8 @@ class OldPage {
 
     /**
      * function ready() : Set ready callback
-     * 
-     * @param {{function()}} callback 
+     *
+     * @param {{function()}} callback
      */
     ready(callback) {
         this.logger.startWith({ callback });

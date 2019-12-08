@@ -7,21 +7,21 @@
 import API from '../api/api.js';
 import Modules from '../modules/modules.js';
 import Services from '../services/services.js';
+import Container from '../../dev/modules/container.js';
 
-export default class Catalog {
+export default class Catalog extends Container {
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
-    /**
-     * Function constructor() : Create Catalog
-     * 
-     * @param {API.Catalog} catalog 
-     */
-    constructor(catalog) {
+    constructor( parent, context, args ) {
+    	super( parent, context, args );
+
         this.logger = new Modules.Logger(`Components.${this.constructor.name}`, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
-        this.apiCatalog = catalog;
+        this.logger.startWith( { parent, context, args } );
+
+        this.apiCatalog = args.api;
 
         this.page = 0;
 
@@ -30,7 +30,9 @@ export default class Catalog {
             onProductAdd: (product) => { },
         }
 
-        this._afterRender = () => {
+        this.afterRender = () => {
+        	super.afterRender();
+
             this.elements = {
                 pagination: {
                     self: $('#pagination'),
@@ -62,7 +64,7 @@ export default class Catalog {
         this.elements.pagination.next.click(() => this._onPageChange((this.page + 1)));
         this.elements.pagination.prev.click(() => this._onPageChange((this.page - 1)));
 
-        this.elements.catalog.self.on('change', '.product .amount', ((e) => this._onProudctAmountChange(e)));
+        this.elements.catalog.self.on('change', '.product .amount', ((e) => this._onProductAmountChange(e)));
         this.elements.catalog.self.on('click', '.product button', ((e) => this._onProductAdd(e)));
 
         this._getCatalog(0, this._onInitialRecv.bind(this));
@@ -77,8 +79,8 @@ export default class Catalog {
 
     /**
      * Function _onPageChange() : Called on page change
-     * 
-     * @param {number} page 
+     *
+     * @param {number} page
      */
     _onPageChange(page) {
         this.logger.startWith({ page });
@@ -98,8 +100,8 @@ export default class Catalog {
 
     /**
      * Function _onProductAdd() : Called on "Add to cart button"
-     * 
-     * @param {event} e 
+     *
+     * @param {event} e
      */
     _onProductAdd(e) {
         this.logger.startWith({ e });
@@ -123,11 +125,11 @@ export default class Catalog {
     }
 
     /**
-     * Function _onProudctAmountChange() : Called on "Product Amount Change"
-     * 
-     * @param {event} e 
+     * Function _onProductAmountChange() : Called on "Product Amount Change"
+     *
+     * @param {Event} e
      */
-    _onProudctAmountChange(e) {
+    _onProductAmountChange(e) {
         this.logger.startWith({ e });
 
         // maybe there is better way.
@@ -148,8 +150,8 @@ export default class Catalog {
 
     /**
      * Function _getCatalog() : Get catalog from the server.
-     * 
-     * @param {number} page 
+     *
+     * @param {number} page
      * @param {{function()}} onSuccess
      */
     _getCatalog(page, onSuccess = null) {
@@ -176,8 +178,8 @@ export default class Catalog {
 
     /**
      * Function _setPagination() : Set pagination to dom.
-     * 
-     * @param {{}} paginationResult 
+     *
+     * @param {{}} paginationResult
      */
     _setPagination(paginationResult) {
         this.logger.startWith({ paginationResult });
@@ -217,10 +219,10 @@ export default class Catalog {
     }
 
     /**
-     * Function on() : Delcare event callback
-     * 
-     * @param {'initialRecv'|'productAdd'} event 
-     * @param {{function()}} callback 
+     * Function on() : Declare event callback
+     *
+     * @param {'initialRecv'|'productAdd'} event
+     * @param {{function()}} callback
      */
     on(event, callback) {
         this.logger.startWith({ event, callback });
@@ -243,8 +245,8 @@ export default class Catalog {
 
     /**
      * Function renderProduct() : Return html markup for product
-     * 
-     * @param {{}} product 
+     *
+     * @param {{}} product
      */
     renderProduct(product) {
         const { id, name, price } = product;
@@ -267,11 +269,11 @@ export default class Catalog {
     }
 
     /**
-     * Function render() : Return html markup for catalog it self
-     * 
+     * Function render_afterRender() : Return html markup for catalog it self
+     *
      * @param {Element} parent
      */
-    render(parent) {
+    _render(parent) {
         const markup = (`
             <div id="catalog" class="row">
                 <div class="spinner" style="border-top-color: lightskyblue"></div>
@@ -286,8 +288,6 @@ export default class Catalog {
                 </div>
             </div>
         `);
-
-        this._afterRender();
 
         return markup;
     }

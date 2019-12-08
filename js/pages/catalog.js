@@ -1,25 +1,25 @@
 /**
- * @file: js/modules/page.js
+ * @file: js/pages/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Modules Namespace O__o
+ * @description: Catalog page.
  */
 
 import Modules from '../modules/modules.js';
 import Components from '../components/components.js';
 import API from '../api/api.js';
+import Element from "../../dev/modules/element.js";
 
 export default class Catalog extends Modules.Page {
 
     initialize( options ) {
         super.initialize();
-        
+
         const { api } = options;
 
         this.logger.name = `Pages.${this.constructor.name}`;
         this.logger.startWith({ api });
 
-        this.catalog = new Components.Catalog(api);
-
+        this.catalog = new Components.Catalog( this, '<test></test>', { api } );
     }
 
     /**
@@ -27,7 +27,7 @@ export default class Catalog extends Modules.Page {
      */
     _onReady() {
         this.logger.startEmpty();
-        
+
         //this.catalog.on('initialRecv', this._onCatalogInitialRecv.bind(this));
         //this.catalog.on('productAdd', this._onCatalogProductAdd.bind(this));
 
@@ -37,19 +37,26 @@ export default class Catalog extends Modules.Page {
     /**
      * Function _render() : Return the html markup for this page
      */
-    _render() {
-        return (`
+    render() {
+    	super.render();
+
+        const markup = (`
             <div class="home container" style="max-width: 1080px;">
-                ${this.catalog.render()}
+                ${this.catalog._render()}
             </div>
-        `);
+        `), element = new Element( this, markup );
+
+
+        element.render();
+
+        debugger;
     }
 
     /**
      * Function on() : Delcare event callback
-     * 
-     * @param {'initialRecv'|'productAdd'} event 
-     * @param {{function()}} callback 
+     *
+     * @param {'initialRecv'|'productAdd'} event
+     * @param {{function()}} callback
      */
     on(event, callback) {
         this.logger.startWith({ event, callback });

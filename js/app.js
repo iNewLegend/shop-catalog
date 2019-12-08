@@ -51,17 +51,17 @@ class App {
                 main: $("section.main")[ 0 ]
             }
         }
-        
+
         this.container = new Modules.PageContainer(this.elements.sections.main, '<div class="page container"></div>');
 
         this.container.on('render', this._onContainerRender.bind(this));
 
         this.pages = {
             catalog: new Pages.Catalog( this.container, '<div class="_Pages.Catalog"></div>', {
-                api: this.apis.catalog,  
+                api: this.apis.catalog,
             } ),
             checkout: new Pages.Checkout( this.container, '<div class="_Pages.Checkout"><h1>Check OUT.</h1></div>')
-        }    
+        }
     }
 
     /**
@@ -80,15 +80,15 @@ class App {
 
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
-        this.container.set(this.pages.catalog);
+        this.container.setChild(this.pages.catalog);
 
         this.container.render();
     }
 
     /**
      * Function _onContainerReady() : Called when container ready.
-     * 
-     * @param {Modules.Page} pageModule 
+     *
+     * @param {Modules.Page} pageModule
      */
     _onContainerRender(pageModule) {
         this.logger.startWith({ pageModule: pageModule.constructor.name });
@@ -98,7 +98,7 @@ class App {
 
             if (! this.cart) {
                 this.cart = new Components.Cart(this.apis.cart, this.apis.catalog);
-            
+
                 this.cart.on('get', this._onCartGet.bind(this));
                 this.cart.on('received', this._onCartReceived.bind(this));
                 this.cart.on('amountChange', this._onCartAmountChange.bind(this));
@@ -128,15 +128,15 @@ class App {
         this.logger.startEmpty();
 
         const { cart, spinner } = this.elements.header;
-        
+
         cart.show();
         spinner.hide();
     }
 
     /**
      * Function _onCartAmountChange() : Called on cart amount change.
-     * 
-     * @param {Number} count 
+     *
+     * @param {Number} count
      */
     _onCartAmountChange(count) {
         this.logger.startWith({ count });
@@ -148,12 +148,12 @@ class App {
 
     /**
      * Function _onCartEmptyState() : Called on cart empty state change (cart have items|cart does have items)
-     * 
-     * @param {Boolean} state 
+     *
+     * @param {Boolean} state
      */
     _onCartEmptyState(state) {
         this.logger.startWith({ state });
-        
+
         const { amount } = this.elements.header;
 
         state ? amount.show() : amount.hide();
@@ -188,8 +188,8 @@ class App {
 
     /**
      * Function sidebarToggle() : Change the sidebar state
-     * 
-     * @param {boolean} state 
+     *
+     * @param {boolean} state
      */
     sidebarToggle(state) {
         this.logger.startWith({ state });
@@ -199,7 +199,7 @@ class App {
         if (state) {
             overlay.fadeIn();
             sidebar.self.addClass('show');
-            
+
             this.cart.open();
         } else {
             overlay.fadeOut();
