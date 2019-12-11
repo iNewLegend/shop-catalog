@@ -1,12 +1,17 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
-    entry: {
-        app: './index.js'
+	watch: true,
+	devServer: {
+		compress: true,
+		contentBase: path.join(__dirname, 'frontend'),
+	},
+	entry: {
+        app: './frontend/app.js'
     },
     output: {
         filename: 'app.bundle.js',
-        path: path.resolve(__dirname, 'js/dist')
+        path: path.resolve(__dirname, 'frontend/')
     },
     module: {
         rules: [
@@ -22,8 +27,20 @@ module.exports = {
               }
             }
           ]
-        
+
     },
+	resolve: {
+		alias: {
+			'API': path.resolve(__dirname, 'frontend/api'),
+			'COMPONENTS': path.resolve(__dirname, 'frontend/components'),
+			'LIBRARY': path.resolve(__dirname, 'frontend/library'),
+			'MODULES': path.resolve(__dirname, 'frontend/modules'),
+			'PAGES': path.resolve(__dirname, 'frontend/pages'),
+			'SERVICES': path.resolve(__dirname, 'frontend/services'),
+			'DEV-LIBRARY': path.resolve(__dirname, 'dev/library'),
+			'DEV-MODULES': path.resolve(__dirname, 'dev/modules'),
+		}
+	},
     stats: {
         colors: true
     },

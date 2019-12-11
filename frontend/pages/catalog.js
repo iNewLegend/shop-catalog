@@ -4,10 +4,9 @@
  * @description: Catalog page.
  */
 
-import Modules from '../modules/modules.js';
-import Components from '../components/components.js';
-import API from '../api/api.js';
-import Element from "../../dev/modules/element.js";
+import Modules from 'MODULES/modules';
+import Components from 'COMPONENTS/components';
+import Element from 'DEV-MODULES/base-element';
 
 export default class Catalog extends Modules.Page {
 
@@ -53,7 +52,7 @@ export default class Catalog extends Modules.Page {
     }
 
     /**
-     * Function on() : Delcare event callback
+     * Function on() : Declare event callback
      *
      * @param {'initialRecv'|'productAdd'} event
      * @param {{function()}} callback
