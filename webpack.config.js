@@ -1,6 +1,8 @@
 const path = require('path');
 
 module.exports = {
+	mode: 'development',
+	devtool: 'inline-source-map',
 	watch: true,
 	devServer: {
 		compress: true,
@@ -11,7 +13,7 @@ module.exports = {
     },
     output: {
         filename: 'app.bundle.js',
-        path: path.resolve(__dirname, 'frontend/')
+        path: path.resolve(__dirname, 'frontend/dist')
     },
     module: {
         rules: [

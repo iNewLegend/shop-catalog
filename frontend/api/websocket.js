@@ -1,10 +1,10 @@
 /**
  * @file: js/api/websocket.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: 
+ * @description:
  */
 
-import Modules from '../modules/modules.js';  
+import Modules from '../modules/';
 import Services from '../services/services.js';
 
 /**
@@ -12,7 +12,6 @@ import Services from '../services/services.js';
  */
 
 export default class Websocket {
-
     constructor(address, port, autoInit = false) {
         this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
@@ -20,7 +19,7 @@ export default class Websocket {
         this.logger.startWith({ address, port, autoInit });
 
         this.binds = [];
-    
+
         this.webSocket = null;
         this.connectionString = `ws://${address}:${port}/`;
 

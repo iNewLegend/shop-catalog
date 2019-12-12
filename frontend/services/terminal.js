@@ -4,7 +4,7 @@
  * @description: A live console opend by tilda key
  */
 
-import Modules from '../modules/modules.js';
+import Modules from 'MODULES';
 
 import JQuery from '../library/jquery.js';
 
@@ -90,7 +90,7 @@ export default class Terminal {
     /**
      * Function _onKeyDown() : Called when key down on $('body)
      *
-     * @param {Event} e 
+     * @param {Event} e
      */
     _onKeyDown(e) {
         //this.logger.startWith({ e });
@@ -104,7 +104,7 @@ export default class Terminal {
     /**
      * Function _onMouseMove() : Called when mouse move on $('body)
      *
-     * @param {Event} e 
+     * @param {Event} e
      */
     _onMouseMove(e) {
         //this.logger.startWith({ e });
@@ -136,7 +136,7 @@ export default class Terminal {
     /**
      * Function _onMouseMove() : Called when mouse up on $('body)
      *
-     * @param {Event} e 
+     * @param {Event} e
      */
     _onMouseUp(e) {
         //this.logger.startWith({ e });
@@ -163,7 +163,7 @@ export default class Terminal {
     /**
      * Function _onTerminalReiszeMouseDown() : Called when mouse down on $('#terminal button.resize')
      *
-     * @param {Event} e 
+     * @param {Event} e
      */
     _onTerminalReiszeMouseDown(e) {
         this.logger.startWith({ e });
@@ -179,7 +179,7 @@ export default class Terminal {
     /**
      * Function _onTerminalReiszeMouseUp() : Called when mouse up on $('#terminal button.resize')
      *
-     * @param {Event} e 
+     * @param {Event} e
      */
     _onTerminalReiszeMouseUp(e) {
         //this.logger.startWith({ e });
@@ -190,7 +190,7 @@ export default class Terminal {
     /**
      * Function _onTerminalCloseClick() : Called when mouse up on $('#terminal button.close')
      *
-     * @param {Event} e 
+     * @param {Event} e
      */
     _onTerminalCloseClick(e) {
         this.logger.startWith({ e });
@@ -200,9 +200,9 @@ export default class Terminal {
 
     /**
      * Function _storage() : Get or set local storage
-     * 
-     * @param {string} type 
-     * @param {any} val 
+     *
+     * @param {string} type
+     * @param {any} val
      */
     _stroage(type, val = null) {
         this.logger.startWith({ type, val });
@@ -249,9 +249,9 @@ export default class Terminal {
 
 /**
  * Function onOutput() : Output handler
- * 
- * @param {*} output 
- * 
+ *
+ * @param {*} output
+ *
  */
 Terminal.onOutput = function (output) {
     const _this = Terminal.instance;

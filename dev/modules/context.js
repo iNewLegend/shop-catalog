@@ -1,4 +1,4 @@
-import HTML from '../library/html.js';
+import HTML from '../library/html';
 
 export class Context
 {
@@ -15,7 +15,7 @@ export class Context
         this.beforeCreate();
 
         this.node = HTML.toNode( this.context );
-    
+
         this.afterCreate();
 
         return this.node;
@@ -23,7 +23,7 @@ export class Context
 
     beforeCreate() {
     }
- 
+
     afterCreate() {
     }
 }

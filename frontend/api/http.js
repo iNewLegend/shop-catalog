@@ -4,14 +4,14 @@
  * @description: inseatd of using jquery ajax, i choosed this.
  */
 
-import Modules from '../modules/modules.js';  
+import Modules from 'MODULES';
 import Services from '../services/services.js';
 
 export default class Http {
     /**
      * Function constructor() : Create API
-     * 
-     * @param {string} apiBaseUrl 
+     *
+     * @param {string} apiBaseUrl
      */
     constructor(apiBaseUrl = 'http://localhost:8080/api/?cmd=') {
         this.logger = new Modules.Logger('API.' + this.constructor.name, true);
@@ -24,11 +24,11 @@ export default class Http {
 
     /**
      * Function fetch() : fetch api
-     * 
-     * @param {string} path 
-     * @param {string} method 
-     * @param {{}} body 
-     * 
+     *
+     * @param {string} path
+     * @param {string} method
+     * @param {{}} body
+     *
      * @return {any}
      */
     async _fetch(path, method, body = null) {
@@ -52,10 +52,16 @@ export default class Http {
 
         // since i made it async function
         const response = await fetch(this.apiBaseUrl + path, params);
-        const data = await response.json();
+        try {
+	        const data = await response.json();
+        } catch ( e ) {
+        	console.error( e );
+
+        	return false;
+        }
 
         this.logger.recv({ path }, data);
-        
+
         if (data.error)  {
             data.message = this.translateError(data.message);
 
@@ -63,17 +69,17 @@ export default class Http {
                 throw data.message;
             }
         }
-    
+
         return data;
     }
 
     /**
      * Function translateError() : Used to translate server error.
-     * 
+     *
      * @todo Function should be exported to api.js
-     * 
-     * @param {({}|string)} message 
-     * 
+     *
+     * @param {({}|string)} message
+     *
      * @return {string}
      */
     translateError(message) {
@@ -95,9 +101,9 @@ export default class Http {
 
     /**
      * Function get() : Send get request
-     * 
-     * @param {string} path 
-     * 
+     *
+     * @param {string} path
+     *
      * @return {any}
      */
     get(path) {
@@ -108,10 +114,10 @@ export default class Http {
 
     /**
      * Funciton post() : Send post request
-     * 
-     * @param {string} path 
-     * @param {{}} params 
-     * 
+     *
+     * @param {string} path
+     * @param {{}} params
+     *
      * @return {any}
      */
     post(path, params) {

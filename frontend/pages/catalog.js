@@ -4,7 +4,7 @@
  * @description: Catalog page.
  */
 
-import Modules from 'MODULES/modules';
+import Modules from 'MODULES';
 import Components from 'COMPONENTS/components';
 import Element from 'DEV-MODULES/base-element';
 

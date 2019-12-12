@@ -1,11 +1,11 @@
-import Context from './context.js';
+import Context from './context';
 
 // Aka Manager of Context.
-export class BaseElement { 
+export class BaseElement {
     /**
      * Function constructor() : Create Custom Element.
-     * 
-     * @param {Node|Container} parent 
+     *
+     * @param {Node|Container} parent
      * @param {Context|String} context
      */
     constructor(parent, context) {
@@ -17,7 +17,7 @@ export class BaseElement {
         this.context = context;
         this.parent = parent;
 
-        
+
         if ( ! (context instanceof Context)) {
             context = new Context( this.context );
         }
@@ -42,7 +42,7 @@ export class BaseElement {
         }
 
         this.element = this.parent.appendChild( this.context.create() );
-    
+
         this.afterRender();
 
         return this.element;
@@ -52,7 +52,7 @@ export class BaseElement {
     afterInit() {};
 
     beforeRender() {}
- 
+
     afterRender() {}
 }
 

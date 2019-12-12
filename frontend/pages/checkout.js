@@ -1,5 +1,5 @@
 
-import Modules from '../modules/modules.js';
+import Modules from 'MODULES';
 
 export default class Checkout extends Modules.Page {
     _render() {

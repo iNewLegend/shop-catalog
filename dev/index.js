@@ -1,4 +1,4 @@
-import Component from './modules/component.js';
+import Component from './modules/component';
 
 class Container extends Component {
     initialize() {
@@ -21,9 +21,9 @@ class Container extends Component {
     }
     /**
      * Function on() : Declare event callback
-     * 
-     * @param {'render'} event 
-     * @param {{function()}} callback 
+     *
+     * @param {'render'} event
+     * @param {{function()}} callback
      */
     on(event, callback) {
         switch (event) {

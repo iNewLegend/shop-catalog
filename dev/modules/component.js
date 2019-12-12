@@ -1,4 +1,4 @@
-import BaseElement from './base-element.js';
+import BaseElement from './base-element';
 
 export class Component extends BaseElement {
     initialize() {
@@ -11,7 +11,7 @@ export class Component extends BaseElement {
 
     beforeInit() {}
     afterInit() {}
-    
+
     afterRender() {
         super.afterRender();
 

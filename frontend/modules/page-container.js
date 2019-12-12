@@ -5,10 +5,9 @@
  * @todo find wise alternative
  */
 
-import Services from '../services/services.js';
-import Modules from './modules.js';
-
-import Container from '../../dev/modules/container.js';
+import Services from '../services/services';
+import Modules from 'MODULES';
+import Container from 'DEV-MODULES/container';
 
 export default class PageContainer extends Container {
     initialize() {
@@ -29,8 +28,8 @@ export default class PageContainer extends Container {
 
     // /**
     //  * Function set() : Set's pageModule
-    //  * 
-    //  * @param {Modules.Page} pageModule 
+    //  *
+    //  * @param {Modules.Page} pageModule
     //  */
     // set(pageModule) {
     //     this.logger.startWith({ pageModule: pageModule.constructor.name });
@@ -53,7 +52,7 @@ export default class PageContainer extends Container {
     //  */
     // render() {
     //     this.logger.startEmpty()
-        
+
     //     const element = this.pageModule.createElement();
 
     //     element.ready(this.onReady.bind(this));

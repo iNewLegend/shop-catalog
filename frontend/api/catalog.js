@@ -5,14 +5,14 @@
 
 import { Http } from './api.js';
 
-import Modules from '../modules/modules.js';  
+import Modules from '../modules/';
 import Services from '../services/services.js';
 
 export default class Catalog {
 
     /**
-     * Function constructor() Create Catalog Api 
-     * 
+     * Function constructor() Create Catalog Api
+     *
      * @param {Http} api
      */
 
@@ -29,9 +29,9 @@ export default class Catalog {
 
     /**
      * Function get() : Get catalog from the server
-     * 
-     * @param {{function()}} callback 
-     * @param {number} page 
+     *
+     * @param {{function()}} callback
+     * @param {number} page
      */
     get(callback, page = 0) {
         this.logger.startWith({ callback, page });
@@ -47,9 +47,9 @@ export default class Catalog {
 
     /**
      * Function getById() : Return product with specific id's
-     * 
-     * @param {{function()}} callback 
-     * @param {number[]} ids 
+     *
+     * @param {{function()}} callback
+     * @param {number[]} ids
      */
     getByIds(callback, ids) {
         this.logger.startWith({ callback, ids });
@@ -66,8 +66,8 @@ export default class Catalog {
 
     /**
      * Function getLocalProductById() : Get product from local catalog
-     * 
-     * @param {number} id 
+     *
+     * @param {number} id
      * @return {{}|null}
      */
     getLocalProductById(id) {

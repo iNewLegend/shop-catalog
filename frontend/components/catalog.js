@@ -5,7 +5,7 @@
  */
 
 import API from '../api/api.js';
-import Modules from '../modules/modules.js';
+import Modules from 'MODULES';
 import Services from '../services/services.js';
 import Container from '../../dev/modules/container.js';
 

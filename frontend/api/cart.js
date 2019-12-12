@@ -5,14 +5,14 @@
 
 import { Http } from './api.js';
 
-import Modules from '../modules/modules.js';  
+import Modules from '../modules';
 import Services from '../services/services.js';
 
 export default class Cart {
 
     /**
-     * Function constructor() Create Cart Api 
-     * 
+     * Function constructor() Create Cart Api
+     *
      * @param {Http} http
      */
     constructor(http) {
@@ -20,14 +20,14 @@ export default class Cart {
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.logger.startWith({ http });
-        
+
         this.http = http;
     }
 
     /**
      * Function get() : Get cart
-     * 
-     * @param {{function()}} callback 
+     *
+     * @param {{function()}} callback
      */
     get(callback) {
         this.logger.startWith({ callback });
@@ -37,10 +37,10 @@ export default class Cart {
 
     /**
      * Function addItem() : Add item to cart
-     * 
-     * @param {{function()}} callback 
-     * @param {number} id 
-     * @param {number} amount 
+     *
+     * @param {{function()}} callback
+     * @param {number} id
+     * @param {number} amount
      */
     addItem(callback, id, amount = 1) {
         this.logger.startWith({ callback, id, amount });
@@ -52,9 +52,9 @@ export default class Cart {
 
     /**
      * Function removeItem() : Remove item from cart
-     * 
-     * @param {{function()}} callback 
-     * @param {number} id 
+     *
+     * @param {{function()}} callback
+     * @param {number} id
      */
     removeItem(callback, id) {
         this.logger.startWith({ callback, id });

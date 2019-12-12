@@ -5,7 +5,7 @@
  */
 
 import API from '../api/api.js';
-import Modules from '../modules/modules.js';
+import Modules from 'MODULES';
 import Services from '../services/services.js';
 
 export default class Cart {
@@ -14,9 +14,9 @@ export default class Cart {
 
     /**
      * Function constructor() : Create Cart
-     * 
+     *
      * @param {API.Cart} cart
-     * @param {API.Catalog} catalog 
+     * @param {API.Catalog} catalog
      */
     constructor(cart, catalog) {
         this.logger = new Modules.Logger(`Components.${this.constructor.name}`, true);
@@ -71,8 +71,8 @@ export default class Cart {
 
     /**
      * Function _onRecv() : Called when cart received
-     * 
-     * @param {[]} data 
+     *
+     * @param {[]} data
      */
     _onRecv(data) {
         this.logger.object(data, 'data');
@@ -138,8 +138,8 @@ export default class Cart {
 
     /**
      * Function _onItemRemove() : Called on item remove
-     * 
-     * @param {Event} e 
+     *
+     * @param {Event} e
      */
     _onItemRemove(e) {
         this.logger.startWith({ e });
@@ -160,8 +160,8 @@ export default class Cart {
 
     /**
      * function _doInsertItem() : Insert new item dom and virtual
-     * 
-     * @param {{}} item 
+     *
+     * @param {{}} item
      */
     _doInsertItem(item) {
         this.logger.startWith({ item });
@@ -177,10 +177,10 @@ export default class Cart {
 
     /**
      * Function _doUpdateItem() : Update Cart Item dom and virtual
-     * 
-     * @param {{}} item 
-     * @param {string} key 
-     * @param {Element} domItem 
+     *
+     * @param {{}} item
+     * @param {string} key
+     * @param {Element} domItem
      */
     _doUpdateItem(item, key, domItem) {
         this.logger.startWith({ item, key, domItem });
@@ -204,10 +204,10 @@ export default class Cart {
 
     /**
      * Function _doAddItem() : Adds item to cart
-     * 
-     * @param {{}} item 
-     * @param {boolean} notifyCartChanged 
-     * @param {boolean} highlight 
+     *
+     * @param {{}} item
+     * @param {boolean} notifyCartChanged
+     * @param {boolean} highlight
      */
     _doAddItem(item, notifyCartChanged = true, highlight = false) {
         this.logger.startWith({ item, notifyCartChanged, highlight });
@@ -240,9 +240,9 @@ export default class Cart {
 
     /**
      * Function _doRemoveItem() : Remove's item from cart
-     * 
-     * @param {{}} item 
-     * @param {boolean} notifyCartChanged 
+     *
+     * @param {{}} item
+     * @param {boolean} notifyCartChanged
      */
     _doRemoveItem(item, notifyCartChanged = true) {
         this.logger.startWith({ item, notifyCartChanged });
@@ -269,8 +269,8 @@ export default class Cart {
 
     /**
      * Function _doHighlightItem() : highlight item in cart
-     * 
-     * @param {Element} domItem 
+     *
+     * @param {Element} domItem
      */
     _doHighlightItem(domItem) {
         this.logger.startWith({ domItem });
@@ -305,8 +305,8 @@ export default class Cart {
 
     /**
      * Function _getItemKeyById() : Get Item key from cart by id.
-     * 
-     * @param {number} id 
+     *
+     * @param {number} id
      */
     _getItemKeyById(id) {
         this.logger.startWith({ id });
@@ -325,9 +325,9 @@ export default class Cart {
 
     /**
      * Function on() : Delcare event callback
-     * 
-     * @param {'get'|'received'|'amountChange'|'emptyState'|'checkout'} event 
-     * @param {{function()}} callback 
+     *
+     * @param {'get'|'received'|'amountChange'|'emptyState'|'checkout'} event
+     * @param {{function()}} callback
      */
     on(event, callback) {
         this.logger.startWith({ event, callback });
@@ -387,8 +387,8 @@ export default class Cart {
 
     /**
      * Function efficientEmptyState() : Update when cart have items or not.
-     * 
-     * @param {boolean} state 
+     *
+     * @param {boolean} state
      */
     efficientEmptyState(state) {
         this.logger.startWith({ state });
@@ -412,8 +412,8 @@ export default class Cart {
 
     /**
      * Function itemAdd() : Add items or update
-     * 
-     * @param {{}} product 
+     *
+     * @param {{}} product
      * @param {{function()}} onSuccess
      */
     itemAdd(product, onSuccess = null) {
@@ -432,7 +432,7 @@ export default class Cart {
 
     /**
      * Function renderItem() : Return html markup for item
-     * 
+     *
      * @param {{}} item
      * @param {Element} parent
      */
@@ -458,7 +458,7 @@ export default class Cart {
 
     /**
      * Function render() : Add component markup to parent innerHTML
-     * 
+     *
      * @param {Element} parent
      */
     render(parent) {

@@ -3,9 +3,10 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
+import "@babel/polyfill";
 
 import API from './api/api.js';
-import Modules from './modules/modules.js';
+import Modules from 'MODULES';
 import Services from './services/services.js';
 import Components from './components/components.js';
 import Pages from './pages/pages.js';
@@ -80,7 +81,7 @@ class App {
 
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
-        this.container.setChild(this.pages.catalog);
+        this.container.set(this.pages.catalog);
 
         this.container.render();
     }
