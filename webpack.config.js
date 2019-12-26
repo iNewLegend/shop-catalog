@@ -4,10 +4,6 @@ module.exports = {
 	mode: 'development',
 	devtool: 'inline-source-map',
 	watch: true,
-	devServer: {
-		compress: true,
-		contentBase: path.join(__dirname, 'frontend'),
-	},
 	entry: {
         app: './frontend/app.js'
     },

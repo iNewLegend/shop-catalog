@@ -1,7 +1,7 @@
 /**
  * @file: js/api/http.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: inseatd of using jquery ajax, i choosed this.
+ * @description: instead of using jquery ajax, i choose this.
  */
 
 import Modules from 'MODULES';
@@ -13,7 +13,7 @@ export default class Http {
      *
      * @param {string} apiBaseUrl
      */
-    constructor(apiBaseUrl = 'http://localhost:8080/api/?cmd=') {
+    constructor(apiBaseUrl = 'http://localhost') {
         this.logger = new Modules.Logger('API.' + this.constructor.name, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
@@ -29,7 +29,7 @@ export default class Http {
      * @param {string} method
      * @param {{}} body
      *
-     * @return {any}
+     * @return {*}
      */
     async _fetch(path, method, body = null) {
         this.logger.startWith({ path, method, body });
@@ -52,8 +52,10 @@ export default class Http {
 
         // since i made it async function
         const response = await fetch(this.apiBaseUrl + path, params);
+        let data = undefined;
+
         try {
-	        const data = await response.json();
+	         data = await response.json();
         } catch ( e ) {
         	console.error( e );
 
@@ -76,7 +78,7 @@ export default class Http {
     /**
      * Function translateError() : Used to translate server error.
      *
-     * @todo Function should be exported to api.js
+     * TODO Function should be exported to api.js
      *
      * @param {({}|string)} message
      *
@@ -104,7 +106,7 @@ export default class Http {
      *
      * @param {string} path
      *
-     * @return {any}
+     * @return {*}
      */
     get(path) {
         this.logger.startWith({ path });
@@ -113,12 +115,12 @@ export default class Http {
     }
 
     /**
-     * Funciton post() : Send post request
+     * Function post() : Send post request
      *
      * @param {string} path
      * @param {{}} params
      *
-     * @return {any}
+     * @return {*}
      */
     post(path, params) {
         this.logger.startWith({ path, params });

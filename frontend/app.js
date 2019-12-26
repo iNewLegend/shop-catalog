@@ -23,7 +23,7 @@ class App {
 
         this.logger.startEmpty();
 
-        const remoteAddress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/api/?cmd=',
+        const remoteAddress = 'http://localhost:8888/public/shop-catalog/api?cmd=',//window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/../api/?cmd=',
             http = new API.Http(remoteAddress);
 
         this.apis = {

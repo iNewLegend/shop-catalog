@@ -10,9 +10,10 @@ export class Container extends Component {
     }
 
     afterRender() {
+    	//debugger;
         super.afterRender();
 
-        if ( this.events ) {
+        if ( this.events && this.events.onRender ) {
             this.events.onRender( this.child );
         }
     }
@@ -21,13 +22,20 @@ export class Container extends Component {
         this.child = child;
     }
 
-    render() {
-         super.render();
+	render() {
+		this.beforeRender();
 
-         if ( this.child ) {
-            this.child.render();
-         }
-    }
+		super.render( true );
+
+		if ( this.child ) {
+			this.child.render();
+		}
+
+		//debugger;
+
+		this.afterRender();
+		super.afterRender();
+	}
     /**
      * Function on() : Declare event callback
      *

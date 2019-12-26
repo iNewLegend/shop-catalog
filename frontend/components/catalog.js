@@ -33,7 +33,10 @@ export default class Catalog extends Container {
         this.afterRender = () => {
         	super.afterRender();
 
-            this.elements = {
+	        debugger;
+
+	        // Does not work because the self elements isn't exist at this point yet, this.afterRender does not handle its job.
+	        this.elements = {
                 pagination: {
                     self: $('#pagination'),
                     prev: $("#pagination .prev"),
@@ -160,8 +163,11 @@ export default class Catalog extends Container {
         const { catalog, template } = this.elements;
 
         this.apiCatalog.get(data => {
-            // used slow here to fake loading
+	        //debugger;
+
+	        // used slow here to fake loading
             catalog.spinner.fadeOut('slow', () => {
+
                 if (!data.error) {
 
                     this._setPagination(data.pagination);

@@ -34,8 +34,8 @@ export class BaseElement {
 
     initialize( options = {} ) {}
 
-    render() {
-        this.beforeRender();
+    render( preventDefault = false ) {
+        if ( ! preventDefault ) this.beforeRender();
 
         if ( this.parent instanceof BaseElement ) {
             this.parent = this.parent.element;
@@ -43,7 +43,7 @@ export class BaseElement {
 
         this.element = this.parent.appendChild( this.context.create() );
 
-        this.afterRender();
+        if ( ! preventDefault ) this.afterRender();
 
         return this.element;
     }

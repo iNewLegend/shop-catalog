@@ -48,7 +48,7 @@ export default class Catalog extends Modules.Page {
 
         element.render();
 
-        debugger;
+	    this.catalog.render();
     }
 
     /**
