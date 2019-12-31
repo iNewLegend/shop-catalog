@@ -17,7 +17,7 @@
 
 @keyframes highlight {
     0% {
-        background: #ffff99; 
+        background: #ffff99;
     }
     100% {
         background: none;
@@ -178,12 +178,12 @@ header li h1, h2, h3, h4, h5, h6 {
     margin: 0px;
 }
 
-header #toggler {
+header #toggle {
     float: right;
 }
 
 
-header #toggler img {
+header #toggle img {
     width: 35px;
     height: 35px;
     -webkit-user-select: none;
@@ -193,14 +193,14 @@ header #toggler img {
     display: none;
 }
 
-header #toggler .spinner {
+header #toggle .spinner {
     width: 35px;
     height: 35px;
     padding: 0;
     margin: 0;
 }
 
-header #toggler .amount {
+header #toggle .amount {
     display: none;
     position: relative;
     bottom: 8px;

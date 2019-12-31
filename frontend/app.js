@@ -11,6 +11,9 @@ import Services from './services/services.js';
 import Components from './components/components.js';
 import Pages from './pages/pages.js';
 
+
+import * as DocumentModules from './modules/document/index.js'
+
 class App {
     /**
      * Function constructor() : Create App
@@ -23,7 +26,7 @@ class App {
 
         this.logger.startEmpty();
 
-        const remoteAddress = 'http://localhost:8888/public/shop-catalog/api?cmd=',//window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/../api/?cmd=',
+        const remoteAddress = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + '/../api/?cmd=',
             http = new API.Http(remoteAddress);
 
         this.apis = {
@@ -33,12 +36,12 @@ class App {
 
         this.elements = {
             header: {
-                logo: $('header #logo'),
-                toggler: $('header #toggler'),
+                logo: DocumentModules.Factory.createComponent('header #logo'),
+                toggle: DocumentModules.Factory.createComponent( 'header #toggle'),
 
-                cart: $('header #toggler .cart'),
-                amount: $('header #toggler .amount'),
-                spinner: $('header #toggler .spinner')
+                cart: $('header #toggle .cart'),
+                amount: $('header #toggle .amount'),
+                spinner: $('header #toggle .spinner')
             },
 
             sidebar: {
@@ -53,7 +56,7 @@ class App {
             }
         }
 
-        this.container = new Modules.PageContainer(this.elements.sections.main, '<div class="page container"></div>');
+        this.container = new DocumentModules.Container(this.elements.sections.main, '<div class="page container"></div>');
 
         this.container.on('render', this._onContainerRender.bind(this));
 
@@ -75,9 +78,12 @@ class App {
 
         overlay.click(() => this.sidebarToggle(false));
 
-        header.toggler.click(() => this.sidebarToggle(true));
+        header.toggle.click(() => this.sidebarToggle(true));
 
-        header.logo.click(() => this.container.set(this.pages.catalog));
+        header.logo.click(() => {
+	        this.container.set(this.pages.catalog)
+	        this.container.render();
+        });
 
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
@@ -169,9 +175,12 @@ class App {
         this.sidebarToggle(false);
 
         this.container.set(this.pages.checkout);
-        this.pages.checkout.ready(function onCheckoutLoaded() {
-            this.logger.debug(`i was loaded`);
-        }.bind(this));
+
+        this.pages.checkout.on( 'render', () => {
+        	console.log( 'onCartCheckout this.page.checkout rendered');
+        } );
+
+        this.container.render();
     }
 
     /**

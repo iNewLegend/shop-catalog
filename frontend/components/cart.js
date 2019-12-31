@@ -288,7 +288,7 @@ export default class Cart {
 
         this.events.onGet();
 
-        // clear toggler amount
+        // clear toggle amount
         this.events.onAmountChange(0);
 
         // clear visual cart

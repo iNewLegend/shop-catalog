@@ -4,10 +4,9 @@
  * @description: Manages catalog
  */
 
-import API from '../api/api.js';
 import Modules from 'MODULES';
 import Services from '../services/services.js';
-import Container from '../../dev/modules/container.js';
+import Container from 'MODULES/document/container.js';
 
 export default class Catalog extends Container {
     static amountMaxValue = 999;
@@ -33,9 +32,6 @@ export default class Catalog extends Container {
         this.afterRender = () => {
         	super.afterRender();
 
-	        debugger;
-
-	        // Does not work because the self elements isn't exist at this point yet, this.afterRender does not handle its job.
 	        this.elements = {
                 pagination: {
                     self: $('#pagination'),

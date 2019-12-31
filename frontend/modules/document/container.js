@@ -1,16 +1,21 @@
-import Component from './component';
+import BaseElement from './base-element.js';
 
-export class Container extends Component {
+export class Container extends BaseElement {
+
+	constructor( parent, context, options ) {
+		super( parent, context, options );
+
+	}
+
     initialize() {
-        this.events = {
-            onRender: () => {},
-        }
+	    this.events = {
+		    onRender: () => {},
+	    }
 
         super.initialize();
     }
 
     afterRender() {
-    	//debugger;
         super.afterRender();
 
         if ( this.events && this.events.onRender ) {
@@ -18,24 +23,34 @@ export class Container extends Component {
         }
     }
 
-    set( child ) {
-        this.child = child;
-    }
+	/**
+	 *
+	 * @param {Container} child
+	 */
+	set( child ) {
+    	if ( ! ( child instanceof Container ) ) {
+    	    throw new Error();
+	    }
+
+		this.child = child;
+
+	}
 
 	render() {
 		this.beforeRender();
 
 		super.render( true );
 
+		// Re-render of child does not work...
 		if ( this.child ) {
 			this.child.render();
 		}
 
-		//debugger;
-
 		this.afterRender();
+
 		super.afterRender();
 	}
+
     /**
      * Function on() : Declare event callback
      *

@@ -7,10 +7,7 @@
 import Logger from './logger.js';
 import Services from '../services/services.js';
 
-import Container from '../../dev/modules/container.js';
-import Context from '../../dev/modules/context.js';
-import BaseElement from '../../dev/modules/base-element.js';
-
+import Container from 'MODULES/document/container.js';
 
 export default class Page extends Container {
     initialize() {
@@ -18,6 +15,8 @@ export default class Page extends Container {
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
         this.logger.startWith(this.constructor.name);
+
+        super.initialize();
     }
 
     render() {

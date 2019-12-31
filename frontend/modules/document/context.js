@@ -1,4 +1,4 @@
-import HTML from '../library/html';
+import HTML from 'DEV-LIBRARY/html';
 
 export class Context
 {
@@ -28,4 +28,4 @@ export class Context
     }
 }
 
-export default  Context;
+export default Context;
