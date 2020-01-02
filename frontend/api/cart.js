@@ -3,10 +3,10 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 
-import { Http } from './api.js';
+import { Http } from 'API';
 
-import Modules from '../modules';
-import Services from '../services/services.js';
+import Modules from 'MODULES';
+import Services from 'SERVICES';
 
 export default class Cart {
 

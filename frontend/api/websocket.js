@@ -4,8 +4,8 @@
  * @description:
  */
 
-import Modules from '../modules/';
-import Services from '../services/services.js';
+import Modules from 'MODULES';
+import Services from 'SERVICES';
 
 /**
  * @typedef {"open" | "message" | "close" | "error"} API_Websocket_Events

@@ -5,7 +5,7 @@
  */
 
 import Modules from 'MODULES';
-import Components from 'COMPONENTS/components';
+import Components from 'COMPONENTS';
 import BaseElement from 'MODULES/document/base-element';
 
 export default class Catalog extends Modules.Page {

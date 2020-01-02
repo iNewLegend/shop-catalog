@@ -11,7 +11,11 @@ export class Context
         this.context = context;
     }
 
-    create() {
+	/**
+	 *
+	 * @returns {Node}
+	 */
+	create() {
         this.beforeCreate();
 
         this.node = HTML.toNode( this.context );

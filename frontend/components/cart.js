@@ -4,9 +4,9 @@
  * @description: Manages cart
  */
 
-import API from '../api/api.js';
+import API from 'API';
 import Modules from 'MODULES';
-import Services from '../services/services.js';
+import Services from 'SERVICES';
 
 export default class Cart {
     static openCartOnUpdate = true;

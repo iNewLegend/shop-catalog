@@ -5,8 +5,7 @@
  */
 
 import Logger from './logger.js';
-import Services from '../services/services.js';
-
+import Services from 'SERVICES';
 import Container from 'MODULES/document/container.js';
 
 export default class Page extends Container {
@@ -17,106 +16,5 @@ export default class Page extends Container {
         this.logger.startWith(this.constructor.name);
 
         super.initialize();
-    }
-
-    render() {
-        super.render();
-
-        // const markup = this._render(),
-        //     context = new Context( markup ),
-        //     element = new BaseElement( this.element, context );
-		//
-        // this.page = { context, markup, element };
-
-        //this.page.element.render();
-    }
-}
-
-class OldPage {
-    /**
-     * @type Logger
-     */
-    logger = null;
-
-    /**
-     * @type Element
-     */
-    dom = null;
-
-    /**
-     * Function constructor() : Create page module
-     */
-    constructor() {
-        // not good.
-        this.logger = new Logger(`Modules.Page`, true);
-        this.logger.setOutputHandler(Services.Terminal.onOutput);
-
-        this.logger.startWith(this.constructor.name);
-
-        this.dom = document.createElement('div');
-
-        this.events = {
-            onReady: (pageModule) => { },
-        }
-    }
-
-    /**
-     * Function onReady() : Called when this.dom is ready
-     */
-    onReady() {
-        this.logger.startWith(this.constructor.name);
-
-        this.events.onReady();
-
-        if (this._onReady) {
-            this._onReady();
-        }
-    }
-
-    /**
-     * function ready() : Set ready callback
-     *
-     * @param {{function()}} callback
-     */
-    ready(callback) {
-        this.logger.startWith({ callback });
-
-        this.events.onReady = callback;
-    }
-
-    /**
-     * Function createElement() : Create and render element.
-     */
-    createElement() {
-        if (this._render) {
-            this.dom = $(this.render());
-
-            return this.dom;
-        }
-
-        return null;
-    }
-
-    /**
-     * Function destroyElement() : Destroy the element.
-     */
-    destroyElement() {
-        if (this.dom) {
-            this.dom.remove();
-        }
-    }
-
-    /**
-     * Render the element.
-     */
-    render() {
-        const element = $(this._render());
-
-        element.ready(this.onReady.bind(this))
-
-        return $(`
-            <div class="page">
-            </div>
-        `).append(element);
     }
 }

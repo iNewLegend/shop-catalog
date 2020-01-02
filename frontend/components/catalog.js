@@ -4,23 +4,23 @@
  * @description: Manages catalog
  */
 
+import Services from 'SERVICES';
 import Modules from 'MODULES';
-import Services from '../services/services.js';
 import Container from 'MODULES/document/container.js';
 
 export default class Catalog extends Container {
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
-    constructor( parent, context, args ) {
-    	super( parent, context, args );
+    constructor( parent, context, options ) {
+    	super( parent, context, options );
 
         this.logger = new Modules.Logger(`Components.${this.constructor.name}`, true);
         this.logger.setOutputHandler(Services.Terminal.onOutput);
 
-        this.logger.startWith( { parent, context, args } );
+        this.logger.startWith( { parent, context, options } );
 
-        this.apiCatalog = args.api;
+        this.apiCatalog = options.api;
 
         this.page = 0;
 

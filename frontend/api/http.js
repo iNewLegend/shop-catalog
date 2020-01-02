@@ -5,7 +5,7 @@
  */
 
 import Modules from 'MODULES';
-import Services from '../services/services.js';
+import Services from 'SERVICES';
 
 export default class Http {
     /**

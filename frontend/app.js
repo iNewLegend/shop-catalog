@@ -3,14 +3,13 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
-import "@babel/polyfill";
+import "@babel/polyfill"
 
-import API from './api/api.js';
+import API from 'API';
 import Modules from 'MODULES';
-import Services from './services/services.js';
-import Components from './components/components.js';
-import Pages from './pages/pages.js';
-
+import Services from 'SERVICES';
+import Components from 'COMPONENTS';
+import Pages from 'PAGES';
 
 import * as DocumentModules from './modules/document/index.js'
 
@@ -56,16 +55,17 @@ class App {
             }
         }
 
-        this.container = new DocumentModules.Container(this.elements.sections.main, '<div class="page container"></div>');
+	    this.container = new DocumentModules.Container(this.elements.sections.main, '<div class="page container"></div>');
 
-        this.container.on('render', this._onContainerRender.bind(this));
-
-        this.pages = {
-            catalog: new Pages.Catalog( this.container, '<div class="_Pages.Catalog"></div>', {
-                api: this.apis.catalog,
-            } ),
-            checkout: new Pages.Checkout( this.container, '<div class="_Pages.Checkout"><h1>Check OUT.</h1></div>')
-        }
+	    this.pages = {
+		    catalog: new Pages.Catalog( this.container, '<div class="pages catalog"></div>', {
+			    api: this.apis.catalog,
+		    } ),
+		    checkout: new Pages.Checkout( this.container, '<div class="pages checkout">' +
+			    '   <h1>Check OUT.</h1>' +
+			    '</div>'
+		    ),
+	    }
     }
 
     /**
@@ -76,19 +76,21 @@ class App {
 
         const { header, overlay, sidebar } = this.elements;
 
+	    this.container.on('render', this._onContainerRender.bind(this));
+
         overlay.click(() => this.sidebarToggle(false));
 
         header.toggle.click(() => this.sidebarToggle(true));
 
         header.logo.click(() => {
+        	// TODO: Handle with view, when container will be view, then you will have extend page-container view, and extend it like this page-container.set( page ) // auto render.
 	        this.container.set(this.pages.catalog)
 	        this.container.render();
         });
 
         sidebar.closeButton.click(() => this.sidebarToggle(false));
 
-        this.container.set(this.pages.catalog);
-
+	    this.container.set(this.pages.catalog);
         this.container.render();
     }
 
