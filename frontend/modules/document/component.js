@@ -1,4 +1,4 @@
-import Container from './container';
+import Container from './container.js';
 
 export class Component extends Container {
     initialize() {

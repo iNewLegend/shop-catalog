@@ -1,4 +1,4 @@
-import HTML from 'DEV-LIBRARY/html';
+import HTML from '../../library/html.js';
 
 export class Context
 {
