@@ -15,6 +15,24 @@ class CatalogPage extends Page {
 }
 
 
+class Item extends DocumentModules.View {
+	template() {
+		return '' +
+			'<div class"item">' +
+				'<h1 onClick="this.onItemClick()">Item</h1>' +
+			'</div'
+		;
+	}
+
+	onItemClick() {
+		alert('on item heading click');
+	}
+
+	onClick = () => {
+		alert('Hello from item view');
+	 }
+}
+
 
 class App {
     initialize() {
@@ -32,13 +50,15 @@ class App {
 
         this.app.render();
 
+	    this.pageContainer.set( this.homePage );
         this.pageContainer.render();
-
-        this.pageContainer.set( this.homePage );
     }
 
 	onPageContainerRender() {
     	console.log( 'onPageContainerRender' );
+
+    	const item = new Item( this.homePage );
+    	item.render();
 	}
 
 }

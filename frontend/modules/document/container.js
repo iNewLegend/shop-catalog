@@ -38,16 +38,17 @@ export class Container extends BaseElement {
 
 	render() {
 		this.beforeRender();
+		super.beforeRender();
 
+		// Self Re-render.
 		super.render( true );
 
-		// Re-render of child does not work...
+		// Re-render of child.
 		if ( this.child ) {
 			this.child.render();
 		}
 
 		this.afterRender();
-
 		super.afterRender();
 	}
 

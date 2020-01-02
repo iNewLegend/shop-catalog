@@ -5,4 +5,4 @@ export { Context } from './context.js';
 export { Factory } from './factory.js';
 
 // TODO model
-// TODO view
+export { View } from './view.js';
