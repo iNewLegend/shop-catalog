@@ -6,13 +6,10 @@
 
 import Logger from './logger.js';
 import Page from './page.js';
+import Component from './component.js';
 
-const Modules = {
-	Logger,
-	Page,
-};
-
-
-export default Modules;
-
-export { Logger, Page };
+export default {
+    Page,
+    Logger,
+    Component,
+}

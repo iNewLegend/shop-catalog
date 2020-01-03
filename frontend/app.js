@@ -5,13 +5,13 @@
  */
 import "@babel/polyfill"
 
+import * as Core from 'CORE'
 import API from 'API';
 import Modules from 'MODULES';
 import Services from 'SERVICES';
 import Components from 'COMPONENTS';
 import Pages from 'PAGES';
 
-import * as DocumentModules from './modules/document/index.js'
 
 class App {
     /**
@@ -35,8 +35,8 @@ class App {
 
         this.elements = {
             header: {
-                logo: DocumentModules.Factory.createComponent('header #logo'),
-                toggle: DocumentModules.Factory.createComponent( 'header #toggle'),
+                logo: Core.Factory.createComponent('header #logo'),
+                toggle: Core.Factory.createComponent( 'header #toggle'),
 
                 cart: $('header #toggle .cart'),
                 amount: $('header #toggle .amount'),
@@ -55,7 +55,7 @@ class App {
             }
         }
 
-	    this.container = new DocumentModules.Container(this.elements.sections.main, '<div class="page container"></div>');
+	    this.container = new Core.Container(this.elements.sections.main, '<div class="page container"></div>');
 
 	    this.pages = {
 		    catalog: new Pages.Catalog( this.container, '<div class="pages catalog"></div>', {

@@ -1,6 +1,6 @@
 import Context from './context.js';
 
-export class BaseElement {
+export class Base {
 	/**
 	 * @type {HTMLElement}
 	 */
@@ -9,7 +9,7 @@ export class BaseElement {
     /**
      * Function constructor() : Create Custom Element.
      *
-     * @param {Node|HTMLElement|BaseElement} parent
+     * @param {Node|HTMLElement|Base} parent
      * @param {String|HTMLElement|Context} context
      * @param {{}} options
      */
@@ -45,7 +45,7 @@ export class BaseElement {
 
         let parent = this.parent;
 
-	    if ( parent instanceof BaseElement ) {
+	    if ( parent instanceof Base ) {
 		    parent = this.parent.element;
 	    }
 
@@ -78,4 +78,4 @@ export class BaseElement {
     afterRender() {}
 }
 
-export default BaseElement;
+export default Base;

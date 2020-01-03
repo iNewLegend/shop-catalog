@@ -4,13 +4,13 @@ export class Factory {
 	static createElement( selector ) {
 		selector = document.querySelector( selector );
 
-		return new Modules.BaseElement( selector.parentElement, selector );
+		return new Modules.Base( selector.parentElement, selector );
 	}
 
 	static createComponent( selector ) {
 		selector = document.querySelector( selector );
 
-		return new Modules.Component( selector.parentElement, selector );
+		return new Modules.Element( selector.parentElement, selector );
 	}
 }
 

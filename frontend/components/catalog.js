@@ -6,7 +6,7 @@
 
 import Services from 'SERVICES';
 import Modules from 'MODULES';
-import Container from 'MODULES/document/container.js';
+import Container from 'CORE/container.js';
 
 export default class Catalog extends Container {
     static amountMaxValue = 999;

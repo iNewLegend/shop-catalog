@@ -6,10 +6,10 @@
 
 namespace Config;
 
-class Database 
+class Database
 {
     const HOST      = 'localhost';
     const NAME      = 'market';
-    const USERNAME  = 'root';
-    const PASSWORD  = '';
+    const USERNAME  = 'admin';
+    const PASSWORD  = 'mysql';
 }

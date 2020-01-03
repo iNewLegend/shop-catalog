@@ -5,8 +5,8 @@
  */
 
 import Logger from './logger.js';
+import Container from 'CORE/container.js';
 import Services from 'SERVICES';
-import Container from 'MODULES/document/container.js';
 
 export default class Page extends Container {
     initialize() {

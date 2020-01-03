@@ -1,6 +1,6 @@
 import Container from './container.js';
 
-export class Component extends Container {
+export class Element extends Container {
     initialize() {
         this.beforeInit();
 
@@ -76,4 +76,4 @@ export class Component extends Container {
     }
 }
 
-export default Component;
+export default Element;

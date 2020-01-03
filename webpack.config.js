@@ -5,10 +5,11 @@ module.exports = {
 	devtool: 'inline-source-map',
 	watch: true,
 	entry: {
-        app: './frontend/app.js'
+        app: './frontend/app.js',
+        mvc: './dev/mvc/index.js'
     },
     output: {
-        filename: 'app.bundle.js',
+        filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'frontend/dist')
     },
     module: {
@@ -31,6 +32,7 @@ module.exports = {
 		alias: {
 			'API': path.resolve(__dirname, 'frontend/api'),
 			'COMPONENTS': path.resolve(__dirname, 'frontend/components'),
+            'CORE': path.resolve(__dirname, 'frontend/core'),
 			'LIBRARY': path.resolve(__dirname, 'frontend/library'),
 			'MODULES': path.resolve(__dirname, 'frontend/modules'),
 			'PAGES': path.resolve(__dirname, 'frontend/pages'),

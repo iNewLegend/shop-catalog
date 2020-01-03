@@ -6,7 +6,7 @@
 
 import Modules from 'MODULES';
 import Components from 'COMPONENTS';
-import BaseElement from 'MODULES/document/base-element';
+import Base from 'CORE/base';
 
 export default class Catalog extends Modules.Page {
 
@@ -43,7 +43,7 @@ export default class Catalog extends Modules.Page {
             <div class="home container" style="max-width: 1080px;">
                 ${this.catalog._render()}
             </div>
-        `), element = new BaseElement( this, markup );
+        `), element = new Base( this, markup );
 
 
         element.render();

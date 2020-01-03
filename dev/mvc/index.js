@@ -1,10 +1,11 @@
-import * as DocumentModules from '../../frontend/modules/document/index.js';
+import * as Core from '../../frontend/core/index.js';
+import Modules from '../../frontend/modules/index.js';
 
-class PageContainer extends DocumentModules.Container {
+class PageContainer extends Core.Container {
 
 }
 
-class Page extends DocumentModules.Container {
+class Page extends Core.Container {
 
 }
 
@@ -15,7 +16,7 @@ class CatalogPage extends Page {
 }
 
 
-class Item extends DocumentModules.View {
+class Item extends Modules.Component {
 	template() {
 		return '' +
 			'<div class"item">' +
@@ -25,7 +26,7 @@ class Item extends DocumentModules.View {
 		;
 	}
 
-	onInputChanged( event ) {
+	onInputChanged( event ) { // controller
 	    debugger;
     }
 
@@ -45,7 +46,7 @@ class App {
             root: document.getElementById('root'),
         };
 
-        this.app = new DocumentModules.Component(this.elements.root, `<div class="app">App</div>`);
+        this.app = new Core.Element(this.elements.root, `<div class="app">App</div>`);
 
         this.pageContainer = new PageContainer( this.app, '<div class="page">Page Container</div>' );
 
