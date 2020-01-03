@@ -20,16 +20,21 @@ class Item extends DocumentModules.View {
 		return '' +
 			'<div class"item">' +
 				'<h1 onClick="this.onItemClick()">Item</h1>' +
+                '<input type="text" onchange="this.onInputChanged( event )">' +
 			'</div'
 		;
 	}
+
+	onInputChanged( event ) {
+	    debugger;
+    }
 
 	onItemClick() {
 		alert('on item heading click');
 	}
 
 	onClick = () => {
-		alert('Hello from item view');
+		alert('Hello from item class view');
 	 }
 }
 

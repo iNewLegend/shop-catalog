@@ -44,9 +44,17 @@ export class Component extends Container {
         } );
 
         // Attach All `this.context` elements events to `from` component.
-        const Nodes = [this.context.node, ...this.context.node.childNodes];
+        let nodes = [];
 
-        Nodes.forEach( ( node ) => {
+        if ( this.context.node ) {
+            nodes  = [ this.context.node ];
+        }
+
+        if ( nodes.length > 0 && this.context.node.childNodes ) {
+            nodes = [ nodes, ... this.context.node.childNodes ];
+        }
+
+        nodes.forEach( ( node ) => {
             // Now u need loop all over on shit :)
             for ( let i in node ) {
                 if ( i.startsWith( 'on' ) && node[ i ] ) {
@@ -55,6 +63,7 @@ export class Component extends Container {
 
                     funcContent = funcContent.replace( 'this', 'from' );
                     funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
+                    funcContent = funcContent.replace( '()', '( ... arguments)');
 
                     node[ i ] = () => eval( funcContent );
                 }
