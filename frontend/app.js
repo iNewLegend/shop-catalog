@@ -35,17 +35,17 @@ class App {
 
         this.elements = {
             header: {
-                logo: Core.Factory.createComponent('header #logo'),
-                toggle: Core.Factory.createComponent( 'header #toggle'),
+                logo: Core.Factory.createElement('header #logo'),
+                toggle: Core.Factory.createElement( 'header #toggle'),
 
-                cart: $('header #toggle .cart'),
-                amount: $('header #toggle .amount'),
-                spinner: $('header #toggle .spinner')
+                cart: Core.Factory.createElement('header #toggle .cart'),
+                amount: Core.Factory.createElement('header #toggle .amount'),
+                spinner: Core.Factory.createElement('header #toggle .spinner')
             },
 
             sidebar: {
-                self: $('#sidebar'),
-                closeButton: $('#sidebar #close'),
+                self: Core.Factory.createElement('#sidebar'), // Self should not be exist, if you use self, it should be component.
+                closeButton: Core.Factory.createElement('#sidebar #close'),
             },
 
             overlay: $('#overlay'),
@@ -114,7 +114,9 @@ class App {
                 this.cart.on('emptyState', this._onCartEmptyState.bind(this));
                 this.cart.on('checkout', this._onCartCheckout.bind(this));
 
-                this.cart.render(this.elements.sidebar.self[0]);
+                // TODO: should use 'this.elements.sidebar.self' instead of 'this.elements.sidebar.self.element'
+                // TODO: FIX ASAP.
+                this.cart.render(this.elements.sidebar.self.element);
             }
         }
     }

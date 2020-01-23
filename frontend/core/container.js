@@ -1,7 +1,6 @@
 import Base from './base.js';
 
 export class Container extends Base {
-
 	constructor( parent, context, options ) {
 		super( parent, context, options );
 

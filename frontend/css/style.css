@@ -182,7 +182,6 @@ header #toggle {
     float: right;
 }
 
-
 header #toggle img {
     width: 35px;
     height: 35px;
@@ -190,7 +189,6 @@ header #toggle img {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    display: none;
 }
 
 header #toggle .spinner {
@@ -201,7 +199,6 @@ header #toggle .spinner {
 }
 
 header #toggle .amount {
-    display: none;
     position: relative;
     bottom: 8px;
     font-size: 13px;
@@ -264,7 +261,6 @@ header #toggle .amount {
     color: white;
     font-size: 30px;
     border: 0px solid black;
-    display: none;
 }
 
 #sidebar .cart .checkout:hover {

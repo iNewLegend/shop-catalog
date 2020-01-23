@@ -276,11 +276,12 @@ export default class Catalog extends Container {
      * @param {Element} parent
      */
     _render(parent) {
+        // TODO: spinner and pagination should be components.
         const markup = (`
             <div id="catalog" class="row">
                 <div class="spinner" style="border-top-color: lightskyblue"></div>
             </div>
-
+            
             <div id="pagination" class="pagination" style="display: none">
                 <div class="pagination">
                     <a class="prev" href="#">&laquo;</a>
