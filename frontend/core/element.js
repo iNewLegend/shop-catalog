@@ -30,7 +30,7 @@ export class Element extends Container {
             case 'onClick': {
                 this.element.addEventListener( 'click', callback );
             }
-                break;
+            break;
         }
     }
 
@@ -73,6 +73,26 @@ export class Element extends Container {
 
     click( callback ) {
         this.attachListener( 'onClick', callback );
+    }
+
+    show() {
+        this.element.classList.remove( 'hidden')
+    }
+
+    hide() {
+        this.element.classList.add( 'hidden')
+    }
+
+    html( content ) {
+        this.element.innerHTML = content.toString();
+    }
+
+    addClass( className ) {
+        this.element.classList.add( className );
+    }
+
+    removeClass( className ) {
+        this.element.classList.remove( className );
     }
 }
 
