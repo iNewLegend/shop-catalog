@@ -1,6 +1,15 @@
-import Context from './context.js';
+import Context from '../context.js';
 
 export class Base {
+    static getNamespace() {
+        return 'Core/Element'
+    }
+
+    static getName() {
+        return 'Core/Element/Base';
+    }
+
+
 	/**
 	 * @type {HTMLElement}
 	 */

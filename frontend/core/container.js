@@ -1,6 +1,6 @@
-import Base from './base.js';
+import ElementBase from './element/base.js';
 
-export class Container extends Base {
+export class Container extends ElementBase {
 	constructor( parent, context, options ) {
 		super( parent, context, options );
 
