@@ -43,6 +43,8 @@ No hosting at the moment
 
 # frontend:
 ```
+cd frontend
+npm install
 npm run watch
 ```
 
