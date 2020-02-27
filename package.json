@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "webpack": "webpack",
-    "start": "http-server"
+    "watch": "webpack --watch --watchContentBase"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -12,6 +11,6 @@
     "webpack-cli": "^3.3.4"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.4"
+    "@babel/polyfill": "^7.7.0"
   }
 }
