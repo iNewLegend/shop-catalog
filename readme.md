@@ -41,20 +41,20 @@ Editor: PhpStrom
 ### Live
 No hosting at the moment
 
-# frontend:
+# install:
 ```
-cd frontend
+git clone https://github.com/iNewLegend/shop-catalog.git
+cd shop-catalog/frontend
 npm install
 npm run watch
 ```
 
-# backend:
-
-## to start the backend
+Another session
 ```
-mysql <your mysql info>
+cd shop-catalog
+mysql <your mysql auth>
 mysql> create database market
-$ mysql -u <your user> market < market.sql
+$ mysql -u <your user> market < database.sql
 $ nano api/config/database.php
 $ php -S localhost:8080
 ````
