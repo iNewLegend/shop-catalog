@@ -12,9 +12,16 @@
   - ES6
   - Babel
   - Webpack
+  
+## Goals
+  - Remove jQuery.
+  - Modular
+  - Well structured
+  - Apply MVC.
 
 # Code
-Editor: vscode
+Editor: PhpStrom
+
 ## Rules:
 ### Code Access
 | Type | Modules | Services | Library
@@ -32,28 +39,22 @@ Editor: vscode
 ![alt text](https://i.ibb.co/kHsq0dq/image.png)
 
 ### Live
-http://138.201.155.5/leo123/shop-catalog/
+No hosting at the moment
 
 # frontend:
-### es6 plain js: index.html (no extrernal libraries or frameworks except jQuery)
-### babel with webpack: index_babel.html
+```
+npm run watch
+```
 
 # backend:
-### folder: api
 
 ## to start the backend
 ```
 mysql <your mysql info>
 mysql> create database market
 $ mysql -u <your user> market < market.sql
-$ vim api/config/database.php
+$ nano api/config/database.php
 $ php -S localhost:8080
 ````
-## es6 http://localhost:8080/
-## babel http://localhost:8080/babel-index.html
+## http://localhost:8080/frontend/
 
-## build for babel with the command 
-````
-$ npm install
-$ npm run webpack
-````
