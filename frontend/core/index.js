@@ -1,10 +1,13 @@
-import {View} from './view.js';
-import { Element } from './element.js';
+// TODO: Later re-order by abc.
 
-export { Base } from './base.js';
+export { default as ElementBase } from './element/base.js';
 export { Container } from './container.js';
 export { Context } from './context.js';
 export { Factory } from './factory.js';
+
+import { View } from './view.js';
+import { Element } from './element.js';
+
 
 // TODO model
 export {
