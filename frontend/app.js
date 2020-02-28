@@ -76,7 +76,7 @@ class App {
 
         const { header, overlay, sidebar } = this.elements;
 
-	    this.container.on('render', this._onContainerRender.bind(this));
+	    this.container.on('render:after', this._onContainerRender.bind(this));
 
         overlay.click(() => this.sidebarToggle(false));
 
@@ -102,11 +102,11 @@ class App {
     _onContainerRender(pageModule) {
         this.logger.startWith({ pageModule: pageModule.constructor.name });
 
-        if (pageModule instanceof Pages.Catalog) {
+        if ( pageModule instanceof Pages.Catalog ) {
             this.pages.catalog.on('productAdd', this._onCatalogProductAdd.bind(this));
 
-            if (! this.cart) {
-                this.cart = new Components.Cart(this.apis.cart, this.apis.catalog);
+            if ( ! this.cart) {
+                this.cart = new Components.Cart( this.apis.cart, this.apis.catalog );
 
                 this.cart.on('get', this._onCartGet.bind(this));
                 this.cart.on('received', this._onCartReceived.bind(this));
@@ -180,7 +180,7 @@ class App {
 
         this.container.set(this.pages.checkout);
 
-        this.pages.checkout.on( 'render', () => {
+        this.pages.checkout.on( 'render:after', () => {
         	console.log( 'onCartCheckout this.page.checkout rendered');
         } );
 
