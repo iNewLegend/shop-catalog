@@ -1,6 +1,13 @@
 import ElementBase from './element/base.js';
 
 export class Container extends ElementBase {
+    static getNamespace() {
+        return 'Core'
+    }
+
+    static getName() {
+        return 'Core/Element';
+    }
 
     initialize() {
 	    this.events = {

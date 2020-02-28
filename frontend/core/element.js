@@ -1,6 +1,14 @@
 import Container from './container.js';
 
 export class Element extends Container {
+    static getNamespace() {
+        return 'Core'
+    }
+
+    static getName() {
+        return 'Core/Container';
+    }
+
     initialize() {
         this.beforeInit();
 

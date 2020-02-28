@@ -10,6 +10,14 @@ export class Context {
         this.context = context;
     }
 
+    static getNamespace() {
+        return 'Core'
+    }
+
+    static getName() {
+        return 'Core/Context';
+    }
+
 	/**
 	 *
 	 * @returns {Node}
