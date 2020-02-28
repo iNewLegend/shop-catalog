@@ -29,6 +29,14 @@ export default class Logger {
         }
     }
 
+    static getNamespace() {
+        return 'Modules'
+    }
+
+    static getName() {
+        return 'Modules/Logger';
+    }
+
     get name() {
         return this._name;
     }

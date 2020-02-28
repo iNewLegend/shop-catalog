@@ -1,5 +1,6 @@
-import Core from 'CORE';
+import core from 'CORE';
 
+// TODO: Add file signature and use of logger.
 export class Component {
     /**
      *
@@ -13,7 +14,7 @@ export class Component {
         if ( arguments.length === 1 ) {
             model, view, controller = this;
 
-            view = new Core.View( parent, {
+            view = new core.View( parent, {
                 template: this[ 'template' ],
             } );
         } else if ( arguments.length < 4 ) {
@@ -28,10 +29,18 @@ export class Component {
         this.initialize( this.options );
     }
 
+    static getNamespace() {
+        return 'Modules'
+    }
+
+    static getName() {
+        return 'Modules/Component';
+    }
+
     initialize( options ) {
         // Attach listeners of view.element to the controller.
         this.view.element.attachListeners = () => {
-            return Core.Element.prototype.attachListeners.call( this.view.element, this.controller );
+            return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
         }
     }
 
