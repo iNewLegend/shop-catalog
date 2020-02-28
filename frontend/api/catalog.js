@@ -16,11 +16,11 @@ export default class Catalog {
      * @param {Http} api
      */
 
-    constructor(http) {
-        this.logger = new Modules.Logger('API.' + this.constructor.name, true);
-        this.logger.setOutputHandler(Services.Terminal.onOutput);
+    constructor( http ) {
+        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger.setOutputHandler( Services.Terminal.onOutput );
 
-        this.logger.startWith({ http });
+        this.logger.startWith( { http } );
 
         this.http = http;
 
@@ -33,16 +33,16 @@ export default class Catalog {
      * @param {{function()}} callback
      * @param {number} page
      */
-    get(callback, page = 0) {
-        this.logger.startWith({ callback, page });
+    get( callback, page = 0 ) {
+        this.logger.startWith( { callback, page } );
 
-        this.http.get(`catalog/index/${page}`).then(data => {
-            if (!data.error) {
+        this.http.get( `catalog/index/${page}` ).then( data => {
+            if ( !data.error ) {
                 this.catalog = data.result;
             }
 
-            callback(data)
-        });
+            callback( data )
+        } );
     }
 
     /**
@@ -51,16 +51,16 @@ export default class Catalog {
      * @param {{function()}} callback
      * @param {number[]} ids
      */
-    getByIds(callback, ids) {
-        this.logger.startWith({ callback, ids });
+    getByIds( callback, ids ) {
+        this.logger.startWith( { callback, ids } );
 
         // on empty, fake empty callback.
-        if (ids.length <= 0) {
-            callback([]);
+        if ( ids.length <= 0 ) {
+            callback( [] );
         } else {
-            this.http.get(`catalog/get/${ids}`).then(data => {
-                callback(data)
-            });
+            this.http.get( `catalog/get/${ids}` ).then( data => {
+                callback( data )
+            } );
         }
     }
 
@@ -70,14 +70,14 @@ export default class Catalog {
      * @param {number} id
      * @return {{}|null}
      */
-    getLocalProductById(id) {
-        this.logger.startWith({ id });
+    getLocalProductById( id ) {
+        this.logger.startWith( { id } );
 
-        for (let i in this.catalog) {
-            if (this.catalog[i].id == id) {
+        for ( let i in this.catalog ) {
+            if ( this.catalog[ i ].id == id ) {
                 let tmp = {};
                 // return copy since this, catalog may be not writeable.
-                Object.assign(tmp, this.catalog[i]);
+                Object.assign( tmp, this.catalog[ i ] );
 
                 return tmp;
             }

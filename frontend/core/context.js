@@ -1,7 +1,6 @@
 import HTML from '../library/html.js';
 
-export class Context
-{
+export class Context {
     /**
      * @type {Node}
      */

@@ -30,7 +30,7 @@ export class Element extends Container {
             case 'onClick': {
                 this.element.addEventListener( 'click', callback );
             }
-            break;
+                break;
         }
     }
 
@@ -47,11 +47,11 @@ export class Element extends Container {
         let nodes = [];
 
         if ( this.context.node ) {
-            nodes  = [ this.context.node ];
+            nodes = [this.context.node];
         }
 
         if ( nodes.length > 0 && this.context.node.childNodes ) {
-            nodes = [ nodes, ... this.context.node.childNodes ];
+            nodes = [nodes, ...this.context.node.childNodes];
         }
 
         nodes.forEach( ( node ) => {
@@ -63,7 +63,7 @@ export class Element extends Container {
 
                     funcContent = funcContent.replace( 'this', 'from' );
                     funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
-                    funcContent = funcContent.replace( '()', '( ... arguments)');
+                    funcContent = funcContent.replace( '()', '( ... arguments)' );
 
                     node[ i ] = () => eval( funcContent );
                 }
@@ -76,11 +76,11 @@ export class Element extends Container {
     }
 
     show() {
-        this.element.classList.remove( 'hidden')
+        this.element.classList.remove( 'hidden' )
     }
 
     hide() {
-        this.element.classList.add( 'hidden')
+        this.element.classList.add( 'hidden' )
     }
 
     html( content ) {

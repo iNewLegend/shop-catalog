@@ -19,28 +19,28 @@ export default class Terminal {
         state: false,
         capturePosY: 0,
         captureHeight: 0,
-    }
+    };
 
     /**
      * Function constructor() : Create Terminal
      */
     constructor() {
-        if (Terminal.instance == null) {
+        if ( Terminal.instance == null ) {
 
-            this.logger = new Modules.Logger(`Services.${this.constructor.name}`, true);
+            this.logger = new Modules.Logger( `Services.${this.constructor.name}`, true );
             this.logger.startEmpty();
 
             this.localStorage = window.localStorage;
 
             this.elements = {
-                body: $('body'),
+                body: $( 'body' ),
 
                 terminal: {
-                    self: $('#terminal'),
+                    self: $( '#terminal' ),
 
                     buttons: {
-                        resize: $('#terminal button.resize'),
-                        close: $('#terminal button.close'),
+                        resize: $( '#terminal button.resize' ),
+                        close: $( '#terminal button.close' ),
                     },
                 }
             };
@@ -61,28 +61,28 @@ export default class Terminal {
         const { buttons } = terminal;
 
         // add .GetSelector to jQuery
-        JQuery.addGetSelector($);
+        JQuery.addGetSelector( $ );
 
-        body.keydown(this._onKeyDown.bind(this));
-        body.mousemove(this._onMouseMove.bind(this));
-        body.mouseup(this._onMouseUp.bind(this));
+        body.keydown( this._onKeyDown.bind( this ) );
+        body.mousemove( this._onMouseMove.bind( this ) );
+        body.mouseup( this._onMouseUp.bind( this ) );
 
-        terminal.self.scroll(this._onTerminalScroll.bind(this));
+        terminal.self.scroll( this._onTerminalScroll.bind( this ) );
 
         // terminal buttons
-        buttons.resize.mousedown(this._onTerminalReiszeMouseDown.bind(this));
-        buttons.resize.mouseup(this._onTerminalReiszeMouseUp.bind(this));
+        buttons.resize.mousedown( this._onTerminalReiszeMouseDown.bind( this ) );
+        buttons.resize.mouseup( this._onTerminalReiszeMouseUp.bind( this ) );
 
-        buttons.close.click(this._onTerminalCloseClick.bind(this));
+        buttons.close.click( this._onTerminalCloseClick.bind( this ) );
 
-        const storageHeight = this._stroage('height');
+        const storageHeight = this._stroage( 'height' );
 
-        if (storageHeight) {
-            terminal.self.css('height', storageHeight);
+        if ( storageHeight ) {
+            terminal.self.css( 'height', storageHeight );
         }
 
         // null on first time open
-        if (this._stroage('active') === null | this._stroage('active') === 'true') {
+        if ( this._stroage( 'active' ) === null | this._stroage( 'active' ) === 'true' ) {
             this.open();
         }
     }
@@ -92,11 +92,11 @@ export default class Terminal {
      *
      * @param {Event} e
      */
-    _onKeyDown(e) {
+    _onKeyDown( e ) {
         //this.logger.startWith({ e });
 
         // tilda
-        if (e.which === 192) {
+        if ( e.which === 192 ) {
             this.state ? this.close() : this.open();
         }
     }
@@ -106,29 +106,29 @@ export default class Terminal {
      *
      * @param {Event} e
      */
-    _onMouseMove(e) {
+    _onMouseMove( e ) {
         //this.logger.startWith({ e });
         //this.logger.object({ x: e.pageX, y: e.pageY });
 
-        if (this.resize.state) {
-            this.logger.object({ x: e.pageX, y: e.pageY });
+        if ( this.resize.state ) {
+            this.logger.object( { x: e.pageX, y: e.pageY } );
 
             const { self } = this.elements.terminal;
 
             let newHeight = this.resize.capturePosY - e.pageY + this.resize.captureHeight;
 
-            if (newHeight < 50) {
+            if ( newHeight < 50 ) {
                 newHeight = 50;
             }
 
-            self.css('height', newHeight);
+            self.css( 'height', newHeight );
 
             // set timeout here to save only if value stayed the same for (x) time
-            setTimeout(() => {
-                if (newHeight == parseInt(self.css('height'))) {
-                    this._stroage('height', newHeight);
+            setTimeout( () => {
+                if ( newHeight == parseInt( self.css( 'height' ) ) ) {
+                    this._stroage( 'height', newHeight );
                 }
-            }, 500);
+            }, 500 );
 
         }
     }
@@ -138,12 +138,11 @@ export default class Terminal {
      *
      * @param {Event} e
      */
-    _onMouseUp(e) {
+    _onMouseUp( e ) {
         //this.logger.startWith({ e });
 
-        this._onTerminalReiszeMouseUp(e);
+        this._onTerminalReiszeMouseUp( e );
     }
-
 
     /**
      * Function _onTerminalScroll() : called when scroll on $('#terminal')
@@ -152,9 +151,9 @@ export default class Terminal {
         //this.logger.startEmpty();
 
         const { self } = this.elements.terminal;
-        const pLastChild = $("#terminal p:last-child");
+        const pLastChild = $( "#terminal p:last-child" );
 
-        if (self.height() > pLastChild.position().top + 15) {
+        if ( self.height() > pLastChild.position().top + 15 ) {
             pLastChild.stop();
             pLastChild.fadeOut().fadeIn();
         }
@@ -165,15 +164,15 @@ export default class Terminal {
      *
      * @param {Event} e
      */
-    _onTerminalReiszeMouseDown(e) {
-        this.logger.startWith({ e });
-        this.logger.object({ x: e.pageX, y: e.pageY });
+    _onTerminalReiszeMouseDown( e ) {
+        this.logger.startWith( { e } );
+        this.logger.object( { x: e.pageX, y: e.pageY } );
 
         const { self } = this.elements.terminal;
 
         this.resize.state = true;
         this.resize.capturePosY = e.pageY;
-        this.resize.captureHeight = parseInt(self.css('height'));
+        this.resize.captureHeight = parseInt( self.css( 'height' ) );
     }
 
     /**
@@ -181,7 +180,7 @@ export default class Terminal {
      *
      * @param {Event} e
      */
-    _onTerminalReiszeMouseUp(e) {
+    _onTerminalReiszeMouseUp( e ) {
         //this.logger.startWith({ e });
 
         this.resize.state = false;
@@ -192,8 +191,8 @@ export default class Terminal {
      *
      * @param {Event} e
      */
-    _onTerminalCloseClick(e) {
-        this.logger.startWith({ e });
+    _onTerminalCloseClick( e ) {
+        this.logger.startWith( { e } );
 
         this.close();
     }
@@ -204,16 +203,16 @@ export default class Terminal {
      * @param {string} type
      * @param {any} val
      */
-    _stroage(type, val = null) {
-        this.logger.startWith({ type, val });
+    _stroage( type, val = null ) {
+        this.logger.startWith( { type, val } );
 
         const key = LOCAL_STORAGE_KEY + '/' + type;
 
-        if (val !== null) {
-            this.localStorage.setItem(key, val);
+        if ( val !== null ) {
+            this.localStorage.setItem( key, val );
         }
 
-        return this.localStorage.getItem(key);
+        return this.localStorage.getItem( key );
     }
 
     /**
@@ -224,9 +223,9 @@ export default class Terminal {
 
         const { terminal } = this.elements;
 
-        terminal.self.addClass('active');
+        terminal.self.addClass( 'active' );
 
-        this._stroage('active', 'true');
+        this._stroage( 'active', 'true' );
 
         this.state = true;
     }
@@ -239,9 +238,9 @@ export default class Terminal {
 
         const { terminal } = this.elements;
 
-        this._stroage('active', 'false');
+        this._stroage( 'active', 'false' );
 
-        terminal.self.removeClass('active');
+        terminal.self.removeClass( 'active' );
 
         this.state = false;
     }
@@ -253,7 +252,7 @@ export default class Terminal {
  * @param {*} output
  *
  */
-Terminal.onOutput = function (output) {
+Terminal.onOutput = function( output ) {
     const _this = Terminal.instance;
 
     let plain = false;
@@ -264,94 +263,94 @@ Terminal.onOutput = function (output) {
     let objectFlag, tildaFlag, quoteFlag, dbQuotesFlag, spanFlag, skipFlag = false;
     let spansCount = 0;
 
-    console.log.apply(this, arguments);
+    console.log.apply( this, arguments );
 
     // if jQuery element
-    if (output instanceof jQuery) {
+    if ( output instanceof jQuery ) {
         output = `[jQuery Element]: '${output.getSelector()}'`;
-    } else if (typeof output == 'object') {
+    } else if ( typeof output == 'object' ) {
         // for events.
-        if (output instanceof Event) {
+        if ( output instanceof Event ) {
             /**
              * @type {Element}
              */
-            const el = output.path[0];
+            const el = output.path[ 0 ];
             let selector = el.nodeName;
 
-            if (el.id) {
+            if ( el.id ) {
                 selector += '#' + el.id;
             }
 
-            if (el.className) {
-                selector += '.' + [...el.classList].join('.');
+            if ( el.className ) {
+                selector += '.' + [...el.classList].join( '.' );
             }
 
             output = `[Event]: type: '${output.type}' element: '${selector}'`;
         } else {
-            output = JSON.stringify(output, null, 4);
+            output = JSON.stringify( output, null, 4 );
 
             output = `<pre>${output}</pre>`;
         }
     }
 
-    for (let i = 0; i < output.length; ++i) {
-        if (skipFlag) {
+    for ( let i = 0; i < output.length; ++i ) {
+        if ( skipFlag ) {
             skipFlag = false;
             continue;
         }
 
-        if (output[i] === '{' || output[i] === '}') {
-            if (!objectFlag) {
-                formated.push(`<span class="object">{`);
+        if ( output[ i ] === '{' || output[ i ] === '}' ) {
+            if ( !objectFlag ) {
+                formated.push( `<span class="object">{` );
             } else {
-                formated.push(`}</span>`);
+                formated.push( `}</span>` );
             }
 
             objectFlag = !objectFlag;
 
             continue;
-        } else if (output[i] === '`') {
-            if (!tildaFlag) {
-                formated.push(`${output[i]}<span class="tilda">`);
+        } else if ( output[ i ] === '`' ) {
+            if ( !tildaFlag ) {
+                formated.push( `${output[ i ]}<span class="tilda">` );
             } else {
-                formated.push(`</span>${output[i]}`);
+                formated.push( `</span>${output[ i ]}` );
             }
 
             tildaFlag = !tildaFlag;
 
             continue;
-        } else if (output[i] === "'") {
-            if (!quoteFlag) {
-                formated.push(`${output[i]}<span class="text quote">`);
+        } else if ( output[ i ] === "'" ) {
+            if ( !quoteFlag ) {
+                formated.push( `${output[ i ]}<span class="text quote">` );
             } else {
-                formated.push(`</span>${output[i]}`);
+                formated.push( `</span>${output[ i ]}` );
             }
 
             quoteFlag = !quoteFlag;
 
             continue;
-        } else if (output[i] === '"') {
-            if (!dbQuotesFlag) {
-                formated.push(`${output[i]}<span class="text double-quote">`);
+        } else if ( output[ i ] === '"' ) {
+            if ( !dbQuotesFlag ) {
+                formated.push( `${output[ i ]}<span class="text double-quote">` );
             } else {
-                formated.push(`</span>${output[i]}`);
+                formated.push( `</span>${output[ i ]}` );
             }
 
             dbQuotesFlag = !dbQuotesFlag;
 
             continue;
-        } else if (output[i] == '%' && output[i + 1] == 'c') {
-            if (plain) {
+        } else if ( output[ i ] == '%' && output[ i + 1 ] == 'c' ) {
+            if ( plain ) {
                 i++;
                 continue;
             }
 
             skipFlag = true;
 
-            if (!spanFlag) {
-                formated.push(`<span style="${arguments[1 + spansCount]}">`);
+            if ( !spanFlag ) {
+                formated.push( `<span style="${arguments[ 1 + spansCount ]}">` );
             } else {
-                formated.push('</span>');
+                formated.push( '</span>' );
             }
 
             spanFlag = !spanFlag;
@@ -361,25 +360,24 @@ Terminal.onOutput = function (output) {
         }
 
         skipFlag = false;
-        formated.push(output[i]);
+        formated.push( output[ i ] );
     }
 
+    output = formated.join( '' );
 
-    output = formated.join('');
+    output = output.replace( new RegExp( 'null', 'g' ), '<span class="null">null</span>' );
 
-    output = output.replace(new RegExp('null', 'g'), '<span class="null">null</span>');
-
-    terminal.self.append(`<p>${output}</p>`);
+    terminal.self.append( `<p>${output}</p>` );
 
     terminal.self.stop();
-    terminal.self.animate({
-        scrollTop: terminal.self.get(0).scrollHeight
-    });
-}
+    terminal.self.animate( {
+        scrollTop: terminal.self.get( 0 ).scrollHeight
+    } );
+};
 
 /**
  * Funciton initialize() : Create Instance
  */
-Terminal.initialize = function () {
+Terminal.initialize = function() {
     new Terminal();
-}
+};

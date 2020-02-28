@@ -14,10 +14,10 @@ export default class Catalog extends Container {
     static amountMinValue = 1;
 
     constructor( parent, context, options ) {
-    	super( parent, context, options );
+        super( parent, context, options );
 
-        this.logger = new Modules.Logger(`Components.${this.constructor.name}`, true);
-        this.logger.setOutputHandler(Services.Terminal.onOutput);
+        this.logger = new Modules.Logger( `Components.${this.constructor.name}`, true );
+        this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.logger.startWith( { parent, context, options } );
 
@@ -26,28 +26,30 @@ export default class Catalog extends Container {
         this.page = 0;
 
         this.events = {
-            onInitialRecv: () => { },
-            onProductAdd: (product) => { },
+            onInitialRecv: () => {
+            },
+            onProductAdd: ( product ) => {
+            },
         };
 
         this.afterRender = () => {
-        	super.afterRender();
+            super.afterRender();
 
-	        this.elements = {
+            this.elements = {
                 pagination: {
-                    self: $('#pagination'),
-                    prev: $("#pagination .prev"),
-                    next: $("#pagination .next"),
-                    placeHolder: $('#pagination .placeholder')
+                    self: $( '#pagination' ),
+                    prev: $( "#pagination .prev" ),
+                    next: $( "#pagination .next" ),
+                    placeHolder: $( '#pagination .placeholder' )
                 },
 
                 catalog: {
-                    self: $('#catalog'),
-                    spinner: $('#catalog .spinner'),
+                    self: $( '#catalog' ),
+                    spinner: $( '#catalog .spinner' ),
                 },
 
                 template: {
-                    product: $('template#product'),
+                    product: $( 'template#product' ),
                 }
             };
 
@@ -61,13 +63,13 @@ export default class Catalog extends Container {
     _initialize() {
         this.logger.startEmpty();
 
-        this.elements.pagination.next.click(() => this._onPageChange((this.page + 1)));
-        this.elements.pagination.prev.click(() => this._onPageChange((this.page - 1)));
+        this.elements.pagination.next.click( () => this._onPageChange( (this.page + 1) ) );
+        this.elements.pagination.prev.click( () => this._onPageChange( (this.page - 1) ) );
 
-        this.elements.catalog.self.on('change', '.product .amount', ((e) => this._onProductAmountChange(e)));
-        this.elements.catalog.self.on('click', '.product button', ((e) => this._onProductAdd(e)));
+        this.elements.catalog.self.on( 'change', '.product .amount', (( e ) => this._onProductAmountChange( e )) );
+        this.elements.catalog.self.on( 'click', '.product button', (( e ) => this._onProductAdd( e )) );
 
-        this._getCatalog(0, this._onInitialRecv.bind(this));
+        this._getCatalog( 0, this._onInitialRecv.bind( this ) );
     }
 
     /**
@@ -82,20 +84,20 @@ export default class Catalog extends Container {
      *
      * @param {number} page
      */
-    _onPageChange(page) {
-        this.logger.startWith({ page });
+    _onPageChange( page ) {
+        this.logger.startWith( { page } );
 
         const { catalog, pagination } = this.elements;
 
         --page;
 
-        catalog.self.children('.product').remove();
+        catalog.self.children( '.product' ).remove();
         catalog.spinner.show();
 
         pagination.self.hide();
         pagination.placeHolder.empty();
 
-        this._getCatalog(page);
+        this._getCatalog( page );
     }
 
     /**
@@ -103,25 +105,25 @@ export default class Catalog extends Container {
      *
      * @param {event} e
      */
-    _onProductAdd(e) {
-        this.logger.startWith({ e });
+    _onProductAdd( e ) {
+        this.logger.startWith( { e } );
 
         // maybe there is better way.
-        const el = $(e.currentTarget);
-        const domProduct = el.parentsUntil('.product').parent();
+        const el = $( e.currentTarget );
+        const domProduct = el.parentsUntil( '.product' ).parent();
 
-        const id = parseInt(domProduct.attr('data-id'));
-        const amount = parseInt(domProduct.find('.amount').val());
+        const id = parseInt( domProduct.attr( 'data-id' ) );
+        const amount = parseInt( domProduct.find( '.amount' ).val() );
 
-        let product = this.apiCatalog.getLocalProductById(id);
+        let product = this.apiCatalog.getLocalProductById( id );
 
-        Object.assign(product, { id, amount });
+        Object.assign( product, { id, amount } );
 
         // call callback
-        this.events.onProductAdd(product)
+        this.events.onProductAdd( product );
 
         // put it back to 1.
-        domProduct.find('.amount').val('1');
+        domProduct.find( '.amount' ).val( '1' );
     }
 
     /**
@@ -129,23 +131,23 @@ export default class Catalog extends Container {
      *
      * @param {Event} e
      */
-    _onProductAmountChange(e) {
-        this.logger.startWith({ e });
+    _onProductAmountChange( e ) {
+        this.logger.startWith( { e } );
 
         // maybe there is better way.
-        const el = $(e.currentTarget);
+        const el = $( e.currentTarget );
 
         let val = el.val();
 
-        this.logger.debug(`val: '${val}'`);
+        this.logger.debug( `val: '${val}'` );
 
-        if (val > Catalog.amountMaxValue) {
+        if ( val > Catalog.amountMaxValue ) {
             val = Catalog.amountMaxValue;
-        } else if (val < Catalog.amountMinValue) {
+        } else if ( val < Catalog.amountMinValue ) {
             val = Catalog.amountMinValue;
         }
 
-        el.val(val);
+        el.val( val );
     }
 
     /**
@@ -154,29 +156,29 @@ export default class Catalog extends Container {
      * @param {number} page
      * @param {{function()}} onSuccess
      */
-    _getCatalog(page, onSuccess = null) {
-        this.logger.startWith({ page, onSuccess });
+    _getCatalog( page, onSuccess = null ) {
+        this.logger.startWith( { page, onSuccess } );
 
         const { catalog, template } = this.elements;
 
-        this.apiCatalog.get(data => {
-	        //debugger;
+        this.apiCatalog.get( data => {
+            //debugger;
 
-	        // used slow here to fake loading
-            catalog.spinner.fadeOut('slow', () => {
+            // used slow here to fake loading
+            catalog.spinner.fadeOut( 'slow', () => {
 
-                if (!data.error) {
+                if ( !data.error ) {
 
-                    this._setPagination(data.pagination);
+                    this._setPagination( data.pagination );
 
-                    data.result.map((product) => {
-                        catalog.self.append(this.renderProduct(product));
-                    });
+                    data.result.map( ( product ) => {
+                        catalog.self.append( this.renderProduct( product ) );
+                    } );
 
-                    if (onSuccess) onSuccess();
+                    if ( onSuccess ) onSuccess();
                 }
-            });
-        }, page);
+            } );
+        }, page );
     }
 
     /**
@@ -184,21 +186,21 @@ export default class Catalog extends Container {
      *
      * @param {{}} paginationResult
      */
-    _setPagination(paginationResult) {
-        this.logger.startWith({ paginationResult });
+    _setPagination( paginationResult ) {
+        this.logger.startWith( { paginationResult } );
 
         const { pagination } = this.elements;
 
         // pages
-        for (let i = 0; i < paginationResult.pages; ++i) {
+        for ( let i = 0; i < paginationResult.pages; ++i ) {
 
-            const anchor = $(`<a href="#">${i + 1}</a>`)
+            const anchor = $( `<a href="#">${i + 1}</a>` );
 
-            anchor.click(function (val) {
-                this._onPageChange(val);
-            }.bind(this, parseInt(anchor.html())));
+            anchor.click( function( val ) {
+                this._onPageChange( val );
+            }.bind( this, parseInt( anchor.html() ) ) );
 
-            pagination.placeHolder.append(anchor);
+            pagination.placeHolder.append( anchor );
 
             pagination.self.fadeIn();
         }
@@ -207,14 +209,14 @@ export default class Catalog extends Container {
         this.page = paginationResult.current + 1;
 
         // next
-        if (paginationResult.current >= (paginationResult.pages - 1)) {
+        if ( paginationResult.current >= (paginationResult.pages - 1) ) {
             pagination.next.hide();
         } else {
             pagination.next.show();
         }
 
         // prev
-        if (this.page == 1) {
+        if ( this.page == 1 ) {
             pagination.prev.hide();
         } else {
             pagination.prev.show();
@@ -227,21 +229,22 @@ export default class Catalog extends Container {
      * @param {'initialRecv'|'productAdd'} event
      * @param {{function()}} callback
      */
-    on(event, callback) {
-        this.logger.startWith({ event, callback });
+    on( event, callback ) {
+        this.logger.startWith( { event, callback } );
 
-        switch (event) {
+        switch ( event ) {
             case 'initialRecv': {
                 this.events.onInitialRecv = callback;
-            } break;
+            }
+                break;
 
             case 'productAdd': {
                 this.events.onProductAdd = callback;
-            } break;
-
+            }
+                break;
 
             default: {
-                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
             }
         }
     }
@@ -251,7 +254,7 @@ export default class Catalog extends Container {
      *
      * @param {{}} product
      */
-    renderProduct(product) {
+    renderProduct( product ) {
         const { id, name, price } = product;
 
         return (`
@@ -298,10 +301,9 @@ export default class Catalog extends Container {
 
         const markup = (`
             <div class="container" style="max-width: 1080px;">
-                ${ this._render() }
+                ${this._render()}
             </div>
         `), element = new ElementBase( this, markup );
-
 
         element.render();
 

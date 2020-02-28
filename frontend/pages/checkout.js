@@ -1,4 +1,3 @@
-
 import Modules from 'MODULES';
 
 export default class Checkout extends Modules.Page {
