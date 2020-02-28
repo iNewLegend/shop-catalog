@@ -24,6 +24,14 @@ export default class Cart {
         this.http = http;
     }
 
+    static getNamespace() {
+        return 'API'
+    }
+
+    static getName() {
+        return 'API/Cart';
+    }
+
     /**
      * Function get() : Get cart
      *

@@ -22,6 +22,14 @@ export default class Http {
         this.apiBaseUrl = apiBaseUrl;
     }
 
+    static getNamespace() {
+        return 'API'
+    }
+
+    static getName() {
+        return 'API/Http';
+    }
+
     /**
      * Function fetch() : fetch api
      *

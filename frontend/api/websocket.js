@@ -28,6 +28,14 @@ export default class Websocket {
         if ( autoInit ) this.initialize();
     }
 
+    static getNamespace() {
+        return 'API'
+    }
+
+    static getName() {
+        return 'API/Websocket';
+    }
+
     initialize() {
         this.logger.startEmpty();
 

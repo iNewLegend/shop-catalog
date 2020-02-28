@@ -27,6 +27,14 @@ export default class Catalog {
         this.catalog = [];
     }
 
+    static getNamespace() {
+        return 'API'
+    }
+
+    static getName() {
+        return 'API/Catalog';
+    }
+
     /**
      * Function get() : Get catalog from the server
      *
