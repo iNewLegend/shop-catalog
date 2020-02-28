@@ -14,10 +14,10 @@ export class Component {
             model, view, controller = this;
 
             view = new Core.View( parent, {
-                template: this['template'],
+                template: this[ 'template' ],
             } );
         } else if ( arguments.length < 4 ) {
-            throw Error('WTF');
+            throw Error( 'WTF' );
         }
 
         this.model = model;

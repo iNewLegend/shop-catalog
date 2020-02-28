@@ -13,11 +13,11 @@ export default class Http {
      *
      * @param {string} apiBaseUrl
      */
-    constructor(apiBaseUrl = 'http://localhost') {
-        this.logger = new Modules.Logger('API.' + this.constructor.name, true);
-        this.logger.setOutputHandler(Services.Terminal.onOutput);
+    constructor( apiBaseUrl = 'http://localhost' ) {
+        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger.setOutputHandler( Services.Terminal.onOutput );
 
-        this.logger.startWith({apiBaseUrl});
+        this.logger.startWith( { apiBaseUrl } );
 
         this.apiBaseUrl = apiBaseUrl;
     }
@@ -31,43 +31,43 @@ export default class Http {
      *
      * @return {*}
      */
-    async _fetch(path, method, body = null) {
-        this.logger.startWith({ path, method, body });
+    async _fetch( path, method, body = null ) {
+        this.logger.startWith( { path, method, body } );
 
         const params = { 'credentials': 'include' }; // cookies
 
-        const headers = {}
+        const headers = {};
 
-        if (method === 'post') {
-            Object.assign(headers, { 'Content-Type': 'application/json' });
-            Object.assign(params, {
+        if ( method === 'post' ) {
+            Object.assign( headers, { 'Content-Type': 'application/json' } );
+            Object.assign( params, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify(body)
-            });
+                body: JSON.stringify( body )
+            } );
 
         } else {
-            Object.assign(params, { headers });
+            Object.assign( params, { headers } );
         }
 
         // since i made it async function
-        const response = await fetch(this.apiBaseUrl + path, params);
+        const response = await fetch( this.apiBaseUrl + path, params );
         let data = undefined;
 
         try {
-	         data = await response.json();
+            data = await response.json();
         } catch ( e ) {
-        	console.error( e );
+            console.error( e );
 
-        	return false;
+            return false;
         }
 
-        this.logger.recv({ path }, data);
+        this.logger.recv( { path }, data );
 
-        if (data.error)  {
-            data.message = this.translateError(data.message);
+        if ( data.error ) {
+            data.message = this.translateError( data.message );
 
-            if (data.global) {
+            if ( data.global ) {
                 throw data.message;
             }
         }
@@ -84,16 +84,16 @@ export default class Http {
      *
      * @return {string}
      */
-    translateError(message) {
-        this.logger.startWith({ message });
+    translateError( message ) {
+        this.logger.startWith( { message } );
 
-        if (typeof message == 'object') {
-            message = message.map(element => {
-                return this.translateError(element);
-            });
+        if ( typeof message == 'object' ) {
+            message = message.map( element => {
+                return this.translateError( element );
+            } );
         }
 
-        switch (message) {
+        switch ( message ) {
             case 'system_error':
                 return 'system error. please contact the system administrator';
         }
@@ -108,10 +108,10 @@ export default class Http {
      *
      * @return {*}
      */
-    get(path) {
-        this.logger.startWith({ path });
+    get( path ) {
+        this.logger.startWith( { path } );
 
-        return this._fetch(path, 'get');
+        return this._fetch( path, 'get' );
     }
 
     /**
@@ -122,9 +122,9 @@ export default class Http {
      *
      * @return {*}
      */
-    post(path, params) {
-        this.logger.startWith({ path, params });
+    post( path, params ) {
+        this.logger.startWith( { path, params } );
 
-        return this._fetch(path, 'post', params);
+        return this._fetch( path, 'post', params );
     }
 }

@@ -50,14 +50,15 @@ export class Container extends ElementBase {
      * @param {'render:after'} event
      * @param {{function()}} callback
      */
-    on(event, callback) {
-        switch (event) {
+    on( event, callback ) {
+        switch ( event ) {
             case 'render:after': {
                 this.events.onAfterRender = callback;
-            } break;
+            }
+            break;
 
             default: {
-                alert(`${this.constructor.name}::on() -> invalid event type: '${event}'`);
+                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
             }
         }
     }

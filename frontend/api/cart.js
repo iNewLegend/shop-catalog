@@ -15,11 +15,11 @@ export default class Cart {
      *
      * @param {Http} http
      */
-    constructor(http) {
-        this.logger = new Modules.Logger('API.' + this.constructor.name, true);
-        this.logger.setOutputHandler(Services.Terminal.onOutput);
+    constructor( http ) {
+        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger.setOutputHandler( Services.Terminal.onOutput );
 
-        this.logger.startWith({ http });
+        this.logger.startWith( { http } );
 
         this.http = http;
     }
@@ -29,10 +29,10 @@ export default class Cart {
      *
      * @param {{function()}} callback
      */
-    get(callback) {
-        this.logger.startWith({ callback });
+    get( callback ) {
+        this.logger.startWith( { callback } );
 
-        this.http.get('cart/index').then(data => callback(data));
+        this.http.get( 'cart/index' ).then( data => callback( data ) );
     }
 
     /**
@@ -42,12 +42,12 @@ export default class Cart {
      * @param {number} id
      * @param {number} amount
      */
-    addItem(callback, id, amount = 1) {
-        this.logger.startWith({ callback, id, amount });
+    addItem( callback, id, amount = 1 ) {
+        this.logger.startWith( { callback, id, amount } );
 
         const params = { id, amount };
 
-        this.http.post('cart/addItem', params).then((data) => callback(data));
+        this.http.post( 'cart/addItem', params ).then( ( data ) => callback( data ) );
     }
 
     /**
@@ -56,10 +56,10 @@ export default class Cart {
      * @param {{function()}} callback
      * @param {number} id
      */
-    removeItem(callback, id) {
-        this.logger.startWith({ callback, id });
+    removeItem( callback, id ) {
+        this.logger.startWith( { callback, id } );
 
-        this.http.post('cart/removeItem', { id }).then((data) => callback(data));
+        this.http.post( 'cart/removeItem', { id } ).then( ( data ) => callback( data ) );
     }
 }
 

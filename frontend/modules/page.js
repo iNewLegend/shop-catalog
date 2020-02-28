@@ -10,10 +10,10 @@ import Services from 'SERVICES';
 
 export default class Page extends Container {
     initialize() {
-        this.logger = new Logger(`Modules.Page`, true);
-        this.logger.setOutputHandler(Services.Terminal.onOutput);
+        this.logger = new Logger( `Modules.Page`, true );
+        this.logger.setOutputHandler( Services.Terminal.onOutput );
 
-        this.logger.startWith(this.constructor.name);
+        this.logger.startWith( this.constructor.name );
 
         super.initialize();
     }

@@ -10,23 +10,31 @@ export default class Logger {
 
     /**
      * Function constructor() : Create logger class
-     * 
-     * @param {*} owner 
-     * @param {boolean} state 
+     *
+     * @param {*} owner
+     * @param {boolean} state
      */
-    constructor(owner, state = false) {
+    constructor( owner, state = false ) {
         this.state = state;
         this._name = '';
 
-        if (typeof owner == 'string') {
+        if ( typeof owner == 'string' ) {
             this._name = owner;
         } else {
             this._name = owner.constructor.name;
         }
 
-        if (state) {
+        if ( state ) {
             this._initialize();
         }
+    }
+
+    get name() {
+        return this._name;
+    }
+
+    set name( val ) {
+        this._name = val;
     }
 
     /**
@@ -35,7 +43,7 @@ export default class Logger {
     _initialize() {
         this.color = this.getRandomColor();
 
-        Logger.colorsInUse.push(this.color);
+        Logger.colorsInUse.push( this.color );
 
         this.outputHandler = console.log.bind();
 
@@ -52,14 +60,14 @@ export default class Logger {
 
     /**
      * Function _functionView() : Return function preview
-     * 
-     * @param {{function()}} fn 
+     *
+     * @param {{function()}} fn
      */
-    _functionView(fn) {
+    _functionView( fn ) {
         let fReturn = 'anonymous function()';
 
-        if (fn.name.length !== 0) {
-            fReturn = fn.name.split(' ')[1] + '()';
+        if ( fn.name.length !== 0 ) {
+            fReturn = fn.name.split( ' ' )[ 1 ] + '()';
         }
 
         return fReturn;
@@ -67,86 +75,85 @@ export default class Logger {
 
     /**
      * Function _printFunctionNotify() : Print simple log for notify source (function)
-     * 
-     * @param {string} type 
-     * @param {string} source 
-     * @param {*} output 
+     *
+     * @param {string} type
+     * @param {string} source
+     * @param {*} output
      */
-    _printFunctionNotify(type, source, output) {
-        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ${output}%c`].concat(this.defaultStyle));
+    _printFunctionNotify( type, source, output ) {
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ${output}%c`].concat( this.defaultStyle ) );
     }
 
     /**
      * Function _printInLineElement() : Print in line element
-     * 
-     * @param {string} type 
-     * @param {string} source 
-     * @param {string} key 
-     * @param {*} value 
+     *
+     * @param {string} type
+     * @param {string} source
+     * @param {string} key
+     * @param {*} value
      */
-    _printInLineElement(type, source, key, value) {
-        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat(this.defaultStyle));
+    _printInLineElement( type, source, key, value ) {
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat( this.defaultStyle ) );
     }
 
     /**
      * Function __printInLineFunction() : Print in line function
-     * 
-     * @param {string} type 
-     * @param {string} source 
-     * @param {string} key 
-     * @param {{function()}} fn 
+     *
+     * @param {string} type
+     * @param {string} source
+     * @param {string} key
+     * @param {{function()}} fn
      */
-    _printInLineFunction(type, source, key, fn) {
-        fn = this._functionView(fn);
+    _printInLineFunction( type, source, key, fn ) {
+        fn = this._functionView( fn );
 
-        this._printInLineElement(type, source, key, fn);
+        this._printInLineElement( type, source, key, fn );
     }
 
     /**
      * Function _printInLineString() : Print in line string
-     * 
-     * @param {string} type 
-     * @param {string} source 
-     * @param {string} string 
+     *
+     * @param {string} type
+     * @param {string} source
+     * @param {string} string
      */
-    _printInLineString(type, source, string) {
-        this._printInLineElement(type, source, '(string)', string);
+    _printInLineString( type, source, string ) {
+        this._printInLineElement( type, source, '(string)', string );
     }
 
     /**
      * Function _printNextlineObject() : Print object in next line
-     * 
-     * @param {string} type 
-     * @param {string} source 
-     * @param {string} key 
-     * @param {{}} obj 
+     *
+     * @param {string} type
+     * @param {string} source
+     * @param {string} key
+     * @param {{}} obj
      */
-    _printNextlineObject(type, source, key, obj) {
-        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key} %c↓`].concat(this.defaultStyle));
+    _printNextlineObject( type, source, key, obj ) {
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key} %c↓`].concat( this.defaultStyle ) );
         // print in next line
-        this.out(obj);
+        this.out( obj );
     }
 
     /**
      * Function _printMultiLineObject() : Print object in multiline format
-     * 
-     * @param {string} type 
-     * @param {string} source 
-     * @param {{}} obj 
+     *
+     * @param {string} type
+     * @param {string} source
+     * @param {{}} obj
      */
-    _printMultiLineObject(type, source, obj) {
+    _printMultiLineObject( type, source, obj ) {
         // print long (multiline) object
-        this.out.apply(this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c(${Object.keys(obj).join(', ')}) %c↓`].concat(this.defaultStyle));
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c(${Object.keys( obj ).join( ', ' )}) %c↓`].concat( this.defaultStyle ) );
 
-        for (let key in obj) {
-            if (typeof obj[key] === 'object') {
-                obj[key] = JSON.stringify(obj[key]);
-            } else if (typeof obj[key] == 'function') {
-                obj[key] = this._functionView(obj[key]);
+        for ( let key in obj ) {
+            if ( typeof obj[ key ] === 'object' ) {
+                obj[ key ] = JSON.stringify( obj[ key ] );
+            } else if ( typeof obj[ key ] == 'function' ) {
+                obj[ key ] = this._functionView( obj[ key ] );
             }
 
-
-            this.out.apply(this, ["%c" + key + ": `" + obj[key] + "`", 'color: #a3a3a3']);
+            this.out.apply( this, ["%c" + key + ": `" + obj[ key ] + "`", 'color: #a3a3a3'] );
         }
     }
 
@@ -154,13 +161,13 @@ export default class Logger {
      * Function _getCallerName() : Return caller name
      */
     _getCallerName() {
-        const caller = Error().stack.split('\n')[3].trim();
+        const caller = Error().stack.split( '\n' )[ 3 ].trim();
 
-        if (caller.startsWith('at new')) {
+        if ( caller.startsWith( 'at new' ) ) {
             return 'constructor';
         }
 
-        return caller.split('.')[1].split(' ')[0];
+        return caller.split( '.' )[ 1 ].split( ' ' )[ 0 ];
     }
 
     /**
@@ -170,54 +177,54 @@ export default class Logger {
         const letters = '0123456789ABCDEF';
         let color = '#';
 
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+        for ( let i = 0; i < 6; i++ ) {
+            color += letters[ Math.floor( Math.random() * 16 ) ];
         }
 
         /**
          * Function hexColorDelta() : Return color diffrence in ratio decmial point
-         * 
-         * @param {string} hex1 
+         *
+         * @param {string} hex1
          * @param {string} hex2
-         * 
-         * @see http://jsfiddle.net/96sME/ 
+         *
+         * @see http://jsfiddle.net/96sME/
          */
-        const hexColorDelta = function (hex1, hex2) {
-            hex1 = hex1.replace('#', '');
-            hex2 = hex2.replace('#', '');
+        const hexColorDelta = function( hex1, hex2 ) {
+            hex1 = hex1.replace( '#', '' );
+            hex2 = hex2.replace( '#', '' );
 
             // get red/green/blue int values of hex1
-            var r1 = parseInt(hex1.substring(0, 2), 16);
-            var g1 = parseInt(hex1.substring(2, 4), 16);
-            var b1 = parseInt(hex1.substring(4, 6), 16);
+            var r1 = parseInt( hex1.substring( 0, 2 ), 16 );
+            var g1 = parseInt( hex1.substring( 2, 4 ), 16 );
+            var b1 = parseInt( hex1.substring( 4, 6 ), 16 );
             // get red/green/blue int values of hex2
-            var r2 = parseInt(hex2.substring(0, 2), 16);
-            var g2 = parseInt(hex2.substring(2, 4), 16);
-            var b2 = parseInt(hex2.substring(4, 6), 16);
+            var r2 = parseInt( hex2.substring( 0, 2 ), 16 );
+            var g2 = parseInt( hex2.substring( 2, 4 ), 16 );
+            var b2 = parseInt( hex2.substring( 4, 6 ), 16 );
             // calculate differences between reds, greens and blues
-            var r = 255 - Math.abs(r1 - r2);
-            var g = 255 - Math.abs(g1 - g2);
-            var b = 255 - Math.abs(b1 - b2);
+            var r = 255 - Math.abs( r1 - r2 );
+            var g = 255 - Math.abs( g1 - g2 );
+            var b = 255 - Math.abs( b1 - b2 );
             // limit differences between 0 and 1
             r /= 255;
             g /= 255;
             b /= 255;
             // 0 means opposit colors, 1 means same colors
             return (r + g + b) / 3;
-        }
+        };
 
-        let similar = Logger.colorsInUse.some((value) => {
+        let similar = Logger.colorsInUse.some( ( value ) => {
             // it return the ratio of diffrence... closer to 1.0 is less difference.
 
-            if (hexColorDelta(color, value) < 0.8) {
+            if ( hexColorDelta( color, value ) < 0.8 ) {
                 return false;
             }
 
             return true;
-        });
+        } );
 
         // if the color is similar, try again.
-        if (similar) {
+        if ( similar ) {
             return this.getRandomColor();
         }
 
@@ -226,136 +233,128 @@ export default class Logger {
 
     /**
      * Set output handler
-     * 
-     * @param {function(...args)} outputHandler 
+     *
+     * @param {function(...args)} outputHandler
      */
-    setOutputHandler(outputHandler) {
+    setOutputHandler( outputHandler ) {
         this.outputHandler = outputHandler;
     }
 
     /**
      * Function out() : Print console log with style
-     * 
-     * @param {string} text 
+     *
+     * @param {string} text
      */
-    out(...args) {
-        this.outputHandler.apply(this, args);
+    out( ...args ) {
+        this.outputHandler.apply( this, args );
     }
 
     /**
      * Function startEmpty() : Notify function start without args.
-     * 
-     * @param {string} output 
+     *
+     * @param {string} output
      */
-    startEmpty(output = '') {
-        if (!this.state) return;
+    startEmpty( output = '' ) {
+        if ( !this.state ) return;
 
-        this._printFunctionNotify('se', this._getCallerName(), output);
+        this._printFunctionNotify( 'se', this._getCallerName(), output );
     }
 
     /**
      * Function startWith() : Notify function start with args.
-     * 
-     * @param {*} output 
+     *
+     * @param {*} output
      */
-    startWith(params) {
-        if (!this.state) return;
+    startWith( params ) {
+        if ( !this.state ) return;
 
         const type = 'se';
         const source = this._getCallerName();
 
-        if (typeof params == "string") {
-            this._printInLineString(type, source, params);
+        if ( typeof params == "string" ) {
+            this._printInLineString( type, source, params );
 
-        } else if (Object.keys(params).length === 1) {
-            const key = Object.keys(params)[0];
-            let value = Object.values(params)[0];
+        } else if ( Object.keys( params ).length === 1 ) {
+            const key = Object.keys( params )[ 0 ];
+            let value = Object.values( params )[ 0 ];
 
             // function check is repated logic, handle it.
-            if (typeof value === 'object') {
-                this._printNextlineObject(type, source, key, value);
-            } else if (typeof value == 'function') {
-                this._printInLineFunction(type, source, key, value)
+            if ( typeof value === 'object' ) {
+                this._printNextlineObject( type, source, key, value );
+            } else if ( typeof value == 'function' ) {
+                this._printInLineFunction( type, source, key, value )
             } else {
-                this._printInLineElement(type, source, key, value);
+                this._printInLineElement( type, source, key, value );
             }
         } else {
-            this._printMultiLineObject(type, source, params);
+            this._printMultiLineObject( type, source, params );
         }
     }
 
     /**
      * Function recv() : Notify recv from server
-     * 
-     * @param {{}} params 
-     * @param {{}|[]} data 
+     *
+     * @param {{}} params
+     * @param {{}|[]} data
      */
-    recv(params, data) {
-        if (!this.state) return;
+    recv( params, data ) {
+        if ( !this.state ) return;
 
         const source = this._getCallerName();
 
-        for (let key in params) {
-            this.out.apply(this, [`%c(rv)-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${params[key]}' %c↓`].concat(this.defaultStyle));
+        for ( let key in params ) {
+            this.out.apply( this, [`%c(rv)-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${params[ key ]}' %c↓`].concat( this.defaultStyle ) );
         }
 
-        this.out(data);
+        this.out( data );
     }
 
     /**
      * Function object() : Prints object
-     * 
-     * @param {{}} params 
-     * @param {string} notice 
+     *
+     * @param {{}} params
+     * @param {string} notice
      */
-    object(params, notice = '') {
-        if (!this.state) return;
+    object( params, notice = '' ) {
+        if ( !this.state ) return;
 
         const source = this._getCallerName();
 
-        params = Object.create(params);
+        params = Object.create( params );
 
-        for (let key in params) {
-            if (typeof params[key] === 'object') {
-                params[key] = JSON.stringify(params[key]);
+        for ( let key in params ) {
+            if ( typeof params[ key ] === 'object' ) {
+                params[ key ] = JSON.stringify( params[ key ] );
             }
 
-            this.out.apply(this, [`%c(ob)-> %c%c${this._name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[key]}'%c`].concat(this.defaultStyle));
+            this.out.apply( this, [`%c(ob)-> %c%c${this._name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[ key ]}'%c`].concat( this.defaultStyle ) );
         }
     }
 
     /**
      * Function debug() : Notify debug.
      * `
-     * @param {string} output 
+     * @param {string} output
      */
-    debug(output) {
-        if (!this.state) return;
+    debug( output ) {
+        if ( !this.state ) return;
 
-        this._printFunctionNotify('db', this._getCallerName(), output);
+        this._printFunctionNotify( 'db', this._getCallerName(), output );
     }
 
     /**
      * Function throw() : Throws error
-     * 
-     * @param {string} output 
-     * @param {string} name 
-     * @param {*} params 
+     *
+     * @param {string} output
+     * @param {string} name
+     * @param {*} params
      */
-    throw(output, name = null, params = null) {
-        this._printFunctionNotify('tw', this._getCallerName(), output);
+    throw( output, name = null, params = null ) {
+        this._printFunctionNotify( 'tw', this._getCallerName(), output );
 
-        if (params) this._printNextlineObject('tw', this._getCallerName(), name, params);
+        if ( params ) this._printNextlineObject( 'tw', this._getCallerName(), name, params );
 
         throw (new Error().stack);
-    }
-
-    set name(val) {
-        this._name = val;
-    }
-
-    get name() {
-        return this._name;
     }
 
 }

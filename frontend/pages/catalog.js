@@ -14,13 +14,13 @@ export default class Catalog extends modules.Page {
         const { api } = options;
 
         this.logger.name = `Pages.${this.constructor.name}`;
-        this.logger.startWith({ api });
+        this.logger.startWith( { api } );
 
         this.catalog = new components.Catalog( this, '<Component data-type="catalog"></Component>', { api } );
     }
 
     afterRender() {
-    	super.afterRender();
+        super.afterRender();
 
         this.catalog.render();
     }
@@ -31,9 +31,9 @@ export default class Catalog extends modules.Page {
      * @param {'initialRecv'|'productAdd'} event
      * @param {{function()}} callback
      */
-    on(event, callback) {
-        this.logger.startWith({ event, callback });
+    on( event, callback ) {
+        this.logger.startWith( { event, callback } );
 
-        this.catalog.on(event, callback);
+        this.catalog.on( event, callback );
     }
 }

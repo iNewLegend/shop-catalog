@@ -7,7 +7,7 @@
 import Http from './http.js';
 import Websocket from './websocket.js';
 import Catalog from './catalog.js';
-import Cart  from './cart.js';
+import Cart from './cart.js';
 
 const API = {};
 
