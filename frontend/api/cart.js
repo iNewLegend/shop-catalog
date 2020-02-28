@@ -16,7 +16,7 @@ export default class Cart {
      * @param {Http} http
      */
     constructor( http ) {
-        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger = new Modules.Logger( Cart.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.logger.startWith( { http } );

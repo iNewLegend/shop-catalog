@@ -17,7 +17,7 @@ export default class Catalog {
      */
 
     constructor( http ) {
-        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger = new Modules.Logger( Catalog.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.logger.startWith( { http } );

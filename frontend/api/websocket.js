@@ -13,7 +13,7 @@ import Services from 'SERVICES';
 
 export default class Websocket {
     constructor( address, port, autoInit = false ) {
-        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger = new Modules.Logger( Websocket.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.logger.startWith( { address, port, autoInit } );
