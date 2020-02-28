@@ -26,10 +26,8 @@ export default class Catalog extends Container {
         this.page = 0;
 
         this.events = {
-            onInitialRecv: () => {
-            },
-            onProductAdd: ( product ) => {
-            },
+            onInitialRecv: () => {},
+            onProductAdd: ( product ) => {},
         };
 
         this.afterRender = () => {
@@ -236,12 +234,12 @@ export default class Catalog extends Container {
             case 'initialRecv': {
                 this.events.onInitialRecv = callback;
             }
-                break;
+            break;
 
             case 'productAdd': {
                 this.events.onProductAdd = callback;
             }
-                break;
+            break;
 
             default: {
                 alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
