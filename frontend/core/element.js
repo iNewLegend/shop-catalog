@@ -6,7 +6,7 @@ export class Element extends Container {
     }
 
     static getName() {
-        return 'Core/Container';
+        return 'Core/Element';
     }
 
     initialize() {
