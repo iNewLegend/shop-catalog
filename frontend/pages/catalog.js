@@ -1,54 +1,28 @@
 /**
- * @file: js/pages/catalog.js
+ * @file: pages/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Catalog page.
  */
+import modules from 'MODULES';
+import components from 'COMPONENTS';
 
-import Modules from 'MODULES';
-import Components from 'COMPONENTS';
-import ElementBase from 'CORE/element/base';
-
-export default class Catalog extends Modules.Page {
+export default class Catalog extends modules.Page {
 
     initialize( options ) {
-        super.initialize();
+        super.initialize( options );
 
         const { api } = options;
 
         this.logger.name = `Pages.${this.constructor.name}`;
         this.logger.startWith({ api });
 
-        this.catalog = new Components.Catalog( this, '<test></test>', { api } );
+        this.catalog = new components.Catalog( this, '<Component data-type="catalog"></Component>', { api } );
     }
 
-    /**
-     * Function _onReady() : Called when element ready
-     */
-    _onReady() {
-        this.logger.startEmpty();
+    afterRender() {
+    	super.afterRender();
 
-        //this.catalog.on('initialRecv', this._onCatalogInitialRecv.bind(this));
-        //this.catalog.on('productAdd', this._onCatalogProductAdd.bind(this));
-
-        this.catalog.initialize();
-    }
-
-    /**
-     * Function _render() : Return the html markup for this page
-     */
-    render() {
-    	super.render();
-
-        const markup = (`
-            <div class="home container" style="max-width: 1080px;">
-                ${this.catalog._render()}
-            </div>
-        `), element = new ElementBase( this, markup );
-
-
-        element.render();
-
-	    this.catalog.render();
+        this.catalog.render();
     }
 
     /**
