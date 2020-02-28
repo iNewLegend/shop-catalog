@@ -6,7 +6,7 @@ export class Container extends ElementBase {
     }
 
     static getName() {
-        return 'Core/Element';
+        return 'Core/Container';
     }
 
     initialize() {
