@@ -30,9 +30,8 @@ export class Container extends ElementBase {
 
 	}
 
-	render() {
-		this.beforeRender();
-		super.beforeRender();
+	render( preventDefault ) {
+		if ( ! preventDefault ) this.beforeRender();
 
 		// Self Re-render.
 		super.render( true );
@@ -42,8 +41,7 @@ export class Container extends ElementBase {
 			this.child.render();
 		}
 
-		this.afterRender();
-		super.afterRender();
+        if ( ! preventDefault )  this.afterRender();
 	}
 
     /**

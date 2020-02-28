@@ -7,6 +7,7 @@
 import Services from 'SERVICES';
 import Modules from 'MODULES';
 import Container from 'CORE/container.js';
+import ElementBase from 'CORE/element/base';
 
 export default class Catalog extends Container {
     static amountMaxValue = 999;
@@ -27,7 +28,7 @@ export default class Catalog extends Container {
         this.events = {
             onInitialRecv: () => { },
             onProductAdd: (product) => { },
-        }
+        };
 
         this.afterRender = () => {
         	super.afterRender();
@@ -270,12 +271,7 @@ export default class Catalog extends Container {
         `)
     }
 
-    /**
-     * Function render_afterRender() : Return html markup for catalog it self
-     *
-     * @param {Element} parent
-     */
-    _render(parent) {
+    _render() {
         // TODO: spinner and pagination should be components.
         const markup = (`
             <div id="catalog" class="row">
@@ -293,5 +289,22 @@ export default class Catalog extends Container {
         `);
 
         return markup;
+    }
+
+    render() {
+        this.beforeRender();
+
+        super.render( true );
+
+        const markup = (`
+            <div class="container" style="max-width: 1080px;">
+                ${ this._render() }
+            </div>
+        `), element = new ElementBase( this, markup );
+
+
+        element.render();
+
+        this.afterRender();
     }
 }
