@@ -55,6 +55,14 @@ export default class Catalog extends Container {
         }
     }
 
+    static getNamespace() {
+        return 'Components'
+    }
+
+    static getName() {
+        return 'Components/Catalog';
+    }
+
     /**
      * Function _initialize() : Initialize catalog
      */

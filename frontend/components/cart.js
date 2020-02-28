@@ -50,6 +50,14 @@ export default class Cart {
         }
     }
 
+    static getNamespace() {
+        return 'Components'
+    }
+
+    static getName() {
+        return 'Components/Cart';
+    }
+
     /**
      * Function _initialize() : Initialize Cart
      */

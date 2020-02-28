@@ -34,7 +34,6 @@ export class Container extends ElementBase {
 	    }
 
 		this.child = child;
-
 	}
 
 	render( preventDefault ) {
