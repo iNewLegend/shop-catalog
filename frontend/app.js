@@ -102,11 +102,11 @@ class App {
     _onContainerRender(pageModule) {
         this.logger.startWith({ pageModule: pageModule.constructor.name });
 
-        if (pageModule instanceof Pages.Catalog) {
+        if ( pageModule instanceof Pages.Catalog ) {
             this.pages.catalog.on('productAdd', this._onCatalogProductAdd.bind(this));
 
-            if (! this.cart) {
-                this.cart = new Components.Cart(this.apis.cart, this.apis.catalog);
+            if ( ! this.cart) {
+                this.cart = new Components.Cart( this.apis.cart, this.apis.catalog );
 
                 this.cart.on('get', this._onCartGet.bind(this));
                 this.cart.on('received', this._onCartReceived.bind(this));
