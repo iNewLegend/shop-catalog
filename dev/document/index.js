@@ -28,7 +28,7 @@ class Container extends Component {
     on(event, callback) {
         switch (event) {
             case 'render': {
-                this.events.onRender = callback;
+                this.events.onAfterRender = callback;
             } break;
 
             default: {

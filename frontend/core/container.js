@@ -1,15 +1,11 @@
 import ElementBase from './element/base.js';
 
 export class Container extends ElementBase {
-	constructor( parent, context, options ) {
-		super( parent, context, options );
-
-	}
 
     initialize() {
 	    this.events = {
-		    onRender: () => {},
-	    }
+		    onAfterRender: () => {},
+	    };
 
         super.initialize();
     }
@@ -17,13 +13,12 @@ export class Container extends ElementBase {
     afterRender() {
         super.afterRender();
 
-        if ( this.events && this.events.onRender ) {
-            this.events.onRender( this.child );
+        if ( this.events && this.events.onAfterRender ) {
+            this.events.onAfterRender( this.child );
         }
     }
 
 	/**
-	 *
 	 * @param {Container} child
 	 */
 	set( child ) {
@@ -54,13 +49,13 @@ export class Container extends ElementBase {
     /**
      * Function on() : Declare event callback
      *
-     * @param {'render'} event
+     * @param {'render:after'} event
      * @param {{function()}} callback
      */
     on(event, callback) {
         switch (event) {
-            case 'render': {
-                this.events.onRender = callback;
+            case 'render:after': {
+                this.events.onAfterRender = callback;
             } break;
 
             default: {

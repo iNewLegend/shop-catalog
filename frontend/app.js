@@ -76,7 +76,7 @@ class App {
 
         const { header, overlay, sidebar } = this.elements;
 
-	    this.container.on('render', this._onContainerRender.bind(this));
+	    this.container.on('render:after', this._onContainerRender.bind(this));
 
         overlay.click(() => this.sidebarToggle(false));
 
@@ -180,7 +180,7 @@ class App {
 
         this.container.set(this.pages.checkout);
 
-        this.pages.checkout.on( 'render', () => {
+        this.pages.checkout.on( 'render:after', () => {
         	console.log( 'onCartCheckout this.page.checkout rendered');
         } );
 
