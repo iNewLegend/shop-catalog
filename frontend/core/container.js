@@ -1,6 +1,13 @@
 import ElementBase from './element/base.js';
 
 export class Container extends ElementBase {
+    static getNamespace() {
+        return 'Core'
+    }
+
+    static getName() {
+        return 'Core/Container';
+    }
 
     initialize() {
 	    this.events = {
@@ -17,32 +24,31 @@ export class Container extends ElementBase {
             this.events.onAfterRender( this.child );
         }
     }
+    
+    /**
+     * @param {Container} child
+     */
+    set( child ) {
+        if ( ! ( child instanceof Container ) ) {
+            throw new Error();
+        }
 
-	/**
-	 * @param {Container} child
-	 */
-	set( child ) {
-    	if ( ! ( child instanceof Container ) ) {
-    	    throw new Error();
-	    }
+        this.child = child;
+    }
 
-		this.child = child;
+    render( preventDefault ) {
+        if ( ! preventDefault ) this.beforeRender();
 
-	}
+        // Self Re-render.
+        super.render( true );
 
-	render( preventDefault ) {
-		if ( ! preventDefault ) this.beforeRender();
-
-		// Self Re-render.
-		super.render( true );
-
-		// Re-render of child.
-		if ( this.child ) {
-			this.child.render();
-		}
+        // Re-render of child.
+        if ( this.child ) {
+            this.child.render();
+        }
 
         if ( ! preventDefault )  this.afterRender();
-	}
+    }
 
     /**
      * Function on() : Declare event callback

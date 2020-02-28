@@ -4,7 +4,7 @@
  * @description: A live console opend by tilda key
  */
 
-import Modules from 'MODULES';
+import modules from 'MODULES';
 
 import JQuery from '../library/jquery.js';
 
@@ -27,7 +27,7 @@ export default class Terminal {
     constructor() {
         if ( Terminal.instance == null ) {
 
-            this.logger = new Modules.Logger( `Services.${this.constructor.name}`, true );
+            this.logger = new modules.Logger( Terminal.getName(), true );
             this.logger.startEmpty();
 
             this.localStorage = window.localStorage;
@@ -51,6 +51,14 @@ export default class Terminal {
         }
 
         return Terminal.instance;
+    }
+
+    static getNamespace() {
+        return 'Services'
+    }
+
+    static getName() {
+        return 'Services/Terminal';
     }
 
     /**

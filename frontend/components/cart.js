@@ -19,7 +19,7 @@ export default class Cart {
      * @param {API.Catalog} catalog
      */
     constructor( cart, catalog ) {
-        this.logger = new Modules.Logger( `Components.${this.constructor.name}`, true );
+        this.logger = new Modules.Logger( Cart.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.cart = [];
@@ -48,6 +48,14 @@ export default class Cart {
 
             this._initialize();
         }
+    }
+
+    static getNamespace() {
+        return 'Components'
+    }
+
+    static getName() {
+        return 'Components/Cart';
     }
 
     /**

@@ -16,7 +16,7 @@ export default class Catalog extends Container {
     constructor( parent, context, options ) {
         super( parent, context, options );
 
-        this.logger = new Modules.Logger( `Components.${this.constructor.name}`, true );
+        this.logger = new Modules.Logger( Catalog.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.logger.startWith( { parent, context, options } );
@@ -53,6 +53,14 @@ export default class Catalog extends Container {
 
             this._initialize();
         }
+    }
+
+    static getNamespace() {
+        return 'Components'
+    }
+
+    static getName() {
+        return 'Components/Catalog';
     }
 
     /**

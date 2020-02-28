@@ -2,6 +2,7 @@
  * @file: library/jquery.js
  * @author: see each function.
  * @description: JQuery Addons
+ * TODO: Remove jQuery should be removed.
  */
 
 export function JQuery_GetSelector( $ ) {

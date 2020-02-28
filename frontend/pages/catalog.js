@@ -7,13 +7,20 @@ import modules from 'MODULES';
 import components from 'COMPONENTS';
 
 export default class Catalog extends modules.Page {
+    static getNamespace() {
+        return 'Pages'
+    }
+
+    static getName() {
+        return 'Pages/Catalog';
+    }
 
     initialize( options ) {
         super.initialize( options );
 
         const { api } = options;
 
-        this.logger.name = `Pages.${this.constructor.name}`;
+        this.logger.name = Catalog.getName();
         this.logger.startWith( { api } );
 
         this.catalog = new components.Catalog( this, '<Component data-type="catalog"></Component>', { api } );

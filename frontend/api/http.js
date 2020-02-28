@@ -14,12 +14,20 @@ export default class Http {
      * @param {string} apiBaseUrl
      */
     constructor( apiBaseUrl = 'http://localhost' ) {
-        this.logger = new Modules.Logger( 'API.' + this.constructor.name, true );
+        this.logger = new Modules.Logger( Http.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
         this.logger.startWith( { apiBaseUrl } );
 
         this.apiBaseUrl = apiBaseUrl;
+    }
+
+    static getNamespace() {
+        return 'API'
+    }
+
+    static getName() {
+        return 'API/Http';
     }
 
     /**
