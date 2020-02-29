@@ -1,5 +1,14 @@
+/**
+ * @file: core/view.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import Element from './element.js';
 
+/**
+ * @memberOf core
+ */
 export class View {
     constructor( parent, options = {} ) {
         this.element = new Element(

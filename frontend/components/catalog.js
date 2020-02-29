@@ -1,28 +1,33 @@
 /**
- * @file: js/components/catalog.js
+ * @file: components/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages catalog
  */
 
-import Services from 'SERVICES';
-import Container from 'CORE/container.js';
-import ElementBase from 'CORE/element/base';
+import * as services from 'SERVICES';
+import {
+    Component,
+    Logger,
+} from 'MODULES';
 
-import * as core from 'CORE';
-import modules from 'MODULES';
-
-export default class Catalog extends modules.Component {
+/**
+ * @memberOf components;
+ */
+export class Catalog extends Component {
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
     constructor( parent, options ) {
         super( parent, options );
 
-        this.logger = new modules.Logger( Catalog.getName(), true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new Logger( Catalog.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startWith( { parent, options } );
 
+        /**
+         * @type {API.Catalog}
+         */
         this.apiCatalog = options.api;
 
         this.page = 0;
@@ -304,3 +309,5 @@ export default class Catalog extends modules.Component {
         return markup;
     }
 }
+
+export default Catalog;

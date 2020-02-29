@@ -3,10 +3,13 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Catalog page.
  */
-import modules from 'MODULES';
-import components from 'COMPONENTS';
+import { Page } from 'MODULES';
+import * as components from 'COMPONENTS';
 
-export default class Catalog extends modules.Page {
+/**
+ * @memberOf pages
+ */
+export class Catalog extends Page {
     static getNamespace() {
         return 'Pages'
     }
@@ -46,3 +49,5 @@ export default class Catalog extends modules.Page {
         this.catalog.on( event, callback );
     }
 }
+
+export default Catalog;

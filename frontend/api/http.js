@@ -1,21 +1,23 @@
 /**
- * @file: js/api/http.js
+ * @file: api/http.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: instead of using jquery ajax, i choose this.
  */
+import * as services from 'SERVICES';
+import * as modules from 'MODULES';
 
-import Modules from 'MODULES';
-import Services from 'SERVICES';
-
-export default class Http {
+/**
+ * @memberOf API
+ */
+export class Http {
     /**
      * Function constructor() : Create API
      *
      * @param {string} apiBaseUrl
      */
     constructor( apiBaseUrl = 'http://localhost' ) {
-        this.logger = new Modules.Logger( Http.getName(), true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new modules.Logger( Http.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startWith( { apiBaseUrl } );
 
@@ -136,3 +138,5 @@ export default class Http {
         return this._fetch( path, 'post', params );
     }
 }
+
+export default Http;

@@ -1,23 +1,22 @@
 /**
- * @file: js/api/cart.js
+ * @file: api/cart.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
+import * as services from 'SERVICES';
+import * as modules from 'MODULES';
 
-import { Http } from 'API';
-
-import Modules from 'MODULES';
-import Services from 'SERVICES';
-
-export default class Cart {
-
+/**
+ * @memberOf API
+ */
+export class Cart {
     /**
      * Function constructor() Create Cart Api
      *
      * @param {Http} http
      */
     constructor( http ) {
-        this.logger = new Modules.Logger( Cart.getName(), true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new modules.Logger( Cart.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startWith( { http } );
 
@@ -71,3 +70,4 @@ export default class Cart {
     }
 }
 
+export default Cart;

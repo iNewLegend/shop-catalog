@@ -1,5 +1,14 @@
+/**
+ * @file: core/element.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import Container from './container.js';
 
+/**
+ * @memberOf core
+ */
 export class Element extends Container {
     static getNamespace() {
         return 'Core'

@@ -1,50 +1,50 @@
 /**
- * @file: js/app.js
+ * @file: app.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
 import "@babel/polyfill"
 
-import * as Core from 'CORE'
-import API from 'API';
-import Modules from 'MODULES';
-import Services from 'SERVICES';
-import Components from 'COMPONENTS';
-import Pages from 'PAGES';
+import * as core from 'CORE'
+import * as api from 'API';
+import * as modules from 'MODULES';
+import * as services from 'SERVICES';
+import * as components from 'COMPONENTS';
+import * as pages from 'PAGES';
 
 class App {
     /**
      * Function constructor() : Create App
      */
     constructor() {
-        Services.Terminal.initialize();
+        services.Terminal.initialize();
 
-        this.logger = new Modules.Logger( this, true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new modules.Logger( this, true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startEmpty();
 
         const remoteAddress = window.location.href.substring( 0, window.location.href.lastIndexOf( "/" ) ) + '/../api/?cmd=',
-            http = new API.Http( remoteAddress );
+            http = new api.Http( remoteAddress );
 
         this.apis = {
-            catalog: new API.Catalog( http ),
-            cart: new API.Cart( http ),
+            catalog: new api.Catalog( http ),
+            cart: new api.Cart( http ),
         };
 
         this.elements = {
             header: {
-                logo: Core.Factory.createElement( 'header #logo' ),
-                toggle: Core.Factory.createElement( 'header #toggle' ),
+                logo: core.Factory.createElement( 'header #logo' ),
+                toggle: core.Factory.createElement( 'header #toggle' ),
 
-                cart: Core.Factory.createElement( 'header #toggle .cart' ),
-                amount: Core.Factory.createElement( 'header #toggle .amount' ),
-                spinner: Core.Factory.createElement( 'header #toggle .spinner' )
+                cart: core.Factory.createElement( 'header #toggle .cart' ),
+                amount: core.Factory.createElement( 'header #toggle .amount' ),
+                spinner: core.Factory.createElement( 'header #toggle .spinner' )
             },
 
             sidebar: {
-                self: Core.Factory.createElement( '#sidebar' ), // Self should not be exist, if you use self, it should be component.
-                closeButton: Core.Factory.createElement( '#sidebar #close' ),
+                self: core.Factory.createElement( '#sidebar' ), // Self should not be exist, if you use self, it should be component.
+                closeButton: core.Factory.createElement( '#sidebar #close' ),
             },
 
             overlay: $( '#overlay' ),
@@ -54,13 +54,13 @@ class App {
             }
         };
 
-        this.container = new Core.Container( this.elements.sections.main, '<div class="page container"></div>' );
+        this.container = new core.Container( this.elements.sections.main, '<div class="page container"></div>' );
 
         this.pages = {
-            catalog: new Pages.Catalog( this.container, '<div class="pages catalog"></div>', {
+            catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>', {
                 api: this.apis.catalog,
             } ),
-            checkout: new Pages.Checkout( this.container, '<div class="pages checkout">' +
+            checkout: new pages.Checkout( this.container, '<div class="pages checkout">' +
                 '   <h1>Check OUT.</h1>' +
                 '</div>'
             ),
@@ -96,16 +96,16 @@ class App {
     /**
      * Function _onContainerReady() : Called when container ready.
      *
-     * @param {Modules.Page} pageModule
+     * @param {modules.Page} pageModule
      */
     _onContainerRender( pageModule ) {
         this.logger.startWith( { pageModule: pageModule.constructor.name } );
 
-        if ( pageModule instanceof Pages.Catalog ) {
+        if ( pageModule instanceof pages.Catalog ) {
             this.pages.catalog.on( 'productAdd', this._onCatalogProductAdd.bind( this ) );
 
             if ( !this.cart ) {
-                this.cart = new Components.Cart( this.apis.cart, this.apis.catalog );
+                this.cart = new components.Cart( this.apis.cart, this.apis.catalog );
 
                 this.cart.on( 'get', this._onCartGet.bind( this ) );
                 this.cart.on( 'received', this._onCartReceived.bind( this ) );
@@ -193,7 +193,7 @@ class App {
         this.logger.startWith( { product } );
 
         this.cart.itemAdd( product, () => {
-            if ( Components.Cart.openCartOnUpdate ) {
+            if ( components.Cart.openCartOnUpdate ) {
                 this.sidebarToggle( true );
             }
         } );

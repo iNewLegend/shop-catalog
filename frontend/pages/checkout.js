@@ -1,6 +1,14 @@
-import modules from 'MODULES';
+/**
+ * @file: pages/catalog.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: Catalog page.
+ */
+import { Page } from 'MODULES';
 
-export default class Checkout extends modules.Page {
+/**
+ * @memberOf pages
+ */
+export class Checkout extends Page {
     static getNamespace() {
         return 'Pages'
     }
@@ -21,6 +29,8 @@ export default class Checkout extends modules.Page {
             <div class="checkout">
                 <h1 style="text-align: center">Checkout</h1>
             </div>
-    `);
+        `);
     }
 }
+
+export default Checkout;

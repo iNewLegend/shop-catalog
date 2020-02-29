@@ -1,24 +1,23 @@
 /**
- * @file: js/api/catalog.js
+ * @file: api/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
+import * as services from 'SERVICES';
+import * as modules from 'MODULES';
 
-import { Http } from 'API';
-
-import Modules from 'MODULES';
-import Services from 'SERVICES';
-
-export default class Catalog {
+/**
+ * @memberOf API
+ */
+export class Catalog {
 
     /**
      * Function constructor() Create Catalog Api
      *
      * @param {Http} api
      */
-
     constructor( http ) {
-        this.logger = new Modules.Logger( Catalog.getName(), true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new modules.Logger( Catalog.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startWith( { http } );
 
@@ -94,3 +93,5 @@ export default class Catalog {
         return null;
     }
 }
+
+export default Catalog;

@@ -1,6 +1,14 @@
-// TODO: Add file signature and use of logger.
+/**
+ * @file: modules/component.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import * as core from 'CORE';
 
+/**
+ * @memberOf modules
+ */
 export class Component {
     constructor( parent, options = {} ) {
         this.parent = parent;
@@ -36,7 +44,7 @@ export class Component {
         this.model = model;
         this.view = view;
         this.controller = controller;
-
+10
         // Attach listeners of view.element to the controller.
         this.view.element.attachListeners = () => {
             return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
