@@ -4,7 +4,7 @@ export class View {
     constructor( parent, options = {} ) {
         this.element = new Element(
             parent,
-            options.template() || this.template(),
+            options.template || this.template(),
             options,
         );
 
@@ -12,16 +12,10 @@ export class View {
     }
 
     initialize( options ) {
-        if ( options.template ) {
-            this.template = options.template;
-        }
     }
 
-    /**
-     * @return {String} HTML Markup.
-     */
     template() {
-        alert( 'no template' );
+        throw( 'no template' );
     }
 
     render() {

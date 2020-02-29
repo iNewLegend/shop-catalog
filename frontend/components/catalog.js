@@ -5,21 +5,23 @@
  */
 
 import Services from 'SERVICES';
-import Modules from 'MODULES';
 import Container from 'CORE/container.js';
 import ElementBase from 'CORE/element/base';
 
-export default class Catalog extends Container {
+import * as core from 'CORE';
+import modules from 'MODULES';
+
+export default class Catalog extends modules.Component {
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
-    constructor( parent, context, options ) {
-        super( parent, context, options );
+    constructor( parent, options ) {
+        super( parent, options );
 
-        this.logger = new Modules.Logger( Catalog.getName(), true );
+        this.logger = new modules.Logger( Catalog.getName(), true );
         this.logger.setOutputHandler( Services.Terminal.onOutput );
 
-        this.logger.startWith( { parent, context, options } );
+        this.logger.startWith( { parent, options } );
 
         this.apiCatalog = options.api;
 
@@ -280,39 +282,25 @@ export default class Catalog extends Container {
         `)
     }
 
-    _render() {
+    template() {
         // TODO: spinner and pagination should be components.
         const markup = (`
-            <div id="catalog" class="row">
-                <div class="spinner" style="border-top-color: lightskyblue"></div>
-            </div>
-            
-            <div id="pagination" class="pagination" style="display: none">
-                <div class="pagination">
-                    <a class="prev" href="#">&laquo;</a>
-                    <span class="placeholder">
-                    </span>
-                    <a class="next" href="#">&raquo;</a>
+            <div class="container" style="max-width: 1080px;">
+                <div id="catalog" class="row">
+                    <div class="spinner" style="border-top-color: lightskyblue"></div>
+                </div>
+                
+                <div id="pagination" class="pagination" style="display: none">
+                    <div class="pagination">
+                        <a class="prev" href="#">&laquo;</a>
+                        <span class="placeholder">
+                        </span>
+                        <a class="next" href="#">&raquo;</a>
+                    </div>
                 </div>
             </div>
         `);
 
         return markup;
-    }
-
-    render() {
-        this.beforeRender();
-
-        super.render( true );
-
-        const markup = (`
-            <div class="container" style="max-width: 1080px;">
-                ${this._render()}
-            </div>
-        `), element = new ElementBase( this, markup );
-
-        element.render();
-
-        this.afterRender();
     }
 }

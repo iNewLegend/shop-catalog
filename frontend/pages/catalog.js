@@ -23,7 +23,9 @@ export default class Catalog extends modules.Page {
         this.logger.name = Catalog.getName();
         this.logger.startWith( { api } );
 
-        this.catalog = new components.Catalog( this, '<Component data-type="catalog"></Component>', { api } );
+        this.catalog = new components.Catalog( this, {
+            api
+        } );
     }
 
     afterRender() {

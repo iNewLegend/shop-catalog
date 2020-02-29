@@ -24,7 +24,7 @@ export class Container extends ElementBase {
             this.events.onAfterRender( this.child );
         }
     }
-    
+
     /**
      * @param {Container} child
      */
