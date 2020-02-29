@@ -8,7 +8,7 @@ import * as services from 'SERVICES';
 import * as modules from 'MODULES';
 
 /**
- * @memberOf components;
+ * @memberOf components
  */
 export class Cart {
     static openCartOnUpdate = true;
@@ -35,8 +35,7 @@ export class Cart {
             onAmountChange: (amount) => { },
             onEmptyState: (state) => { },
             onCheckout: () => { }
-        }
-
+        };
 
         this._afterRender = () => {
             this.elements = {

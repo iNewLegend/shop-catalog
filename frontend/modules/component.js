@@ -44,7 +44,7 @@ export class Component {
         this.model = model;
         this.view = view;
         this.controller = controller;
-10
+
         // Attach listeners of view.element to the controller.
         this.view.element.attachListeners = () => {
             return core.Element.prototype.attachListeners.call( this.view.element, this.controller );

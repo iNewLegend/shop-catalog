@@ -10,6 +10,11 @@ import Element from './element.js';
  * @memberOf core
  */
 export class View {
+    /**
+     * @type {core.Element}
+     */
+    element;
+
     constructor( parent, options = {} ) {
         this.element = new Element(
             parent,
@@ -28,6 +33,8 @@ export class View {
     }
 
     render() {
-        return this.element.render();
+        this.element.render();
     }
 }
+
+export default View;
