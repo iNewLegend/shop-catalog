@@ -24,8 +24,10 @@ export class Element extends Container {
         super.initialize();
 
         if ( this.context instanceof HTMLElement ) {
-            this.attachListeners();
+            this.attachListenersFromHTMLElement( this.context );
         }
+
+        this.chhildren = [];
 
         this.afterInit();
     }
@@ -39,7 +41,8 @@ export class Element extends Container {
     afterRender() {
         super.afterRender();
 
-        this.attachListeners();
+        this.parseChildren();
+	    this.attachListeners();
     }
 
     attachListener( method, callback ) {
@@ -47,46 +50,90 @@ export class Element extends Container {
             case 'onClick': {
                 this.element.addEventListener( 'click', callback );
             }
-                break;
+            break;
         }
     }
 
-    attachListeners( from = this ) {
+	/**
+	 * @param {Element} targetElement
+	 */
+	attachListeners( targetElement = this ) {
         // Handle all parent properties if startsWith 'on' then attach it listener.
         // Allow you extend components with custom callbacks.
-        Object.getOwnPropertyNames( from ).forEach( ( method ) => {
+        Object.getOwnPropertyNames( targetElement ).forEach( ( method ) => {
             if ( method.startsWith( 'on' ) ) {
-                this.attachListener( method, from[ 'onClick' ] );
+                this.attachListener( method, targetElement[ 'onClick' ] );
             }
         } );
 
-        // Attach All `this.context` elements events to `from` component.
-        let nodes = [];
-
-        if ( this.context.node ) {
-            nodes = [this.context.node];
-        }
-
-        if ( nodes.length > 0 && this.context.node.childNodes ) {
-            nodes = [nodes, ...this.context.node.childNodes];
-        }
-
-        nodes.forEach( ( node ) => {
-            // Now u need loop all over on shit :)
-            for ( let i in node ) {
-                if ( i.startsWith( 'on' ) && node[ i ] ) {
-                    // here u wanted to eval onclick.
-                    let funcContent = node[ i ].toString();
-
-                    funcContent = funcContent.replace( 'this', 'from' );
-                    funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
-                    funcContent = funcContent.replace( '()', '( ... arguments)' );
-
-                    node[ i ] = () => eval( funcContent );
-                }
-            }
-        } );
+        this.attachListenersFromContext( targetElement.context );
     }
+
+	attachListenersFromHTMLElement( element ) {
+		const elements = [ element, ... element.childNodes ];
+
+		elements.forEach( ( element ) => {
+			if ( element.onclick ) {
+				debugger;
+			}
+		} )
+	}
+
+	/**
+	 * YOU STUCK BCOZ attachListeners not working at alll.
+	 */
+	/**
+	 * @param {Context} context
+	 */
+	attachListenersFromContext( context ) {
+	    // Attach All `context` element events, to `target` component.
+	    let nodes = [];
+
+	    if ( context.node ) {
+		    nodes = [ context.node ];
+	    }
+
+	    if ( nodes.length > 0 && context.node.childNodes ) {
+		    nodes = [ nodes, ...context.node.childNodes ] ;
+	    } else {
+	    	debugger; // Never happens?
+		    nodes = context.childNodes;
+	    }
+
+	    nodes.forEach( ( node ) => {
+		    for ( let i in node ) {
+		    	if ( node[ 0 ] instanceof HTMLElement ) {
+				    this.attachListenersFromHTMLElement( node[ 0 ] );
+			    }
+
+		    	if ( i.startsWith( 'on' ) && node[ i ] ) {
+		    		debugger;
+				    this.evalHandlers( node[ i ] );
+			    }
+		    }
+	    } );
+    }
+
+	evalHandlers( node ) {
+		if ( node ) {
+			// here u wanted to eval onclick.
+			let funcContent = node.toString();
+
+			funcContent = funcContent.replace( 'this', 'from' );
+			funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
+			funcContent = funcContent.replace( '()', '( ... arguments)' );
+
+			node = () => eval( funcContent );
+		} {
+			throw Error( 'evalHandlers: fail, reason: node empty' );
+		}
+	}
+
+	parseChildren() {
+		for( const children of this.element.children ) {
+			this.chhildren.push( new Element( this.element, children ) );
+		}
+	}
 
     click( callback ) {
         this.attachListener( 'onClick', callback );

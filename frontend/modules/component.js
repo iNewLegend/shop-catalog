@@ -45,15 +45,22 @@ export class Component {
         this.view = view;
         this.controller = controller;
 
-        // Attach listeners of view.element to the controller.
-        this.view.element.attachListeners = () => {
-            return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
-        }
+        // Alias.
+	    this.context = view.element.context;
+
+	    // Attach listeners of view.element to the controller.
+	    this.view.element.attachListeners = () => {
+		    return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
+	    }
     }
 
-    beforeRender() {}
-    afterRender() {}
-    template() {}
+    beforeRender() {
+
+    }
+
+    template() {
+
+    }
 
     render() {
         this.beforeRender();
@@ -62,6 +69,9 @@ export class Component {
 
         this.afterRender();
     }
+
+	afterRender() {
+	}
 }
 
 export default Component;
