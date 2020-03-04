@@ -23,11 +23,11 @@ export class Element extends Container {
 
         super.initialize();
 
-        if ( this.context instanceof HTMLElement ) {
-            this.attachListenersFromHTMLElement( this.context );
-        }
+        // if ( this.context instanceof HTMLElement ) {
+        //     this.attachListenersFromHTMLElement( this.context );
+        // }
 
-        this.chhildren = [];
+        this.children = [];
 
         this.afterInit();
     }
@@ -38,11 +38,14 @@ export class Element extends Container {
     afterInit() {
     }
 
-    afterRender() {
+    afterRender( attachListeners = true ) {
         super.afterRender();
 
         this.parseChildren();
-	    this.attachListeners();
+
+        if ( attachListeners ) {
+	        this.attachListeners();
+        }
     }
 
     attachListener( method, callback ) {
@@ -69,12 +72,24 @@ export class Element extends Container {
         this.attachListenersFromContext( targetElement.context );
     }
 
-	attachListenersFromHTMLElement( element ) {
-		const elements = [ element, ... element.childNodes ];
+	attachListenersFromHTMLElement( element , controller = this ) {
+		let elements = {};
 
-		elements.forEach( ( element ) => {
-			if ( element.onclick ) {
-				debugger;
+		if ( element.childNodes ) {
+			elements = { element, ... element.childNodes };
+		} else {
+			elements = { element };
+		}
+
+		Object.values( elements ).forEach( ( entity ) => {
+			if ( entity !== element ) {
+				if ( entity instanceof HTMLElement ) {
+					this.attachListenersFromHTMLElement( entity, controller );
+				}
+
+				if ( entity.onclick ) {
+					entity.onclick = this.evalHandlers( entity.onclick, controller );
+				}
 			}
 		} )
 	}
@@ -114,24 +129,26 @@ export class Element extends Container {
 	    } );
     }
 
-	evalHandlers( node ) {
-		if ( node ) {
-			// here u wanted to eval onclick.
-			let funcContent = node.toString();
+	evalHandlers( property, controller ) {
+		if ( property && property.toString().includes( 'this' ) ) {
+			let funcContent = property.toString();
 
 			funcContent = funcContent.replace( 'this', 'from' );
 			funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
 			funcContent = funcContent.replace( '()', '( ... arguments)' );
 
-			node = () => eval( funcContent );
-		} {
-			throw Error( 'evalHandlers: fail, reason: node empty' );
+			// In other words recreate the callback.
+			property = ( event, from = controller ) => {
+				eval( funcContent )
+			};
 		}
+
+		return property;
 	}
 
 	parseChildren() {
 		for( const children of this.element.children ) {
-			this.chhildren.push( new Element( this.element, children ) );
+			this.children.push( new Element( this.element, children ) );
 		}
 	}
 

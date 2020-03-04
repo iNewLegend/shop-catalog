@@ -67,7 +67,7 @@ export class Product extends Component {
 
 		switch ( event ) {
 			case 'product:add': {
-				this.events.onPageChange = callback;
+				this.events.onProductAdd = callback;
 			}
 			break;
 

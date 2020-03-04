@@ -132,7 +132,7 @@ export class Catalog extends Component {
         this.logger.startWith( { page, onSuccess } );
 
         const { catalog } = this.elements;
-const self = this;
+
         this.apiCatalog.get( data => {
             // used slow here to fake loading
             catalog.spinner.fadeOut( 'slow', () => {
@@ -140,9 +140,8 @@ const self = this;
                     this.components.pagination.set( data.pagination );
 
                     data.result.map( ( product ) => {
-                    	let test = self;
-
-	                    const rowCatalog = this.view.element.chhildren[ 0 ],
+	                    // TODO: Create function add product.
+	                    const rowCatalog = this.view.element.children[ 0 ],
 		                    productComponent = new Product( rowCatalog, {
 			                    api: {
 				                    catalog: this.apiCatalog,
@@ -150,8 +149,10 @@ const self = this;
 			                    ...product,
 		                    } );
 
+	                    productComponent.on( 'product:add', this._onProductAdd.bind( this ) );
+
 	                    this.products.push( productComponent );
-                        // catalog.self.append( this.productTemplate( product ) );
+	                    // TODO: Stop extract.
                     } );
 
                     if ( onSuccess ) onSuccess();
@@ -218,12 +219,12 @@ const self = this;
 			case 'initialRecv': {
 				this.events.onRecvOnce = callback;
 			}
-				break;
+			break;
 
 			case 'productAdd': {
 				this.events.onProductAdd = callback;
 			}
-				break;
+			break;
 
 			default: {
 				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );

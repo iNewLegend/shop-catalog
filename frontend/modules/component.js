@@ -48,10 +48,20 @@ export class Component {
         // Alias.
 	    this.context = view.element.context;
 
+	    // Disable default attach Listeners from element.
+	    this.view.element.afterRender = () => {
+		    core.Element.prototype.afterRender.call( this.view.element, false );
+		    core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.controller );
+	    };
+
 	    // Attach listeners of view.element to the controller.
-	    this.view.element.attachListeners = () => {
-		    return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
-	    }
+	    // this.view.element.attachListeners = () => {
+		//     return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
+	    // }
+
+	    // Attach listeners of view.element to the controller.
+	    // this.view.element.attachListenersFromHTMLElement = () => {
+	    // }
     }
 
     beforeRender() {
