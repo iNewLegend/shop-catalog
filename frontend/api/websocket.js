@@ -1,20 +1,22 @@
 /**
- * @file: js/api/websocket.js
+ * @file: api/websocket.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description:
  */
-
-import Modules from 'MODULES';
-import Services from 'SERVICES';
+import * as modules from 'MODULES';
+import * as services from 'SERVICES';
 
 /**
  * @typedef {"open" | "message" | "close" | "error"} API_Websocket_Events
  */
 
-export default class Websocket {
+/**
+ * @memberOf API
+ */
+export class Websocket {
     constructor( address, port, autoInit = false ) {
-        this.logger = new Modules.Logger( Websocket.getName(), true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new modules.Logger( Websocket.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startWith( { address, port, autoInit } );
 
@@ -129,3 +131,5 @@ export default class Websocket {
         this.webSocket.close();
     }
 }
+
+export default Websocket;

@@ -4,12 +4,7 @@
  * @description: Modules Namespace O__o
  */
 
-import Logger from './logger.js';
-import Page from './page.js';
-import Component from './component.js';
+export { Logger } from './logger.js';
+export { Page } from './page.js';
+export { Component } from './component.js';
 
-export default {
-    Page,
-    Logger,
-    Component,
-}

@@ -1,10 +1,24 @@
+/**
+ * @file: core/view.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import Element from './element.js';
 
+/**
+ * @memberOf core
+ */
 export class View {
+    /**
+     * @type {core.Element}
+     */
+    element;
+
     constructor( parent, options = {} ) {
         this.element = new Element(
             parent,
-            options.template() || this.template(),
+            options.template || this.template(),
             options,
         );
 
@@ -12,19 +26,15 @@ export class View {
     }
 
     initialize( options ) {
-        if ( options.template ) {
-            this.template = options.template;
-        }
     }
 
-    /**
-     * @return {String} HTML Markup.
-     */
     template() {
-        alert( 'no template' );
+        throw( 'no template' );
     }
 
     render() {
-        return this.element.render();
+        this.element.render();
     }
 }
+
+export default View;

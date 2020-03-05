@@ -1,14 +1,16 @@
 /**
- * @file: js/modules/page.js
+ * @file: modules/page.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Modules Namespace O__o
  */
+import { Container }  from 'CORE';
+import * as modules from 'MODULES';
+import * as services from 'SERVICES';
 
-import * as core from 'CORE';
-import services from 'SERVICES';
-import Logger from './logger.js';
-
-export default class Page extends core.Container {
+/**
+ * @memberOf modules
+ */
+export class Page extends Container {
     static getNamespace() {
         return 'Modules'
     }
@@ -18,7 +20,7 @@ export default class Page extends core.Container {
     }
 
     initialize() {
-        this.logger = new Logger( Page.getName(), true );
+        this.logger = new modules.Logger( Page.getName(), true );
         this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.logger.startWith( this.constructor.name );
@@ -26,3 +28,5 @@ export default class Page extends core.Container {
         super.initialize();
     }
 }
+
+export default Page;

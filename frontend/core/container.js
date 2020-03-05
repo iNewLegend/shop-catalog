@@ -1,5 +1,14 @@
+/**
+ * @file: core/container.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import ElementBase from './element/base.js';
 
+/**
+ * @memberOf core
+ */
 export class Container extends ElementBase {
     static getNamespace() {
         return 'Core'
@@ -24,7 +33,7 @@ export class Container extends ElementBase {
             this.events.onAfterRender( this.child );
         }
     }
-    
+
     /**
      * @param {Container} child
      */

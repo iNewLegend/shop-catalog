@@ -1,14 +1,16 @@
 /**
- * @file: js/components/cart.js
+ * @file: components/cart.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages cart
  */
 
-import API from 'API';
-import Modules from 'MODULES';
-import Services from 'SERVICES';
+import * as services from 'SERVICES';
+import * as modules from 'MODULES';
 
-export default class Cart {
+/**
+ * @memberOf components
+ */
+export class Cart {
     static openCartOnUpdate = true;
     static reloadCartEachOpen = false; // highlight of new cart item, while this option set to true, will not work.
 
@@ -19,8 +21,8 @@ export default class Cart {
      * @param {API.Catalog} catalog
      */
     constructor( cart, catalog ) {
-        this.logger = new Modules.Logger( Cart.getName(), true );
-        this.logger.setOutputHandler( Services.Terminal.onOutput );
+        this.logger = new modules.Logger( Cart.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
 
         this.cart = [];
 
@@ -33,8 +35,7 @@ export default class Cart {
             onAmountChange: (amount) => { },
             onEmptyState: (state) => { },
             onCheckout: () => { }
-        }
-
+        };
 
         this._afterRender = () => {
             this.elements = {
@@ -487,3 +488,5 @@ export default class Cart {
         this._afterRender();
     }
 }
+
+export default Cart;

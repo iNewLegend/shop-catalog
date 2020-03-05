@@ -1,11 +1,14 @@
 /**
- * @file: js/modules/logger.js
+ * @file: modules/logger.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description:
- * @todo: on constructor add prefix for owner
+ * @description: Module for logging instances.
+ * TODO: on constructor add prefix for owner
  */
 
-export default class Logger {
+/**
+ * @memberOf modules
+ */
+export class Logger {
     static colorsInUse = [];
 
     /**
@@ -364,5 +367,6 @@ export default class Logger {
 
         throw (new Error().stack);
     }
-
 }
+
+export default Logger;

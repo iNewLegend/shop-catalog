@@ -1,16 +1,17 @@
 /**
- * @file: js/services/terminal.js
+ * @file: services/terminal.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: A live console opend by tilda key
+ * @description: A live console that you can open by tilda key.
  */
-
-import modules from 'MODULES';
-
+import * as modules from 'MODULES';
 import JQuery from '../library/jquery.js';
 
 const LOCAL_STORAGE_KEY = 'local_storage_key';
 
-export default class Terminal {
+/**
+ * @memberOf services;
+ */
+export class Terminal {
     static instance = null;
 
     state = false;
@@ -83,14 +84,14 @@ export default class Terminal {
 
         buttons.close.click( this._onTerminalCloseClick.bind( this ) );
 
-        const storageHeight = this._stroage( 'height' );
+        const storageHeight = this._storage( 'height' );
 
         if ( storageHeight ) {
             terminal.self.css( 'height', storageHeight );
         }
 
         // null on first time open
-        if ( this._stroage( 'active' ) === null | this._stroage( 'active' ) === 'true' ) {
+        if ( this._storage( 'active' ) === null | this._storage( 'active' ) === 'true' ) {
             this.open();
         }
     }
@@ -134,7 +135,7 @@ export default class Terminal {
             // set timeout here to save only if value stayed the same for (x) time
             setTimeout( () => {
                 if ( newHeight == parseInt( self.css( 'height' ) ) ) {
-                    this._stroage( 'height', newHeight );
+                    this._storage( 'height', newHeight );
                 }
             }, 500 );
 
@@ -211,7 +212,7 @@ export default class Terminal {
      * @param {string} type
      * @param {any} val
      */
-    _stroage( type, val = null ) {
+    _storage( type, val = null ) {
         this.logger.startWith( { type, val } );
 
         const key = LOCAL_STORAGE_KEY + '/' + type;
@@ -233,7 +234,7 @@ export default class Terminal {
 
         terminal.self.addClass( 'active' );
 
-        this._stroage( 'active', 'true' );
+        this._storage( 'active', 'true' );
 
         this.state = true;
     }
@@ -246,7 +247,7 @@ export default class Terminal {
 
         const { terminal } = this.elements;
 
-        this._stroage( 'active', 'false' );
+        this._storage( 'active', 'false' );
 
         terminal.self.removeClass( 'active' );
 
@@ -384,8 +385,10 @@ Terminal.onOutput = function( output ) {
 };
 
 /**
- * Funciton initialize() : Create Instance
+ * Function initialize() : Create Instance
  */
 Terminal.initialize = function() {
     new Terminal();
 };
+
+export default Terminal;

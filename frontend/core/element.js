@@ -1,5 +1,14 @@
+/**
+ * @file: core/element.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import Container from './container.js';
 
+/**
+ * @memberOf core
+ */
 export class Element extends Container {
     static getNamespace() {
         return 'Core'
@@ -14,9 +23,11 @@ export class Element extends Container {
 
         super.initialize();
 
-        if ( this.context instanceof HTMLElement ) {
-            this.attachListeners();
-        }
+        // if ( this.context instanceof HTMLElement ) {
+        //     this.attachListenersFromHTMLElement( this.context );
+        // }
+
+        this.children = [];
 
         this.afterInit();
     }
@@ -27,10 +38,14 @@ export class Element extends Container {
     afterInit() {
     }
 
-    afterRender() {
+    afterRender( attachListeners = true ) {
         super.afterRender();
 
-        this.attachListeners();
+        this.parseChildren();
+
+        if ( attachListeners ) {
+	        this.attachListeners();
+        }
     }
 
     attachListener( method, callback ) {
@@ -38,46 +53,104 @@ export class Element extends Container {
             case 'onClick': {
                 this.element.addEventListener( 'click', callback );
             }
-                break;
+            break;
         }
     }
 
-    attachListeners( from = this ) {
+	/**
+	 * @param {Element} targetElement
+	 */
+	attachListeners( targetElement = this ) {
         // Handle all parent properties if startsWith 'on' then attach it listener.
         // Allow you extend components with custom callbacks.
-        Object.getOwnPropertyNames( from ).forEach( ( method ) => {
+        Object.getOwnPropertyNames( targetElement ).forEach( ( method ) => {
             if ( method.startsWith( 'on' ) ) {
-                this.attachListener( method, from[ 'onClick' ] );
+                this.attachListener( method, targetElement[ 'onClick' ] );
             }
         } );
 
-        // Attach All `this.context` elements events to `from` component.
-        let nodes = [];
-
-        if ( this.context.node ) {
-            nodes = [this.context.node];
-        }
-
-        if ( nodes.length > 0 && this.context.node.childNodes ) {
-            nodes = [nodes, ...this.context.node.childNodes];
-        }
-
-        nodes.forEach( ( node ) => {
-            // Now u need loop all over on shit :)
-            for ( let i in node ) {
-                if ( i.startsWith( 'on' ) && node[ i ] ) {
-                    // here u wanted to eval onclick.
-                    let funcContent = node[ i ].toString();
-
-                    funcContent = funcContent.replace( 'this', 'from' );
-                    funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
-                    funcContent = funcContent.replace( '()', '( ... arguments)' );
-
-                    node[ i ] = () => eval( funcContent );
-                }
-            }
-        } );
+        this.attachListenersFromContext( targetElement.context );
     }
+
+	attachListenersFromHTMLElement( element , controller = this ) {
+		let elements = {};
+
+		if ( element.childNodes ) {
+			elements = { element, ... element.childNodes };
+		} else {
+			elements = { element };
+		}
+
+		Object.values( elements ).forEach( ( entity ) => {
+			if ( entity !== element ) {
+				if ( entity instanceof HTMLElement ) {
+					this.attachListenersFromHTMLElement( entity, controller );
+				}
+
+				if ( entity.onclick ) {
+					entity.onclick = this.evalHandlers( entity.onclick, controller );
+				}
+			}
+		} )
+	}
+
+	/**
+	 * YOU STUCK BCOZ attachListeners not working at alll.
+	 */
+	/**
+	 * @param {Context} context
+	 */
+	attachListenersFromContext( context ) {
+	    // Attach All `context` element events, to `target` component.
+	    let nodes = [];
+
+	    if ( context.node ) {
+		    nodes = [ context.node ];
+	    }
+
+	    if ( nodes.length > 0 && context.node.childNodes ) {
+		    nodes = [ nodes, ...context.node.childNodes ] ;
+	    } else {
+	    	debugger; // Never happens?
+		    nodes = context.childNodes;
+	    }
+
+	    nodes.forEach( ( node ) => {
+		    for ( let i in node ) {
+		    	if ( node[ 0 ] instanceof HTMLElement ) {
+				    this.attachListenersFromHTMLElement( node[ 0 ] );
+			    }
+
+		    	if ( i.startsWith( 'on' ) && node[ i ] ) {
+		    		debugger;
+				    this.evalHandlers( node[ i ] );
+			    }
+		    }
+	    } );
+    }
+
+	evalHandlers( property, controller ) {
+		if ( property && property.toString().includes( 'this' ) ) {
+			let funcContent = property.toString();
+
+			funcContent = funcContent.replace( 'this', 'from' );
+			funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
+			funcContent = funcContent.replace( '()', '( ... arguments)' );
+
+			// In other words recreate the callback.
+			property = ( event, from = controller ) => {
+				eval( funcContent )
+			};
+		}
+
+		return property;
+	}
+
+	parseChildren() {
+		for( const children of this.element.children ) {
+			this.children.push( new Element( this.element, children ) );
+		}
+	}
 
     click( callback ) {
         this.attachListener( 'onClick', callback );

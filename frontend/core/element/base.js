@@ -1,5 +1,15 @@
+/**
+ * @file: core/element/base.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: nope.
+ * TODO:
+ */
 import Context from '../context.js';
 
+/**
+ * @memberOf core;
+ * @name ElementBase
+ */
 export class Base {
     /**
      * @type {HTMLElement}
@@ -11,9 +21,9 @@ export class Base {
      *
      * @param {Node|HTMLElement|Base} parent
      * @param {String|HTMLElement|Context} context
-     * @param {{}} options
+     * @param {{}} [options={}]
      */
-    constructor( parent, context, options ) {
+    constructor( parent, context, options = {} ) {
         if ( !parent ) {
             throw Error( 'parent is required.' );
         }
