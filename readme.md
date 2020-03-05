@@ -1,7 +1,7 @@
 # Shop-Catalog
 
-PHP
-  - Simple PHP Backend
+## Backend
+  - Core PHP Backend
   
 ## Frontend
   - Simple API
