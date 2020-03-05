@@ -1,15 +1,20 @@
 # Shop-Catalog
-## Includes
+
+PHP
   - Simple PHP Backend
+  
+## Frontend
   - Simple API
-  - Modules: Logger, Page
+  - Core: Set of modules to communicate with DOM.
+  - Modules: Component, Logger, Page
   - Components: Cart, Catalog
+  - Pages: Catalog, Checkout 
   - Services: Terminal
 
 
 ## Build-With
+  - Core PHP
   - jQuery
-  - ES6
   - Babel
   - Webpack
   
