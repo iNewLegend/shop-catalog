@@ -81,23 +81,23 @@ export class Element extends Container {
 			elements = { element };
 		}
 
-		Object.values( elements ).forEach( ( entity ) => {
-			if ( entity !== element ) {
-				if ( entity instanceof HTMLElement ) {
-					this.attachListenersFromHTMLElement( entity, controller );
+		Object.values( elements ).forEach( ( currentElement ) => {
+			if ( currentElement !== element ) {
+				if ( currentElement instanceof HTMLElement ) {
+					this.attachListenersFromHTMLElement( currentElement, controller );
 				}
 
-				if ( entity.onclick ) {
-					entity.onclick = this.evalHandlers( entity.onclick, controller );
+				for ( const entity in currentElement ) {
+					if ( entity.startsWith( 'on' ) ) {
+						currentElement[ entity ] = this.evalHandlers( currentElement[ entity ], controller );
+					}
 				}
 			}
-		} )
+		} );
 	}
 
 	/**
-	 * YOU STUCK BCOZ attachListeners not working at alll.
-	 */
-	/**
+	 * TODO: YOU STUCK BCOZ attachListeners not working at alll.
 	 * @param {Context} context
 	 */
 	attachListenersFromContext( context ) {
