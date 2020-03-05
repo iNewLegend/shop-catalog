@@ -117,7 +117,7 @@ export class Product extends Component {
 			case 'product:change': {
 				this.events.onProductChange = callback;
 			}
-				break;
+			break;
 
 			default: {
 				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
