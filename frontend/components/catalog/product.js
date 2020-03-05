@@ -6,7 +6,7 @@
 import * as services from 'SERVICES';
 import {
 	Component,
-	Logger,
+//	Logger,
 } from 'MODULES';
 
 /**
@@ -16,29 +16,17 @@ export class Product extends Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		this.logger = new Logger( Product.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
-
-		this.logger.startWith( { options } );
+		// this.logger = new Logger( Product.getName(), true );
+		// this.logger.setOutputHandler( services.Terminal.onOutput );
+		//
+		// this.logger.startWith( { options } );
 
 		this.apiCatalog = options.api.catalog;
 
 		this.events = {
 			onProductAdd: ( product ) => {},
+			onProductChange: ( product, amount ) => {},
 		};
-
-		this.afterRender = () => {
-			super.afterRender();
-
-			this.elements = {
-				self: this.view.element,
-				prev: $( "#pagination .prev" ),
-				next: $( "#pagination .next" ),
-				placeHolder: $( '#pagination .placeholder' )
-			};
-
-			this._initialize();
-		}
 	}
 
 	static getNamespace() {
@@ -49,53 +37,46 @@ export class Product extends Component {
 		return 'Components/Catalog/Product';
 	}
 
-	/**
-	 * Function _initialize() : Initialize Product
-	 */
-	_initialize() {
-		this.logger.startEmpty();
-	}
+	setAmount( amount ) {
+		// this.logger.startWith( { amount } );
 
-	/**
-	 * Function on() : Declare event callback
-	 *
-	 * @param {'product:add'} event
-	 * @param {{function()}} callback
-	 */
-	on( event, callback ) {
-		this.logger.startWith( { event, callback } );
-
-		switch ( event ) {
-			case 'product:add': {
-				this.events.onProductAdd = callback;
-			}
-			break;
-
-			default: {
-				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-			}
-		}
+		// TODO Remove JQuery.
+		this.amountEl.val( amount );
 	}
 
 	onProductAdd( e ) {
-		this.logger.startWith( { e } );
+		// this.logger.startWith( { e } );
 
-		// maybe there is better way.
-		const el = $( e.currentTarget );
-		const domProduct = el.parentsUntil( '.product' ).parent();
-
-		const id = parseInt( domProduct.attr( 'data-id' ) );
-		const amount = parseInt( domProduct.find( '.amount' ).val() );
+		// TODO: Remove JQuery.
+		const el = $( e.currentTarget ),
+			domProduct = el.parentsUntil( '.product' ).parent(),
+			id = parseInt( domProduct.attr( 'data-id' ) ),
+			amount = parseInt( domProduct.find( '.amount' ).val().toString() );
 
 		let product = this.apiCatalog.getLocalProductById( id );
 
+		// Assign `id` and `amount`.
 		Object.assign( product, { id, amount } );
 
-		// call callback
+		// Call callback
 		this.events.onProductAdd( product );
 
-		// put it back to 1.
+		// Put it back to 1.
 		domProduct.find( '.amount' ).val( '1' );
+	}
+
+	onProductChange( e ) {
+		// this.logger.startWith( { e } );
+
+		// TODO: Remove JQuery.
+		const el = $( e.currentTarget ),
+			val = el.val().toString();
+
+		this.amountEl = el;
+
+		// this.logger.debug( `val: '${val}'` );
+
+		this.events.onProductChange( this, parseInt( val ) );
 	}
 
 	template() {
@@ -109,13 +90,39 @@ export class Product extends Component {
                 <div class="footer">
                     <h5>Price: <span class="price">${price}$</span></h5>
                     <div class="row">
-                        <button class="bg-primary" onclick="this.onProductAdd()">Add To Cart</button>
-                        <input class="amount" type="number" name="amount"
+                        <button onclick="this.onProductAdd()" class="bg-primary">Add To Cart</button>
+                        <input onchange="this.onProductChange()" class="amount" type="number" name="amount"
                             value="1" min="1">
                     </div>
                 </div>
             </div>
         `);
+	}
+
+	/**
+	 * Function on() : Declare event callback
+	 *
+	 * @param {'product:add'|'product:change'} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		// this.logger.startWith( { event, callback } );
+
+		switch ( event ) {
+			case 'product:add': {
+				this.events.onProductAdd = callback;
+			}
+			break;
+
+			case 'product:change': {
+				this.events.onProductChange = callback;
+			}
+				break;
+
+			default: {
+				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+			}
+		}
 	}
 }
 

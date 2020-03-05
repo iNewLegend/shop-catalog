@@ -82,7 +82,6 @@ class App {
         header.toggle.click( () => this.sidebarToggle( true ) );
 
         header.logo.click( () => {
-            // TODO: Handle with view, when container will be view, then you will have extend page-container view, and extend it like this page-container.set( page ) // auto render.
             this.container.set( this.pages.catalog );
             this.container.render();
         } );

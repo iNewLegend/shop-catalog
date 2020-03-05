@@ -38,7 +38,8 @@ export class Pagination extends Component {
                 placeHolder: $( '#pagination .placeholder' )
             };
 
-            this._initialize();
+	        this.elements.next.click( () => this.onPageChange( (this.page + 1) ) );
+	        this.elements.prev.click( () => this.onPageChange( (this.page - 1) ) );
         }
     }
 
@@ -48,16 +49,6 @@ export class Pagination extends Component {
 
     static getName() {
         return 'Components/Catalog/Pagination';
-    }
-
-    /**
-     * Function _initialize() : Initialize pagination
-     */
-    _initialize() {
-        this.logger.startEmpty();
-
-        this.elements.next.click( () => this.onPageChange( (this.page + 1) ) );
-        this.elements.prev.click( () => this.onPageChange( (this.page - 1) ) );
     }
 
     onPageChange( page ) {
