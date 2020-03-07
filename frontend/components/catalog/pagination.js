@@ -20,7 +20,7 @@ export class Pagination extends Component {
         this.logger = new Logger( Pagination.getName(), true );
         this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.logger.startWith( { parent, options } );
+        this.logger.startWith( { options } );
 
         this.page = 0;
 

@@ -25,7 +25,7 @@ export class Catalog extends Component {
         this.logger = new Logger( Catalog.getName(), true );
         this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.logger.startWith( { parent, options } );
+        this.logger.startWith( { options } );
 
         /**
          * @type {API.Catalog}
@@ -209,7 +209,8 @@ export class Catalog extends Component {
 	 * Function onRecvOnce() : Called on success of initial getCatalog request
 	 */
 	onRecvOnce() {
-		this.renderProducts();
+
+	    this.renderProducts();
 
 		this.events.onRecvOnce();
 	}

@@ -39,12 +39,12 @@ export class Cart {
 
         this._afterRender = () => {
             this.elements = {
-                self: document.querySelector('div.cart'),
-                empty: document.querySelector('.cart #empty'),
-                items: document.querySelector('.cart .items'),
-                itemsTotal: document.querySelector('.cart .items .total'),
-                totalPrice: document.querySelector('.cart .total .price'),
-                checkout: document.querySelector('.cart .checkout')
+                self: document.querySelector( 'div.cart' ),
+                empty: document.querySelector( '.cart #empty' ),
+                items: document.querySelector( '.cart .items' ),
+                itemsTotal: document.querySelector( '.cart .items .total' ),
+                totalPrice: document.querySelector( '.cart .total .price' ),
+                checkout: document.querySelector( '.cart .checkout' )
             };
 
             this._initialize();
@@ -374,7 +374,7 @@ export class Cart {
     open() {
         this.logger.startEmpty();
 
-        if (Cart.reloadCartEachOpen) {
+        if ( Cart.reloadCartEachOpen ) {
             this._get();
         }
     }

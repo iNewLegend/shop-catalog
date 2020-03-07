@@ -23,11 +23,13 @@ export class Catalog extends Page {
 
         const { api } = options;
 
+        this.api = api;
+
         this.logger.name = Catalog.getName();
         this.logger.startWith( { api } );
 
         this.catalog = new components.Catalog( this, {
-            api
+            api: this.api,
         } );
     }
 
