@@ -4,10 +4,7 @@
  * @description: Manages catalog
  */
 import * as services from 'SERVICES';
-import {
-    Component,
-    Logger,
-} from 'MODULES';
+import { Component, Logger } from 'MODULES';
 
 import Pagination from './catalog/pagination';
 import Product from './catalog/product';
@@ -19,25 +16,28 @@ export class Catalog extends Component {
     static amountMaxValue = 999;
     static amountMinValue = 1;
 
+    /**
+     * Current page number.
+     * @type {number}
+     */
+    page = 0;
+
+    /**
+     * Loaded products to be rendered.
+     * @type {Array.<components.Product>}
+     */
+    products = [];
+
     constructor( parent, options ) {
         super( parent, options );
 
         this.logger = new Logger( Catalog.getName(), true );
         this.logger.setOutputHandler( services.Terminal.onOutput );
-
         this.logger.startWith( { options } );
 
-        /**
-         * @type {API.Catalog}
-         */
-        this.apiCatalog = options.api;
-
-	    /**
-	     * @type {Array.<components.Product>}
-	     */
-	    this.products = [];
-
-	    this.page = 0;
+        this.apis = {
+            catalog: options.api,
+        };
 
         this.events = {
             onRecvOnce: () => {},
@@ -45,21 +45,22 @@ export class Catalog extends Component {
         };
 
         this.components = {
-	        pagination: new Pagination( this.view.element ),
+            pagination: new Pagination( this.view.element ),
         };
 
-	    this.afterRender = () => {
-		    super.afterRender();
+        // After render.
+        this.afterRender = () => {
+            super.afterRender();
 
-		    this.elements = {
-			    catalog: {
-				    self: $( '#catalog' ),
-				    spinner: $( '#catalog .spinner' ),
-			    },
-		    };
+            this.elements = {
+                catalog: {
+                    self: $( '#catalog' ),
+                    spinner: $( '#catalog .spinner' ),
+                },
+            };
 
-		    this.getProducts( 0, this.onRecvOnce.bind( this ) );
-	    }
+            this.getProducts( 0, this.onRecvOnce.bind( this ) );
+        }
     }
 
     static getNamespace() {
@@ -71,7 +72,7 @@ export class Catalog extends Component {
     }
 
     /**
-     * Function onPageChange() : Called on page change
+     * Function onPageChange() : Called on page change.
      *
      * @param {number} page
      */
@@ -80,30 +81,33 @@ export class Catalog extends Component {
 
         const { catalog } = this.elements;
 
-        --page;
-
+        // Remove all products.
         catalog.self.children( '.product' ).remove();
+
+        // Show spinner.
         catalog.spinner.show();
 
-        this.getProducts( page, () => {
-	        this.renderProducts();
+        this.getProducts( page - 1, () => {
+            this.renderProducts();
         } );
     }
 
     /**
-     * Function onProductAdd() : Called on "Add to cart button"
+     * Function onProductAdd() : Called on "Add to cart button".
      *
      * @param {Product} product
      */
     onProductAdd( product ) {
-    	this.logger.startWith( { product } );
+        this.logger.startWith( { product } );
 
-        // call callback
+        // Call callback.
         this.events.onProductAdd( product );
     }
 
     /**
      * Function onProductAmountChange() : Called on "Product Amount Change".
+     *
+     * Function override amount ( Used as filter ).
      *
      * @param {components.Product} product
      * @param {number} amount
@@ -117,31 +121,33 @@ export class Catalog extends Component {
             amount = Catalog.amountMinValue;
         }
 
-	    product.setAmount( amount );
+        product.setAmount( amount );
     }
 
-	/**
-	 * Function addProduct() : Add's a product.
-	 *
-	 * @param {Product} product
-	 *
-	 * @returns {Product}
-	 */
-	addProduct( product ) {
-	    const rowCatalog = this.view.element.children[ 0 ],
-		    productComponent = new Product( rowCatalog, {
-			    api: {
-				    catalog: this.apiCatalog,
-			    },
-			    ...product,
-		    } );
+    /**
+     * Function addProduct() : Add's a product.
+     *
+     * Function Create product component and push it `this.products`.
+     *
+     * @param {Product} product
+     *
+     * @returns {Product}
+     */
+    addProduct( product ) {
+        const rowCatalog = this.view.element.children[ 0 ],
+            productComponent = new Product( rowCatalog, {
+                api: {
+                    catalog: this.apis.catalog,
+                },
+                ... product,
+            } );
 
-	    productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
-	    productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
+        productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
+        productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 
-	    this.products.push( productComponent );
+        this.products.push( productComponent );
 
-		return productComponent;
+        return productComponent;
     }
 
     /**
@@ -155,17 +161,17 @@ export class Catalog extends Component {
 
         const { catalog } = this.elements;
 
-        this.apiCatalog.get( data => {
-        	// Clear old products.
-	        this.products = [];
+        this.apis.catalog.get( data => {
+            // Clear old products.
+            this.products = [];
 
             // Used 'slow' here to fake loading.
             catalog.spinner.fadeOut( 'slow', () => {
-                if ( ! data.error ) {
+                if ( !data.error ) {
                     this.components.pagination.set( data.pagination );
 
                     data.result.forEach( ( product ) =>
-	                    this.addProduct( product )
+                        this.addProduct( product )
                     );
 
                     if ( onSuccess ) onSuccess();
@@ -188,58 +194,57 @@ export class Catalog extends Component {
     }
 
     render() {
-    	const { pagination } = this.components;
+        const { pagination } = this.components;
 
-    	super.render();
+        super.render();
 
-    	pagination.render();
-	    pagination.on( 'page:change', this.onPageChange.bind( this ) );
+        pagination.render();
+        pagination.on( 'page:change', this.onPageChange.bind( this ) );
     }
 
-	/**
-	 * Function renderProducts() : Render products.
-	 */
-	renderProducts() {
-	    this.products.forEach( ( product ) => {
-		    product.render();
-	    } );
+    /**
+     * Function renderProducts() : Render products.
+     */
+    renderProducts() {
+        this.products.forEach( ( product ) => {
+            product.render();
+        } );
     }
 
-	/**
-	 * Function onRecvOnce() : Called on success of initial getCatalog request
-	 */
-	onRecvOnce() {
+    /**
+     * Function onRecvOnce() : Called on success of initial getCatalog request.
+     */
+    onRecvOnce() {
+        this.renderProducts();
 
-	    this.renderProducts();
+        this.events.onRecvOnce();
+    }
 
-		this.events.onRecvOnce();
-	}
+    /**
+     * Function on() : Declare event callback.
+     *
+     * @param {'initialRecv'|'productAdd'} event
+     * @param {{function()}} callback
+     */
+    on( event, callback ) {
+        this.logger.startWith( { event, callback } );
 
-	/**
-	 * Function on() : Declare event callback
-	 *
-	 * @param {'initialRecv'|'productAdd'} event
-	 * @param {{function()}} callback
-	 */
-	on( event, callback ) {
-		this.logger.startWith( { event, callback } );
+        switch ( event ) {
+            case 'initialRecv': {
+                this.events.onRecvOnce = callback;
+            }
+            break;
 
-		switch ( event ) {
-			case 'initialRecv': {
-				this.events.onRecvOnce = callback;
-			}
-			break;
+            case 'productAdd': {
+                this.events.onProductAdd = callback;
+            }
+            break;
 
-			case 'productAdd': {
-				this.events.onProductAdd = callback;
-			}
-			break;
-
-			default: {
-				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-			}
-		}
-	}
+            default: {
+                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+            }
+        }
+    }
 }
 
 export default Catalog;
