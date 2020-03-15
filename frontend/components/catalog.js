@@ -8,6 +8,7 @@ import { Component, Logger } from 'MODULES';
 
 import Pagination from './catalog/pagination';
 import Product from './catalog/product';
+import Spinner from './catalog/spinner';
 
 /**
  * @memberOf components
@@ -55,9 +56,10 @@ export class Catalog extends Component {
             this.elements = {
                 catalog: {
                     self: $( '#catalog' ),
-                    spinner: $( '#catalog .spinner' ),
                 },
             };
+
+            this.components.spinner = new Spinner( this.view.element.children[ 0 ] );
 
             this.getProducts( 0, this.onRecvOnce.bind( this ) );
         }
@@ -79,13 +81,15 @@ export class Catalog extends Component {
     onPageChange( page ) {
         this.logger.startWith( { page } );
 
-        const { catalog } = this.elements;
+        const { spinner } = this.components;
 
         // Remove all products.
-        catalog.self.children( '.product' ).remove();
+        this.products.forEach( ( product ) =>
+            product.remove()
+        );
 
         // Show spinner.
-        catalog.spinner.show();
+        spinner.show();
 
         this.getProducts( page - 1, () => {
             this.renderProducts();
@@ -159,14 +163,14 @@ export class Catalog extends Component {
     getProducts( page, onSuccess ) {
         this.logger.startWith( { page, onSuccess } );
 
-        const { catalog } = this.elements;
+        const { spinner } = this.components;
 
         this.apis.catalog.get( data => {
             // Clear old products.
             this.products = [];
 
-            // Used 'slow' here to fake loading.
-            catalog.spinner.fadeOut( 'slow', () => {
+            // Used '1000' ms here to fake loading.
+            spinner.fadeOut( 1000, () => {
                 if ( !data.error ) {
                     this.components.pagination.set( data.pagination );
 
@@ -181,22 +185,20 @@ export class Catalog extends Component {
     }
 
     template() {
-        // TODO: spinner should be component.
-        const markup = (`
+        return (`
             <div class="container" style="max-width: 1080px;">
                 <div id="catalog" class="row">
-                    <div class="spinner" style="border-top-color: lightskyblue"></div>
                 </div>
             </div>
         `);
-
-        return markup;
     }
 
     render() {
-        const { pagination } = this.components;
-
         super.render();
+
+        const { pagination, spinner } = this.components;
+
+        spinner.render();
 
         pagination.render();
         pagination.on( 'page:change', this.onPageChange.bind( this ) );

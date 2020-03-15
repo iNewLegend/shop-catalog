@@ -82,6 +82,22 @@ export class Component {
 
 	afterRender() {
 	}
+
+	show() {
+        this.view.element.show();
+    }
+
+    hide() {
+        this.view.element.hide();
+    }
+
+    remove() {
+        const element = this.view.element,
+            parentElement = element.parent.element;
+
+
+        parentElement.removeChild( element.element );
+    }
 }
 
 export default Component;
