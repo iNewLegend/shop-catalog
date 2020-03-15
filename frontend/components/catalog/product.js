@@ -27,6 +27,15 @@ export class Product extends Component {
 			onProductAdd: ( product ) => {},
 			onProductChange: ( product, amount ) => {},
 		};
+
+        // After render.
+        this.afterRender = () => {
+            super.afterRender();
+
+            this.elements = {
+                amount: this.view.element.element.querySelector( '.amount' ),
+            }
+        };
 	}
 
 	static getNamespace() {
@@ -40,18 +49,13 @@ export class Product extends Component {
 	setAmount( amount ) {
 		// this.logger.startWith( { amount } );
 
-		// TODO Remove JQuery.
-		this.amountEl.val( amount );
+		this.elements.amount.value = amount;
 	}
 
 	onProductAdd( e ) {
 		// this.logger.startWith( { e } );
-
-		// TODO: Remove JQuery.
-		const el = $( e.currentTarget ),
-			domProduct = el.parentsUntil( '.product' ).parent(),
-			id = parseInt( domProduct.attr( 'data-id' ) ),
-			amount = parseInt( domProduct.find( '.amount' ).val().toString() );
+		const id = parseInt( this.view.element.element.getAttribute( 'data-id' ) ),
+			amount = parseInt( this.elements.amount.value );
 
 		let product = this.apiCatalog.getLocalProductById( id );
 
@@ -62,17 +66,12 @@ export class Product extends Component {
 		this.events.onProductAdd( product );
 
 		// Put it back to 1.
-		domProduct.find( '.amount' ).val( '1' );
+        this.setAmount( 1 );
 	}
 
 	onProductChange( e ) {
 		// this.logger.startWith( { e } );
-
-		// TODO: Remove JQuery.
-		const el = $( e.currentTarget ),
-			val = el.val().toString();
-
-		this.amountEl = el;
+		const val = e.currentTarget.value;
 
 		// this.logger.debug( `val: '${val}'` );
 
