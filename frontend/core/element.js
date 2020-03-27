@@ -133,9 +133,10 @@ export class Element extends Container {
         if ( property && property.toString().includes( 'this' ) ) {
             let funcContent = property.toString();
 
-            funcContent = funcContent.replace( 'this', 'from' );
+            funcContent = funcContent.replace( new RegExp( 'this', 'g'), 'from' );
             funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
             funcContent = funcContent.replace( '()', '( ... arguments)' );
+
 
             // In other words recreate the callback.
             property = ( event, from = controller ) => {
