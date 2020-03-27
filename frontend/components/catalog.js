@@ -54,12 +54,10 @@ export class Catalog extends Component {
             super.afterRender();
 
             this.elements = {
-                catalog: {
-                    self: $( '#catalog' ),
-                },
+                row: this.view.element.children[ 0 ],
             };
 
-            this.components.spinner = new Spinner( this.view.element.children[ 0 ] );
+            this.components.spinner = new Spinner( this.elements.row );
 
             this.getProducts( 0, this.onRecvOnce.bind( this ) );
         }
@@ -138,8 +136,7 @@ export class Catalog extends Component {
      * @returns {Product}
      */
     addProduct( product ) {
-        const rowCatalog = this.view.element.children[ 0 ],
-            productComponent = new Product( rowCatalog, {
+        const productComponent = new Product( this.elements.row, {
                 api: {
                     catalog: this.apis.catalog,
                 },
@@ -155,7 +152,7 @@ export class Catalog extends Component {
     }
 
     /**
-     * Function getCatalog() : Get catalog from the server.
+     * Function getProducts() : Get products from catalog endpoint.
      *
      * @param {number} page
      * @param {{function()}} onSuccess
