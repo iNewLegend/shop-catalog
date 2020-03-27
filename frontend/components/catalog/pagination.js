@@ -4,6 +4,7 @@
  * @description: Manages pages
  */
 
+import * as core from 'CORE';
 import * as services from 'SERVICES';
 import {
     Component,
@@ -33,13 +34,10 @@ export class Pagination extends Component {
 
             this.elements = {
                 self: this.view.element,
-                prev: $( "#pagination .prev" ),
-                next: $( "#pagination .next" ),
-                placeHolder: $( '#pagination .placeholder' )
+                prev: core.Factory.createElement( "#pagination .prev" ),
+                next: core.Factory.createElement( "#pagination .next" ),
+                placeHolder: core.Factory.createElement( '#pagination .placeholder' )
             };
-
-	        this.elements.next.click( () => this.onPageChange( (this.page + 1) ) );
-	        this.elements.prev.click( () => this.onPageChange( (this.page - 1) ) );
         }
     }
 
@@ -51,14 +49,23 @@ export class Pagination extends Component {
         return 'Components/Catalog/Pagination';
     }
 
+    /**
+     * Function onPageChange() : Call on page change.
+     *
+     * @param {number} page
+     */
     onPageChange( page ) {
         const { self, placeHolder } = this.elements;
 
         this.logger.startWith( { page } );
 
+        // Hide self.
         self.hide();
-        placeHolder.empty();
 
+        // Clear.
+        placeHolder.html('');
+
+        // Notify events.
         this.events.onPageChange( page );
     }
 
@@ -72,30 +79,28 @@ export class Pagination extends Component {
 
         const { placeHolder, next, prev, self } = this.elements;
 
-        // pages
+        // Create pages.
         for ( let i = 0; i < paginationResult.pages; ++i ) {
-            const anchor = $( `<a href="#">${i + 1}</a>` );
+            //const anchor = $( `<a href="#">${i + 1}</a>` );
+            const anchor = new core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
-            anchor.click( function( val ) {
-                this.onPageChange( val );
-            }.bind( this, parseInt( anchor.html() ) ) );
-
-            placeHolder.append( anchor );
+            anchor.render();
+            anchor.click( () => this.onPageChange( i + 1 ) );
 
             self.show();
         }
 
-        // set page
+        // Set page.
         this.page = paginationResult.current + 1;
 
-        // next
+        // Next.
         if ( paginationResult.current >= (paginationResult.pages - 1) ) {
             next.hide();
         } else {
             next.show();
         }
 
-        // prev
+        // Prev.
         if ( 1 === this.page ) {
             prev.hide();
         } else {
@@ -128,10 +133,10 @@ export class Pagination extends Component {
         const markup = (`
             <div id="pagination" class="pagination hidden">
                 <div class="pagination">
-                    <a class="prev" href="#">&laquo;</a>
+                    <a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
                     <span class="placeholder">
                     </span>
-                    <a class="next" href="#">&raquo;</a>
+                    <a onclick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
                 </div>
             </div>
         `);

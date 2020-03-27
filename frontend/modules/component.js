@@ -46,22 +46,22 @@ export class Component {
         this.controller = controller;
 
         // Alias.
-	    this.context = view.element.context;
+        this.context = view.element.context;
 
-	    // Disable default attach Listeners from element.
-	    this.view.element.afterRender = () => {
-		    core.Element.prototype.afterRender.call( this.view.element, false );
-		    core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.controller );
-	    };
+        // Disable default attach Listeners from element.
+        this.view.element.afterRender = () => {
+            core.Element.prototype.afterRender.call( this.view.element, false );
+            core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.controller );
+        };
 
-	    // Attach listeners of view.element to the controller.
-	    // this.view.element.attachListeners = () => {
-		//     return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
-	    // }
+        // Attach listeners of view.element to the controller.
+        // this.view.element.attachListeners = () => {
+        //     return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
+        // }
 
-	    // Attach listeners of view.element to the controller.
-	    // this.view.element.attachListenersFromHTMLElement = () => {
-	    // }
+        // Attach listeners of view.element to the controller.
+        // this.view.element.attachListenersFromHTMLElement = () => {
+        // }
     }
 
     beforeRender() {
@@ -80,8 +80,23 @@ export class Component {
         this.afterRender();
     }
 
-	afterRender() {
-	}
+    afterRender() {
+    }
+
+    show() {
+        this.view.element.show();
+    }
+
+    hide() {
+        this.view.element.hide();
+    }
+
+    remove() {
+        const element = this.view.element,
+            parentElement = element.parent.element;
+
+        parentElement.removeChild( element.element );
+    }
 }
 
 export default Component;
