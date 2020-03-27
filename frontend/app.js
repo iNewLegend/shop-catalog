@@ -47,7 +47,7 @@ class App {
                 closeButton: core.Factory.createElement( '#sidebar #close' ),
             },
 
-            overlay: $( '#overlay' ),
+            overlay: core.Factory.createElement( '#overlay' ),
 
             sections: {
                 main: $( "section.main" )[ 0 ]

@@ -178,6 +178,35 @@ export class Element extends Container {
     removeClass( className ) {
         this.element.classList.remove( className );
     }
+
+    fadeIn() {
+        const el = this.element;
+
+        el.style.opacity = 0;
+        el.style.display = "block";
+
+        (function fade() {
+            let val = parseFloat(el.style.opacity);
+            if (!((val += .1) > 1)) {
+                el.style.opacity = val;
+                requestAnimationFrame(fade);
+            }
+        })();
+    }
+
+    fadeOut(){
+        const el = this.element;
+
+        el.style.opacity = 1;
+
+        (function fade() {
+            if ( ( el.style.opacity -= .1 ) < 0) {
+                el.style.display = "none";
+            } else {
+                requestAnimationFrame( fade );
+            }
+        })();
+    }
 }
 
 export default Element;
