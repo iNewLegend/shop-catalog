@@ -50,7 +50,7 @@ class App {
             overlay: core.Factory.createElement( '#overlay' ),
 
             sections: {
-                main: $( "section.main" )[ 0 ]
+                main: core.Factory.createElement( "section.main" )
             }
         };
 
