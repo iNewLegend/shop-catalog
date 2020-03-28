@@ -27,11 +27,11 @@ export class Context {
         return 'Core/Context';
     }
 
-	/**
-	 *
-	 * @returns {Node}
-	 */
-	create() {
+    /**
+     *
+     * @returns {Node}
+     */
+    create() {
         this.beforeCreate();
 
         this.node = HTML.toNode( this.context );

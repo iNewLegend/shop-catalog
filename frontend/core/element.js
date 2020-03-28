@@ -133,10 +133,9 @@ export class Element extends Container {
         if ( property && property.toString().includes( 'this' ) ) {
             let funcContent = property.toString();
 
-            funcContent = funcContent.replace( new RegExp( 'this', 'g'), 'from' );
+            funcContent = funcContent.replace( new RegExp( 'this', 'g' ), 'from' );
             funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
             funcContent = funcContent.replace( '()', '( ... arguments)' );
-
 
             // In other words recreate the callback.
             property = ( event, from = controller ) => {
@@ -186,21 +185,21 @@ export class Element extends Container {
         el.style.display = "block";
 
         (function fade() {
-            let val = parseFloat(el.style.opacity);
-            if (!((val += .1) > 1)) {
+            let val = parseFloat( el.style.opacity );
+            if ( !((val += .1) > 1) ) {
                 el.style.opacity = val;
-                requestAnimationFrame(fade);
+                requestAnimationFrame( fade );
             }
         })();
     }
 
-    fadeOut(){
+    fadeOut() {
         const el = this.element;
 
         el.style.opacity = 1;
 
         (function fade() {
-            if ( ( el.style.opacity -= .1 ) < 0) {
+            if ( (el.style.opacity -= .1) < 0 ) {
                 el.style.display = "none";
             } else {
                 requestAnimationFrame( fade );
