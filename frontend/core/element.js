@@ -178,7 +178,10 @@ export class Element extends Container {
         this.element.classList.remove( className );
     }
 
-    fadeIn() {
+    /**
+     * @source: https://gist.github.com/chrisbuttery/cf34533cbb30c95ff155
+     */
+    fadeIn( sensitivity = .1 ) {
         const el = this.element;
 
         el.style.opacity = 0;
@@ -186,20 +189,23 @@ export class Element extends Container {
 
         (function fade() {
             let val = parseFloat( el.style.opacity );
-            if ( !((val += .1) > 1) ) {
+            if ( ! ( ( val += sensitivity ) > 1 ) ) {
                 el.style.opacity = val;
                 requestAnimationFrame( fade );
             }
         })();
     }
 
-    fadeOut() {
+    /**
+     * @source: https://gist.github.com/chrisbuttery/cf34533cbb30c95ff155
+     */
+    fadeOut( sensitivity = .1 ) {
         const el = this.element;
 
         el.style.opacity = 1;
 
         (function fade() {
-            if ( (el.style.opacity -= .1) < 0 ) {
+            if ( ( el.style.opacity -= sensitivity ) < 0 ) {
                 el.style.display = "none";
             } else {
                 requestAnimationFrame( fade );
