@@ -29,7 +29,7 @@ export class View {
     }
 
     template() {
-        throw( 'no template' );
+        throw('no template');
     }
 
     render() {

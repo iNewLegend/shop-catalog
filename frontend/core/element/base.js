@@ -82,8 +82,8 @@ export class Base {
             }
 
             // Render.
-		    this.element = parent.appendChild( this.context.create() );
-	    }
+            this.element = parent.appendChild( this.context.create() );
+        }
 
         if ( ! preventDefault ) this.afterRender();
 

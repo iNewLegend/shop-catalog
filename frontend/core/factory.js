@@ -18,11 +18,11 @@ export class Factory {
         return 'Core/Factory';
     }
 
-	static createElement( selector ) {
-		selector = document.querySelector( selector );
+    static createElement( selector ) {
+        selector = document.querySelector( selector );
 
-		return new modules.Element( selector.parentElement, selector );
-	}
+        return new modules.Element( selector.parentElement, selector );
+    }
 }
 
 export default Factory;
