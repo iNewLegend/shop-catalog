@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "allowSyntheticDefaultImports": true,
+        "checkJs": false,
+        "baseUrl": "./",
+        "paths": {
+            "API": ["frontend/api/index.js"],
+            "COMPONENTS": ["frontend/components/index.js"],
+            "CORE": ["frontend/core/index.js"],
+            "LIBRARY": ["frontend/library/index.js"],
+            "MODULES": ["frontend/modules/index.js"],
+            "PAGES": ["frontend/pages/index.js"],
+            "SERVICES": ["frontend/services/index.js"],
+            "DEV-LIBRARY": ["dev/library/index.js"],
+            "DEV-MODULES": ["dev/modules/index.js"],
+        }
+    },
+    "include": [
+        "./frontend/**/*"
+    ]
+}
