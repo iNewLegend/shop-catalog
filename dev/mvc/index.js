@@ -1,11 +1,11 @@
-import * as Core from '../../frontend/core/index.js';
-import Modules from '../../frontend/modules/index.js';
+import * as core from '../../frontend/core/index.js';
+import * as modules from '../../frontend/modules/index.js';
 
-class PageContainer extends Core.Container {
+class PageContainer extends core.Container {
 
 }
 
-class Page extends Core.Container {
+class Page extends core.Container {
 
 }
 
@@ -16,7 +16,7 @@ class CatalogPage extends Page {
 }
 
 
-class Item extends Modules.Component {
+class Component extends modules.Component {
 	template() {
 		return '' +
 			'<div class"item">' +
@@ -36,7 +36,7 @@ class Item extends Modules.Component {
 
 	onClick = () => {
 		alert('Hello from item class view');
-	 }
+	}
 }
 
 
@@ -46,11 +46,11 @@ class App {
             root: document.getElementById('root'),
         };
 
-        this.app = new Core.Element(this.elements.root, `<div class="app">App</div>`);
+        this.app = new core.Element(this.elements.root, `<div class="app">App</div>`);
 
         this.pageContainer = new PageContainer( this.app, '<div class="page">Page Container</div>' );
 
-        this.pageContainer.on('render', this.onPageContainerRender.bind( this ) );
+        this.pageContainer.on('render:after', this.onPageContainerRender.bind( this ) );
 
         this.homePage = new CatalogPage( this.pageContainer, '<div class="homepage">Home Page</div>')
 
@@ -63,8 +63,8 @@ class App {
 	onPageContainerRender() {
     	console.log( 'onPageContainerRender' );
 
-    	const item = new Item( this.homePage );
-    	item.render();
+    	const component = new Component( this.homePage );
+    	component.render();
 	}
 
 }

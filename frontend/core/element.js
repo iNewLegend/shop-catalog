@@ -97,7 +97,6 @@ export class Element extends Container {
     }
 
     /**
-     * TODO: YOU STUCK BCOZ attachListeners not working at alll.
      * @param {Context} context
      */
     attachListenersFromContext( context ) {
