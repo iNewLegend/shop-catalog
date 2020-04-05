@@ -36,7 +36,7 @@ module.exports = {
 		alias: {
 			'API': path.resolve(__dirname, 'frontend/api'),
 			'COMPONENTS': path.resolve(__dirname, 'frontend/components'),
-      'CORE': path.resolve(__dirname, 'frontend/core'),
+            'CORE': path.resolve(__dirname, 'frontend/core'),
 			'LIBRARY': path.resolve(__dirname, 'frontend/library'),
 			'MODULES': path.resolve(__dirname, 'frontend/modules'),
 			'PAGES': path.resolve(__dirname, 'frontend/pages'),
