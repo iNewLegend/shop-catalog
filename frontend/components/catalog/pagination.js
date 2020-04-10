@@ -1,7 +1,7 @@
 /**
  * @file: components/pagination.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Manages pages
+ * @description: component for pagination.
  */
 
 import * as core from 'CORE';
@@ -10,6 +10,15 @@ import {
     Component,
     Logger,
 } from 'MODULES';
+
+/**
+ * @typedef PaginationData pagination data.
+ * @property {number} current current page.
+ * @property {number} total total amount of items.
+ * @property {number} pages amount of pages.
+ * @property {number} perPage amount of pages per page.
+ * @memberOf components
+ */
 
 /**
  * @memberOf components
@@ -72,16 +81,15 @@ export class Pagination extends Component {
     /**
      * Function set() : Set pagination to dom.
      *
-     * @param {{}} paginationResult
+     * @param {PaginationData} paginationData
      */
-    set( paginationResult ) {
-        this.logger.startWith( { paginationResult } );
+    set( paginationData ) {
+        this.logger.startWith( {  paginationData } );
 
         const { placeHolder, next, prev, self } = this.elements;
 
         // Create pages.
-        for ( let i = 0; i < paginationResult.pages; ++i ) {
-            //const anchor = $( `<a href="#">${i + 1}</a>` );
+        for ( let i = 0; i < paginationData.pages; ++i ) {
             const anchor = new core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
             anchor.render();
@@ -91,10 +99,10 @@ export class Pagination extends Component {
         }
 
         // Set page.
-        this.page = paginationResult.current + 1;
+        this.page = paginationData.current + 1;
 
         // Next.
-        if ( paginationResult.current >= (paginationResult.pages - 1) ) {
+        if ( paginationData.current >= ( paginationData.pages - 1 ) ) {
             next.hide();
         } else {
             next.show();
@@ -130,7 +138,7 @@ export class Pagination extends Component {
     }
 
     template() {
-        const markup = (`
+        return (`
             <div id="pagination" class="pagination hidden">
                 <div class="pagination">
                     <a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
@@ -140,8 +148,6 @@ export class Pagination extends Component {
                 </div>
             </div>
         `);
-
-        return markup;
     }
 }
 
