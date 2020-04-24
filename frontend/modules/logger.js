@@ -367,6 +367,10 @@ export class Logger {
 
         throw (new Error().stack);
     }
+
+    clone() {
+        return Object.assign( Object.create( Object.getPrototypeOf( this ) ), this );
+    }
 }
 
 export default Logger;

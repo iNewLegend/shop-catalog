@@ -137,11 +137,14 @@ export class Catalog extends Component {
      */
     addProduct( product ) {
         const productComponent = new Product( this.elements.row, {
-                api: {
-                    catalog: this.apis.catalog,
-                },
-                ... product,
-            } );
+            api: {
+                catalog: this.apis.catalog,
+            },
+
+            logger: this.logger,
+
+            ... product,
+        } );
 
         productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
         productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );

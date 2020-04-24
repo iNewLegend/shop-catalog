@@ -3,10 +3,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one product unit.
  */
-import * as services from 'SERVICES';
 import {
 	Component,
-//	Logger,
 } from 'MODULES';
 
 /**
@@ -16,12 +14,24 @@ export class Product extends Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		// this.logger = new Logger( Product.getName(), true );
-		// this.logger.setOutputHandler( services.Terminal.onOutput );
-		//
-		// this.logger.startWith( { options } );
+        /**
+         * @type {modules.Logger}
+         */
+        this.logger = options.logger;
 
-		this.apiCatalog = options.api.catalog;
+        // If parent logger 'Components/Catalog' passed, clone and extend its name.
+        if ( this.logger ) {
+            const { id, name, price } = this.options;
+
+            this.logger = this.logger.clone();
+            this.logger.name = Product.getName() + '/' + id;
+
+            this.logger.startWith( { id, name, price } );
+        }
+
+        this.apis = {
+            catalog: options.api.catalog,
+        }
 
 		this.events = {
 			onProductAdd: ( product ) => {},
@@ -47,17 +57,22 @@ export class Product extends Component {
 	}
 
 	setAmount( amount ) {
-		// this.logger.startWith( { amount } );
+	    if ( this.logger ) {
+            this.logger.startWith( { amount } );
+        }
 
 		this.elements.amount.value = amount;
 	}
 
 	onProductAdd( e ) {
-		// this.logger.startWith( { e } );
-		const id = parseInt( this.view.element.element.getAttribute( 'data-id' ) ),
+        if ( this.logger ) {
+            this.logger.startWith( { e } );
+        }
+
+		const id = parseInt( this.options.id ),
 			amount = parseInt( this.elements.amount.value );
 
-		let product = this.apiCatalog.getLocalProductById( id );
+		let product = this.apis.catalog.getLocalProductById( id );
 
 		// Assign `id` and `amount`.
 		Object.assign( product, { id, amount } );
@@ -70,10 +85,15 @@ export class Product extends Component {
 	}
 
 	onProductChange( e ) {
-		// this.logger.startWith( { e } );
+	    if ( this.logger ) {
+            this.logger.startWith( { e } );
+        }
+
 		const val = e.currentTarget.value;
 
-		// this.logger.debug( `val: '${val}'` );
+        if ( this.logger ) {
+            this.logger.debug( `val: '${val}'` );
+        }
 
 		this.events.onProductChange( this, parseInt( val ) );
 	}
@@ -82,8 +102,8 @@ export class Product extends Component {
 		const { id, name, price } = this.options;
 
 		return (`
-            <div class="product" data-id="${id}">
-                <img src="img/product-${id}.jpg">
+            <div class="product">
+                <img src="img/product-${id}.jpg" alt="product-${id}" />
                 <h4 class="name color-secondary">${name}</h4>
 
                 <div class="footer">
@@ -105,8 +125,6 @@ export class Product extends Component {
 	 * @param {{function()}} callback
 	 */
 	on( event, callback ) {
-		// this.logger.startWith( { event, callback } );
-
 		switch ( event ) {
 			case 'product:add': {
 				this.events.onProductAdd = callback;
