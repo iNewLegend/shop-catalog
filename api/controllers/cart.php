@@ -7,133 +7,129 @@
 
 namespace Controllers;
 
-class Cart
-{
-    /**
-     * Instace of Catalog Model
-     *
-     * @var \Models\Catalog
-     */
-    private $catalogModel;
+use Helpers\CommonError;
+use Helpers\CommonResponder;
+use Services\Database;
 
-    /**
-     * Cart Object (Can be class if you wish) \Models\Cart
-     *
-     * @var array
-     */
-    private $cart;
+class Cart {
 
-    /**
-     * Function __construct() Create Cart Controller
-     */
-    public function __construct()
-    {
-        $this->catalogModel = new \Models\Catalog(\Services\Database::getInstance()->getPDO());
+	/**
+	 * Instance of Catalog Model
+	 *
+	 * @var \Models\Catalog
+	 */
+	private $catalogModel;
 
-        if (!isset($_COOKIE['cart'])) {
-            $this->cart = [];
-        } else {
-            $this->cart = json_decode($_COOKIE['cart'], true);
-        }
-        
-    }
+	/**
+	 * Cart Object (Can be class if you wish) \Models\Cart
+	 *
+	 * @var array
+	 */
+	private $cart;
 
-    /**
-     * Function __destruct() : Destory the controller
-     */
-    public function __destruct()
-    {
-        // this is works. 
-        setcookie('cart', json_encode($this->cart));
-    }
+	/**
+	 * Function __construct() Create Cart Controller
+	 */
+	public function __construct() {
+		$this->catalogModel = new \Models\Catalog( Database::getInstance()->getPDO() );
 
-    /**
-     * Function index() : Get Cart 
-     *
-     * @param int $page
-     * 
-     * @return array
-     */
-    public function index()
-    {
-        return $this->cart;
-    }
+		if ( ! isset( $_COOKIE['cart'] ) ) {
+			$this->cart = [];
+		} else {
+			$this->cart = json_decode( $_COOKIE['cart'], true );
+		}
+	}
 
-    /**
-     * Function addItem() Add item to cart
-     *
-     * @param int $id
-     * @param int $amount
-     * 
-     * @return void
-     */
-    public function addItem(int $id, int $amount)
-    {
-        if ($product = $this->catalogModel->getById($id)) {
+	/**
+	 * Function __destruct() : Destroy the controller
+	 */
+	public function __destruct() {
+		// this is works.
+		setcookie( 'cart', json_encode( $this->cart ) );
+	}
 
-            $cartFoundKey = null;
+	/**
+	 * Function index() : Get Cart
+	 *
+	 * @return array
+	 */
+	public function index() {
+		return $this->cart;
+	}
 
-            foreach ($this->cart as $key => $item) {
-                if (isset($item['id']) && $item['id'] == $id) {
-                    $cartFoundKey = $key;
-                    break;
-                }
-            }
+	/**
+	 * Function addItem() Add item to cart
+	 *
+	 * @param int $id
+	 * @param int $amount
+	 *
+	 * @return array|string|false
+	 */
+	public function addItem( int $id, int $amount ) {
+		if ( $product = $this->catalogModel->getById( $id ) ) {
 
-            $product['amount'] = $amount;
+			$cartFoundKey = null;
 
-            // unset price and name, so it wont get to client. in frontend use catalog for that.
-            unset($product['price']);
-            unset($product['name']);
-            
-            // if item already exist
-            if ($cartFoundKey !== null) {
-                $product['amount'] += $this->cart[$cartFoundKey]['amount'];
-                
-                $this->cart[$cartFoundKey] = $product;
-            } else {
-                $this->cart[] = $product;
-            }
+			foreach ( $this->cart as $key => $item ) {
+				if ( isset( $item['id'] ) && $item['id'] == $id ) {
+					$cartFoundKey = $key;
+					break;
+				}
+			}
 
-            return $product;
-        }
+			$product['amount'] = $amount;
 
-        return \Helpers\CommonResponder::errorMessage(\Helpers\CommonError::system_error);
-    }
+			// unset price and name, so it wont get to client. in frontend use catalog for that.
+			unset( $product['price'] );
+			unset( $product['name'] );
 
-    /**
-     * Function removeItem() : Removes item from cart 
-     *
-     * @param int $id
-     * 
-     * @return void
-     */
-    public function removeItem(int $id)
-    {
-        $cartFoundKey = null;
+			// if item already exist
+			if ( $cartFoundKey !== null ) {
+				$product['amount'] += $this->cart[ $cartFoundKey ]['amount'];
 
-        foreach ($this->cart as $key => $item) {
-            if (isset($item['id']) && $item['id'] == $id) {
-                $cartFoundKey = $key;
-                break;
-            }
-        }
+				$this->cart[ $cartFoundKey ] = $product;
+			} else {
+				$this->cart[] = $product;
+			}
 
-        if ($cartFoundKey === null) {
-            return \Helpers\CommonResponder::errorMessage(\Helpers\CommonError::item_not_found);
-        }
+			return $product;
+		}
 
-        if ($product = $this->catalogModel->getById($id)) {
-            $product['amount'] = $this->cart[$cartFoundKey]['amount'];
+		return CommonResponder::errorMessage( CommonError::system_error );
+	}
 
-            unset($this->cart[$cartFoundKey]);
+	/**
+	 * Function removeItem() : Removes item from cart
+	 *
+	 * @param int $id
+	 *
+	 * @return array|string|false
+	 */
+	public function removeItem( int $id ) {
+		$cartFoundKey = null;
 
-            // Rebase array keys after unsetting elements, cart send in JSON format.
-            $this->cart = array_values($this->cart);
+		foreach ( $this->cart as $key => $item ) {
+			if ( isset( $item['id'] ) && $item['id'] == $id ) {
+				$cartFoundKey = $key;
+				break;
+			}
+		}
 
-            return $product;
-        }
+		if ( $cartFoundKey === null ) {
+			return CommonResponder::errorMessage( CommonError::item_not_found );
+		}
 
-        return \Helpers\CommonResponder::errorMessage(\Helpers\CommonError::system_error);
-    }
+		if ( $product = $this->catalogModel->getById( $id ) ) {
+			$product['amount'] = $this->cart[ $cartFoundKey ]['amount'];
+
+			unset( $this->cart[ $cartFoundKey ] );
+
+			// Rebase array keys after un-setting elements, cart send in JSON format.
+			$this->cart = array_values( $this->cart );
+
+			return $product;
+		}
+
+		return CommonResponder::errorMessage( CommonError::system_error );
+	}
 }

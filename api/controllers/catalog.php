@@ -2,62 +2,61 @@
 /**
  * @file    : controllers/catalog.php
  * @author  : Leonid Vinikov <czf.leo123@gmail.com>
- * 
- * @desc:   : Catalog Controller
+ *
+ * @desc    :   : Catalog Controller
  */
 
 namespace Controllers;
 
-class Catalog
-{
-    const PER_PAGE = 8; // another way, you can create another config file for that.
+use Helpers\CommonResponder;
+use Services\Database;
 
-    /**
-     * Instace of Catalog Model
-     *
-     * @var \Models\Catalog
-     */
-    private $catalogModel;
+class Catalog {
 
+	const PER_PAGE = 8; // another way, you can create another config file for that.
 
-    /**
-     * Function __construct() Create Catalog Controller
-     */
-    public function __construct()
-    {
-        $this->catalogModel = new \Models\Catalog(\Services\Database::getInstance()->getPDO());
-    }
+	/**
+	 * Instance of Catalog Model
+	 *
+	 * @var \Models\Catalog
+	 */
+	private $catalogModel;
 
-    /**
-     * Function index() : Get Catalog items per page 
-     *
-     * @param int $page
-     * 
-     * @return array
-     */
-    public function index($page = 0)
-    {
-        $result = [];
+	/**
+	 * Function __construct() Create Catalog Controller
+	 */
+	public function __construct() {
+		$this->catalogModel = new \Models\Catalog( Database::getInstance()->getPDO() );
+	}
 
-        $totalCount = 0;
-        $perPage = SELF::PER_PAGE;
+	/**
+	 * Function index() : Get Catalog items per page
+	 *
+	 * @param int $page
+	 *
+	 * @return array
+	 */
+	public function index( $page = 0 ) {
+		$result = [];
 
-        $result['result'] = $this->catalogModel->getAll($page, $perPage, $totalCount);
+		$totalCount = 0;
+		$perPage = SELF::PER_PAGE;
 
-        \Helpers\CommonResponder::addPagination($result, $page, $perPage, $totalCount);
+		$result['result'] = $this->catalogModel->getAll( $page, $perPage, $totalCount );
 
-        return $result;
-    }
+		CommonResponder::addPagination( $result, $page, $perPage, $totalCount );
 
-    /**
-     * Function get() : Get Catalog items with specific id's
-     *
-     * @param string $ids
-     * 
-     * @return array
-     */
-    public function get(string $ids)
-    {
-        return $this->catalogModel->getByIds(explode(',', $ids));
-    }
+		return $result;
+	}
+
+	/**
+	 * Function get() : Get Catalog items with specific id's
+	 *
+	 * @param string $ids
+	 *
+	 * @return array
+	 */
+	public function get( string $ids ) {
+		return $this->catalogModel->getByIds( explode( ',', $ids ) );
+	}
 }

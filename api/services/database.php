@@ -6,61 +6,55 @@
 
 namespace Services;
 
-class Database
-{
-    /**
-     * Self Instance
-     *
-     * @var \Services\Database
-     */
-    private static $instance;
+use PDO;
 
-    /**
-     * PDO
-     *
-     * @var \PDO
-     */
-    private $pdo;
+class Database {
 
-    /**
-     * Function __construct() : Create Database Service
-     */
-    private function __construct()
-    {
-        $host = \Config\Database::HOST;
-        $name = \Config\Database::NAME;
-        $user = \Config\Database::USERNAME;
-        $pass = \Config\Database::PASSWORD;
+	/**
+	 * Self Instance
+	 *
+	 * @var \Services\Database
+	 */
+	private static $instance;
 
-        $this->pdo = new \PDO(
-            "mysql:host={$host};dbname={$name}",
-            $user,
-            $pass,
-            [ \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'" ]
-        );
-    }
+	/**
+	 * PDO
+	 *
+	 * @var \PDO
+	 */
+	private $pdo;
 
-    /**
-     * function getInstance() : Return self instance
-     *
-     * @return \Services\Database
-     */
-    public static function getInstance()
-    {
-        if (!self::$instance) {
-            self::$instance = new self();
-        }
+	/**
+	 * Function __construct() : Create Database Service
+	 */
+	private function __construct() {
+		$host = \Config\Database::HOST;
+		$name = \Config\Database::NAME;
+		$user = \Config\Database::USERNAME;
+		$pass = \Config\Database::PASSWORD;
 
-        return self::$instance;
-    }
+		$this->pdo = new PDO( "mysql:host={$host};dbname={$name}", $user, $pass, [ PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'" ] );
+	}
 
-    /**
-     * function getPDO() : Get the pdo connection
-     *
-     * @return \PDO
-     */
-    public function getPDO()
-    {
-        return $this->pdo;
-    }
+	/**
+	 * function getInstance() : Return self instance
+	 *
+	 * @return \Services\Database
+	 */
+	public static function getInstance() {
+		if ( ! self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	/**
+	 * function getPDO() : Get the pdo connection
+	 *
+	 * @return \PDO
+	 */
+	public function getPDO() {
+		return $this->pdo;
+	}
 }

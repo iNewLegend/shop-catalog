@@ -1,33 +1,37 @@
 <?php
 /**
- * @file: helpers/commonenum.php
+ * @file  : helpers/commonenum.php
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @todo: 
+ * @todo  :
  */
 
 namespace Helpers;
 
-abstract class CommonEnum
-{
-    final public function __construct($value)
-    {
-        $c = new \ReflectionClass($this);
+abstract class CommonEnum {
 
-        if(!in_array($value, $c->getConstants())) {
-            throw IllegalArgumentException();
-        }
+	/**
+	 * CommonEnum constructor.
+	 *
+	 * @param $value
+	 *
+	 * @throws \ReflectionException|
+	 */
+	final public function __construct( $value ) {
+		$c = new \ReflectionClass( $this );
 
-        $this->value = $value;
-    }
+		if ( ! in_array( $value, $c->getConstants() ) ) {
+			throw \Exception( 'IllegalArgumentException' );
+		}
 
-    final public function getValue()
-    {
-        return $this->value;
-    }
+		$this->value = $value;
+	}
 
-    final public function __toString()
-    {
-        return (string) $this->getValue();
-    }
-    
+	final public function __toString() {
+		return (string) $this->getValue();
+	}
+
+	final public function getValue() {
+		return $this->value;
+	}
+
 }

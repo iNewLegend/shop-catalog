@@ -7,101 +7,97 @@
 
 namespace Modules;
 
-class Loader
-{
-    /**
-     * The handler of the object
-     *
-     * @var object
-     */
-    protected $handler;
+class Loader {
 
-    /**
-     * Object name
-     *
-     * @var string
-     */
-    private $name;
-    
-    /**
-     * Object path
-     *
-     * @var string
-     */
-    private $path;
+	/**
+	 * The handler of the object
+	 *
+	 * @var object
+	 */
+	protected $handler;
 
-    /**
-     * Is the object avialable
-     *
-     * @var boolean
-     */
-    private $avialable = false;
+	/**
+	 * Object name
+	 *
+	 * @var string
+	 */
+	private $name;
 
-    /**
-     * Is the object Loaded
-     *
-     * @var boolean
-     */
-    private $loaded = false;
+	/**
+	 * Object path
+	 *
+	 * @var string
+	 */
+	private $path;
 
-    /**
-     * Function __construct() : Create Loader
-     *
-     * @param string $name
-     * @param string $path
-     * @param string $fullName
-     * @param boolean $autoLoad
-     */
-    public function __construct(string $name, string $path, string $fullName, bool $autoLoad = false)
-    {
-        $this->name = $name;
-        $this->path = $path;
-        $this->fullName = $fullName;
+	/**
+	 * Is the object avialable
+	 *
+	 * @var boolean
+	 */
+	private $avialable = false;
 
-        if (file_exists($this->path)) {
-            $this->avialable = true;
-        }
-    
-        if ($autoLoad) {
-            $this->load();
-        }
-    }
+	/**
+	 * Is the object Loaded
+	 *
+	 * @var boolean
+	 */
+	private $loaded = false;
 
-    /**
-     * Function load() : Load's file
-     *
-     * @return void
-     */
-    public function load()
-    {
-        if ($this->isAvialable() && require_once($this->path)) {
-            $this->handler = new $this->fullName;
+	/**
+	 * Function __construct() : Create Loader
+	 *
+	 * @param string  $name
+	 * @param string  $path
+	 * @param string  $fullName
+	 * @param boolean $autoLoad
+	 */
+	public function __construct( string $name, string $path, string $fullName, bool $autoLoad = false ) {
+		$this->name = $name;
+		$this->path = $path;
+		$this->fullName = $fullName;
 
-            if ($this->handler) {
-                return $this->loaded = true;
-            }
-        }
+		if ( file_exists( $this->path ) ) {
+			$this->avialable = true;
+		}
 
-        return false;
-    }
+		if ( $autoLoad ) {
+			$this->load();
+		}
+	}
 
-    /**
-     * Function isAvialable() : is object avialable
-     *
-     * @return boolean
-     */
-    public function isAvialable()
-    {
-        return $this->avialable;
-    }
-    
-    /**
-     * Function isLoaded() : is object loaded
-     *
-     * @return boolean
-     */
-    public function isLoaded()
-    {
-        return $this->loaded;
-    }
+	/**
+	 * Function load() : Load's file
+	 *
+	 * @return void
+	 */
+	public function load() {
+		if ( $this->isAvialable() && require_once( $this->path ) ) {
+			$this->handler = new $this->fullName;
+
+			if ( $this->handler ) {
+				return $this->loaded = true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Function isAvialable() : is object avialable
+	 *
+	 * @return boolean
+	 */
+	public function isAvialable() {
+		return $this->avialable;
+	}
+
+	/**
+	 * Function isLoaded() : is object loaded
+	 *
+	 * @return boolean
+	 */
+	public function isLoaded() {
+		return $this->loaded;
+	}
 }

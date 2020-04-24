@@ -1,231 +1,219 @@
 <?php
 /**
- * @file: modules/command.php
+ * @file   : modules/command.php
  * @author Leonid Vinikov <czf.leo123@gmail.com>
  */
 
 namespace Modules;
 
-class Command
-{
-    /**
-     * Command name (aka controller)
-     *
-     * @var string
-     */
-    private $name = 'welcome';
+class Command {
 
-    /**
-     * Command method (function)
-     *
-     * @var string
-     */
-    private $method = 'index';
+	/**
+	 * Command name (aka controller)
+	 *
+	 * @var string
+	 */
+	private $name = 'welcome';
 
-    /**
-     * Command parameters
-     *
-     * @var array
-     */
-    private $params = [];
+	/**
+	 * Command method (function)
+	 *
+	 * @var string
+	 */
+	private $method = 'index';
 
-    /**
-     * Does we have no parameters
-     *
-     * @var bool
-     */
-    private $noParameters = true;
+	/**
+	 * Command parameters
+	 *
+	 * @var array
+	 */
+	private $params = [];
 
-    /**
-     * Does we have no sub parameters
-     *
-     * @var bool
-     */
-    private $noSubParameters = true;
+	/**
+	 * Does we have no parameters
+	 *
+	 * @var bool
+	 */
+	private $noParameters = true;
 
-    /**
-     * Function __construct() : Construct Command Module and parse $cmd
-     *
-     * @param string    $cmd
-     * @param array     $params
-     */
-    public function __construct(string $cmd = '', array $params = [])
-    {
-        $this->setParameters($params);
+	/**
+	 * Does we have no sub parameters
+	 *
+	 * @var bool
+	 */
+	private $noSubParameters = true;
 
-        if (!empty($cmd)) {
-            $this->parse($cmd);
-        }
+	/**
+	 * Function __construct() : Construct Command Module and parse $cmd
+	 *
+	 * @param string $cmd
+	 * @param array  $params
+	 */
+	public function __construct( string $cmd = '', array $params = [] ) {
+		$this->setParameters( $params );
 
-        $countParameters = count($this->getParameters());
+		if ( ! empty( $cmd ) ) {
+			$this->parse( $cmd );
+		}
 
-        $this->noParameters = true;
-        $this->noSubParameters = true;
+		$countParameters = count( $this->getParameters() );
 
-        if ($countParameters) {
-            $this->noParameters = false;
-        }
-        
-        if ($countParameters > 1) {
-            $this->noSubParameters = false;
-        }
-    }
+		$this->noParameters = true;
+		$this->noSubParameters = true;
 
-    /**
-     * Function parse() : Parse command from format eg: /name/methods/params
-     *
-     * @param string $cmd
-     *
-     * @return void
-     */
-    public function parse(string $cmd)
-    {
-        if (!empty($cmd) && is_string($cmd)) {
-            // remove forward slash from the start & end
+		if ( $countParameters ) {
+			$this->noParameters = false;
+		}
 
-            $cmd = trim($cmd, '/');
-            $cmd = rtrim($cmd, '/');
+		if ( $countParameters > 1 ) {
+			$this->noSubParameters = false;
+		}
+	}
 
-            // removes all illegal URL characters from a string
-            $cmd = explode('/', $cmd);
+	/**
+	 * Function setParameters() : Set command parameters
+	 *
+	 * @param array $params
+	 *
+	 * @return void
+	 */
+	public function setParameters( $params ) {
+		$this->params = $params;
+	}
 
-            // set controller
-            if (isset($cmd[0]) && !empty($cmd[0])) {
-                // only abc for controller name
-                $cmd[0] = preg_replace("/[^a-zA-Z]+/", "", $cmd[0]);
+	/**
+	 * Function parse() : Parse command from format eg: /name/methods/params
+	 *
+	 * @param string $cmd
+	 *
+	 * @return void
+	 */
+	public function parse( string $cmd ) {
+		if ( ! empty( $cmd ) && is_string( $cmd ) ) {
+			// remove forward slash from the start & end
 
-                $this->name = $cmd[0];
-                unset($cmd[0]);
-            }
+			$cmd = trim( $cmd, '/' );
+			$cmd = rtrim( $cmd, '/' );
 
-            // set method
-            if (isset($cmd[1])) {
-                // only abc and digits for method name
-                $cmd[1] = preg_replace("/[^a-zA-Z0-9]+/", "", $cmd[1]);
+			// removes all illegal URL characters from a string
+			$cmd = explode( '/', $cmd );
 
-                $this->method = $cmd[1];
-                unset($cmd[1]);
-            }
+			// set controller
+			if ( isset( $cmd[0] ) && ! empty( $cmd[0] ) ) {
+				// only abc for controller name
+				$cmd[0] = preg_replace( "/[^a-zA-Z]+/", "", $cmd[0] );
 
-            // set params
-            if (!empty($cmd)) {
+				$this->name = $cmd[0];
+				unset( $cmd[0] );
+			}
 
-                foreach ($cmd as $key => $param) {
-                    $cmd[$key] = filter_var($param, FILTER_SANITIZE_STRING);
-                }
+			// set method
+			if ( isset( $cmd[1] ) ) {
+				// only abc and digits for method name
+				$cmd[1] = preg_replace( "/[^a-zA-Z0-9]+/", "", $cmd[1] );
 
-                $this->params = array_values($cmd);
-            }
-        }
-    }
+				$this->method = $cmd[1];
+				unset( $cmd[1] );
+			}
 
-    /**
-     * Function getName() : Get command name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
+			// set params
+			if ( ! empty( $cmd ) ) {
 
-    /**
-     * Function setName() : Set command name
-     *
-     * @param string $name
-     *
-     * @return void
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
+				foreach ( $cmd as $key => $param ) {
+					$cmd[ $key ] = filter_var( $param, FILTER_SANITIZE_STRING );
+				}
 
-    /**
-     * Function getMethod() : Get command method name
-     *
-     * @return string
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
+				$this->params = array_values( $cmd );
+			}
+		}
+	}
 
-    /**
-     * Function setMethod() : Set method name
-     *
-     * @param string $method
-     *
-     * @return void
-     */
-    public function setMethod(string $method)
-    {
-        $this->method = $method;
-    }
+	/**
+	 * Function getParameters() : Get command parameters
+	 *
+	 * @return array
+	 */
+	public function getParameters() {
+		return $this->params;
+	}
 
-    /**
-     * Function getParameters() : Get command parameters
-     *
-     * @return array
-     */
-    public function getParameters()
-    {
-        return $this->params;
-    }
+	/**
+	 * Function getName() : Get command name
+	 *
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
 
-    /**
-     * Function setParameters() : Set command parameters
-     *
-     * @param array $params
-     *
-     * @return void
-     */
-    public function setParameters($params)
-    {
-        $this->params = $params;
-    }
+	/**
+	 * Function setName() : Set command name
+	 *
+	 * @param string $name
+	 *
+	 * @return void
+	 */
+	public function setName( string $name ) {
+		$this->name = $name;
+	}
 
-    /**
-     * Function isEmpty() : Check is empty command on $this->cmd
-     *
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return empty($this->cmd);
-    }
+	/**
+	 * Function getMethod() : Get command method name
+	 *
+	 * @return string
+	 */
+	public function getMethod() {
+		return $this->method;
+	}
 
-    /**
-     * Function __toString() : Return's command in JSON format
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return json_encode([
-            $this->name,
-            $this->method,
-            $this->params,
-        ]);
-    }
+	/**
+	 * Function setMethod() : Set method name
+	 *
+	 * @param string $method
+	 *
+	 * @return void
+	 */
+	public function setMethod( string $method ) {
+		$this->method = $method;
+	}
 
-    /**
-     * Function noParameters() : Return's command in JSON format
-     *
-     * @return bool
-     */
-    public function noParameters()
-    {
-        return $this->noParameters;
-    }
+	/**
+	 * Function isEmpty() : Check is empty command on $this->cmd
+	 *
+	 * @return bool
+	 */
+	public function isEmpty() {
+		return empty( $this->cmd );
+	}
 
-    /**
-     * Function noSubParameters() : Return's command in JSON format
-     *
-     * @return bool
-     */
-    public function noSubParameters()
-    {
-        return $this->noSubParameters;
-    }
+	/**
+	 * Function __toString() : Return's command in JSON format
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return json_encode( [
+			$this->name,
+			$this->method,
+			$this->params,
+		] );
+	}
+
+	/**
+	 * Function noParameters() : Return's command in JSON format
+	 *
+	 * @return bool
+	 */
+	public function noParameters() {
+		return $this->noParameters;
+	}
+
+	/**
+	 * Function noSubParameters() : Return's command in JSON format
+	 *
+	 * @return bool
+	 */
+	public function noSubParameters() {
+		return $this->noSubParameters;
+	}
 } // EOF modules/command.php

@@ -2,67 +2,69 @@
 
 namespace Core;
 
-class Core
-{
-    /**
-     * The controller instance
-     *
-     * @var \Core\Controller
-     */
-    private $controller;
+use Exception;
+use Modules\Command;
 
-    /**
-     * Command to run core
-     *
-     * @var \Modules\Command
-     */
-    private $command;
+class Core {
 
-    /**
-     * Function __construct() : Create new core
-     *
-     * @param \Modules\Command
-     * 
-     * @throws Exception
-     */
-    public function __construct(\Modules\Command $cmd)
-    {
-        $this->command = $cmd;
-        $this->controller = new \Core\Controller($cmd->getName());
-    }
+	/**
+	 * The controller instance
+	 *
+	 * @var \Core\Controller
+	 */
+	private $controller;
 
-    /**
-     * Function execute() Execute's command
-     *
-     * @return mixed
-     */
-    public function execute()
-    {
-        $cmd = $this->command;
+	/**
+	 * Command to run core
+	 *
+	 * @var \Modules\Command
+	 */
+	private $command;
 
-        if (!$this->controller->isAvialable()) {
-            throw new \Exception("controller: `{$cmd->getName()}` not found, in: " . __FILE__ . '(' . __LINE__ . ')');
-        }
+	/**
+	 * Function __construct() : Create new core
+	 *
+	 * @param \Modules\Command
+	 *
+	 * @throws \Exception
+	 */
+	public function __construct( Command $cmd ) {
+		$this->command = $cmd;
+		$this->controller = new Controller( $cmd->getName() );
+	}
 
-        if ($this->controller->load()) {
-            if (!$this->controller->methodExists($cmd->getMethod())) {
-                throw new \Exception("method: `{$cmd->getMethod()}` not found in controller: `{$cmd->getName()}` in: " . __FILE__ . '(' . __LINE__ . ')');
-            }
+	/**
+	 * Function execute() Execute's command
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function execute() {
+		$cmd = $this->command;
 
-            $r = $this->controller->callMethod($cmd->getMethod(), $cmd->getParameters());
+		if ( ! $this->controller->isAvialable() ) {
+			throw new Exception( "controller: `{$cmd->getName()}` not found, in: " . __FILE__ . '(' . __LINE__ . ')' );
+		}
 
-            // json or echo 
-            if (is_array($r) || is_object($r)) {
-                header('Content-Type: application/json');
+		if ( $this->controller->load() ) {
+			if ( ! $this->controller->methodExists( $cmd->getMethod() ) ) {
+				throw new Exception( "method: `{$cmd->getMethod()}` not found in controller: `{$cmd->getName()}` in: " . __FILE__ . '(' . __LINE__ . ')' );
+			}
 
-                echo json_encode($r);
-            } else {
-                echo $r;
-            }
+			$r = $this->controller->callMethod( $cmd->getMethod(), $cmd->getParameters() );
 
-            return $r;
-        }
+			// json or echo
+			if ( is_array( $r ) || is_object( $r ) ) {
+				header( 'Content-Type: application/json' );
 
-        return false;
-    }
+				echo json_encode( $r );
+			} else {
+				echo $r;
+			}
+
+			return $r;
+		}
+
+		return false;
+	}
 }

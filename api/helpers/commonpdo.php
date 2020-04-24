@@ -1,50 +1,55 @@
 <?php
 /**
- * @file: helpers/commonpdo.php
+ * @file  : helpers/commonpdo.php
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @todo: 
+ * @todo  :
  */
 
 namespace Helpers;
 
-class CommonPdo
-{
-    /**
-     * Commonn \PDO method to get all data within table, with pages formula, etc.
-     *
-     * @param \PDO $db - PDO Handler
-     * @param string $table - Table Name (NO SQL Injection Protection)
-     * @param int $page - current page
-     * @param int $perPage - max results per page
-     * @param int $totalCount - reference
-     * 
-     * @return array
-     * 
-     * @todo Add Exceptions on invalid args. extend  like, and exted wheres add operators
-     */
-    public static function getAll(\PDO $db, string $table, int $page, int $perPage, &$totalCount)
-    {
-        $offset = $page > 0 ? ceil($page * $perPage) : 0;
-        $limit = $perPage;
+use PDO;
 
-        /* Total Count */
-        $stmt = $db->prepare("SELECT COUNT(*) FROM {$table} ");
+class CommonPdo {
 
-        if (!$stmt->execute()) return [];
+	/**
+	 * Common \PDO method to get all data within table, with pages formula, etc.
+	 *
+	 * @param \PDO   $db         - PDO Handler
+	 * @param string $table      - Table Name (NO SQL Injection Protection)
+	 * @param int    $page       - current page
+	 * @param int    $perPage    - max results per page
+	 * @param int    $totalCount - reference
+	 *
+	 * @return array
+	 *
+	 * @todo Add Exceptions on invalid args. extend  like, and extend wheres add operators
+	 */
+	public static function getAll( PDO $db, string $table, int $page, int $perPage, &$totalCount ) {
+		$offset = $page > 0 ? ceil( $page * $perPage ) : 0;
+		$limit = $perPage;
 
-        $totalCount = $stmt->fetchColumn();
+		/* Total Count */
+		$stmt = $db->prepare( "SELECT COUNT(*) FROM {$table} " );
 
-        if (!$totalCount) return [];
+		if ( ! $stmt->execute() ) {
+			return [];
+		}
 
-        $stmt = $db->prepare("SELECT * FROM {$table} LIMIT :limit OFFSET :offset");
+		$totalCount = $stmt->fetchColumn();
 
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+		if ( ! $totalCount ) {
+			return [];
+		}
 
-        if ($stmt->execute()) {
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        }
+		$stmt = $db->prepare( "SELECT * FROM {$table} LIMIT :limit OFFSET :offset" );
 
-        return [];
-    }
+		$stmt->bindValue( ':limit', $limit, PDO::PARAM_INT );
+		$stmt->bindValue( ':offset', $offset, PDO::PARAM_INT );
+
+		if ( $stmt->execute() ) {
+			return $stmt->fetchAll( PDO::FETCH_ASSOC );
+		}
+
+		return [];
+	}
 }
