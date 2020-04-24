@@ -114,17 +114,6 @@ li a:hover {
     color: #00A8E8;
 }
 
-.pagination {
-    margin-top: 10px;
-    text-align: center;
-}
-
-.pagination a {
-    color: black;
-    padding: 8px 16px;
-    text-decoration: none;
-}
-
 body {
     font-family: 'Rubik', sans-serif;
 }
@@ -348,55 +337,3 @@ header #toggle .amount {
 #catalog {
     text-align: center;
 }
-
-#catalog .product {
-    width: 23%;
-    position: relative;
-    padding: 10px;
-    margin: 5px;
-    background: #fff;
-    display: inline-block;
-    text-align: center;
-    min-width: 225px;
-    min-height: 430px;
-    vertical-align: top;
-}
-
-#catalog .product img {
-    width: 100%;
-    height: auto;
-    max-height: 290px;
-}
-
-#catalog .product input {
-    width: 20%;
-}
-
-#catalog .product button {
-    border: none;
-    color: #fff;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-#catalog .product h4 {
-    font-weight: 400;
-    font-size: 1.5em;
-    padding: 5px;
-}
-
-#catalog .product .price {
-    color: green;
-    font-weight: 500;
-    font-size: 1.3em;
-}
-
-#catalog .product button:hover {
-    background: #00A8E8;
-}
-
-#catalog .product .footer {
-    position: absolute;
-    bottom: 10px;
-}
-

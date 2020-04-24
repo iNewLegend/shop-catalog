@@ -11,6 +11,8 @@ import {
     Logger,
 } from 'MODULES';
 
+import './pagination.css';
+
 /**
  * @typedef PaginationData pagination data.
  * @property {number} current current page.
@@ -27,6 +29,7 @@ export class Pagination extends Component {
     constructor( parent, options ) {
         super( parent, options );
 
+        // TODO: Logger should work like product.
         this.logger = new Logger( Pagination.getName(), true );
         this.logger.setOutputHandler( services.Terminal.onOutput );
 

@@ -1,0 +1,54 @@
+/**
+ * @file: components/catalog/product.css
+ */
+.product {
+	width: 23%;
+	position: relative;
+	padding: 10px;
+	margin: 5px;
+	background: #fff;
+	display: inline-block;
+	text-align: center;
+	min-width: 225px;
+	min-height: 430px;
+	vertical-align: top;
+}
+
+.product img {
+	width: 100%;
+	height: auto;
+	max-height: 290px;
+}
+
+.product input {
+	width: 20%;
+}
+
+.product button {
+	border: none;
+	color: #fff;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.product h4 {
+	font-weight: 400;
+	font-size: 1.5em;
+	padding: 5px;
+}
+
+.product .price {
+	color: green;
+	font-weight: 500;
+	font-size: 1.3em;
+}
+
+.product button:hover {
+	background: #00A8E8;
+}
+
+.product .footer {
+	position: absolute;
+	bottom: 10px;
+}
+
