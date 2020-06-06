@@ -101,16 +101,16 @@ class App {
         this.logger.startWith( { pageModule: pageModule.constructor.name } );
 
         if ( pageModule instanceof pages.Catalog ) {
-            this.pages.catalog.on( 'productAdd', this._onCatalogProductAdd.bind( this ) );
+            this.pages.catalog.on( 'product:add', this.onCatalogProductAdd.bind( this ) );
 
             if ( !this.cart ) {
                 this.cart = new components.Cart( this.apis.cart, this.apis.catalog );
 
-                this.cart.on( 'get', this._onCartGet.bind( this ) );
-                this.cart.on( 'received', this._onCartReceived.bind( this ) );
-                this.cart.on( 'amountChange', this._onCartAmountChange.bind( this ) );
-                this.cart.on( 'emptyState', this._onCartEmptyState.bind( this ) );
-                this.cart.on( 'checkout', this._onCartCheckout.bind( this ) );
+                this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+                this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+                this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
+                this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+                this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
 
                 // TODO: should use 'this.elements.sidebar.self' instead of 'this.elements.sidebar.self.element'
                 // TODO: FIX ASAP.
@@ -120,9 +120,9 @@ class App {
     }
 
     /**
-     * Function _onCartGet() : Called on request cart from the server
+     * Function onCartRequest() : Called on request cart from the server
      */
-    _onCartGet() {
+    onCartRequest() {
         this.logger.startEmpty();
 
         const { spinner } = this.elements.header;
@@ -131,9 +131,9 @@ class App {
     }
 
     /**
-     * Function _onCartReceived() : Called after cart received
+     * Function onCartReceived() : Called after cart received
      */
-    _onCartReceived() {
+    onCartReceived() {
         this.logger.startEmpty();
 
         const { cart, spinner } = this.elements.header;
@@ -143,11 +143,11 @@ class App {
     }
 
     /**
-     * Function _onCartAmountChange() : Called on cart amount change.
+     * Function onCartAmountChange() : Called on cart amount change.
      *
      * @param {Number} count
      */
-    _onCartAmountChange( count ) {
+    onCartAmountChange( count ) {
         this.logger.startWith( { count } );
 
         const { amount } = this.elements.header;
@@ -156,11 +156,11 @@ class App {
     }
 
     /**
-     * Function _onCartEmptyState() : Called on cart empty state change (cart have items|cart does have items)
+     * Function onCartStateEmpty() : Called on cart empty state change (cart have items|cart does have items)
      *
      * @param {Boolean} state
      */
-    _onCartEmptyState( state ) {
+    onCartStateEmpty( state ) {
         this.logger.startWith( { state } );
 
         const { amount } = this.elements.header;
@@ -169,9 +169,9 @@ class App {
     }
 
     /**
-     * Function _onCartCheckout() : Called on cart checkout
+     * Function onCartCheckout() : Called on cart checkout
      */
-    _onCartCheckout() {
+    onCartCheckout() {
         this.logger.startEmpty();
 
         this.sidebarToggle( false );
@@ -186,9 +186,9 @@ class App {
     }
 
     /**
-     * Function _onCatalogProductAdd() : Called on catalog item add
+     * Function onCatalogProductAdd() : Called on catalog item add
      */
-    _onCatalogProductAdd( product ) {
+    onCatalogProductAdd( product ) {
         this.logger.startWith( { product } );
 
         this.cart.itemAdd( product, () => {

@@ -225,20 +225,20 @@ export class Catalog extends Component {
     /**
      * Function on() : Declare event callback.
      *
-     * @param {'initialRecv'|'productAdd'} event
+     * @param {'product:add','recv:once'|} event
      * @param {{function()}} callback
      */
     on( event, callback ) {
         this.logger.startWith( { event, callback } );
 
         switch ( event ) {
-            case 'initialRecv': {
-                this.events.onRecvOnce = callback;
+            case 'product:add': {
+                this.events.onProductAdd = callback;
             }
             break;
 
-            case 'productAdd': {
-                this.events.onProductAdd = callback;
+            case 'recv:once': {
+                this.events.onRecvOnce = callback;
             }
             break;
 
