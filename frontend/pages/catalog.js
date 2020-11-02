@@ -42,7 +42,7 @@ export class Catalog extends Page {
     /**
      * Function on() : Declare event callback
      *
-     * @param {'initialRecv'|'productAdd'} event
+     * @param {'product:add','recv:once'|} event
      * @param {{function()}} callback
      */
     on( event, callback ) {

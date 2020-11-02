@@ -30,11 +30,11 @@ export class Cart {
         this.apiCatalog = catalog;
 
         this.events = {
-            onGet: () => { },
-            onReceived: () => { },
-            onAmountChange: (amount) => { },
-            onEmptyState: (state) => { },
-            onCheckout: () => { }
+            onCartRequest: () => {},
+            onCartReceived: () => {},
+            onAmountChange: ( amount ) => {},
+            onStateEmpty: ( state ) => {},
+            onCheckout: () => {}
         };
 
         this._afterRender = () => {
@@ -75,22 +75,47 @@ export class Cart {
             }
         } );
 
-        this._get();
+        this.request();
     }
 
     /**
-     * Function _onRecv() : Called when cart received
+     * Function request() : Request cart from server
+     */
+    request() {
+        this.logger.startEmpty();
+
+        const { items } = this.elements;
+
+        this.events.onCartRequest();
+
+        // clear toggle amount
+        this.events.onAmountChange( 0 );
+
+        // clear visual cart
+        this.cart.items = [];
+        this.cart.total = 0;
+
+        // clear dom cart except .total
+        if ( items.length > 0 ) {
+            items.querySelector( '.item' ).remove();
+        }
+
+        this.apiCart.get( this.receive.bind( this ) );
+    }
+
+    /**
+     * Function receive() : Called when cart received, (callback).
      *
      * @param {[]} data
      */
-    _onRecv( data ) {
+    receive( data ) {
         this.logger.object( data, 'data' );
 
-        // not all the products that are in cart exist localy since we used pages in that system,
-        // so we findout what missing and request it from the server.
+        // not all the products that are in cart exist locally since we used pages in that system,
+        // so we find out what missing and request it from the server.
         const missingProducts = data.filter( ( item ) => {
             // we get the price and name from local catalog;
-            // there is many solutions, this is fine for that exmaple.
+            // there is many solutions, this is fine for that example.
             const localProduct = this.apiCatalog.getLocalProductById( item.id );
 
             // use extra info from local product
@@ -114,7 +139,7 @@ export class Cart {
             this._onChange();
         }, missingProducts.map( x => x.id ) );
 
-        this.events.onReceived();
+        this.events.onCartReceived();
     }
 
     /**
@@ -157,9 +182,7 @@ export class Cart {
 
         this.apiCart.removeItem( ( data ) => {
             if ( !data.error ) {
-                const item = data;
-
-                this._doRemoveItem( item, true );
+                this._doRemoveItem( data, true );
             } else {
                 alert( data.message );
             }
@@ -287,31 +310,6 @@ export class Cart {
     }
 
     /**
-     * Function get() : Get cart from server
-     */
-    _get() {
-        this.logger.startEmpty();
-
-        const { items } = this.elements;
-
-        this.events.onGet();
-
-        // clear toggle amount
-        this.events.onAmountChange( 0 );
-
-        // clear visual cart
-        this.cart.items = [];
-        this.cart.total = 0;
-
-        // clear dom cart except .total
-        if ( items.length > 0 ) {
-            items.querySelector( '.item' ).remove();
-        }
-
-        this.apiCart.get( this._onRecv.bind( this ) );
-    }
-
-    /**
      * Function _getItemKeyById() : Get Item key from cart by id.
      *
      * @param {number} id
@@ -332,41 +330,45 @@ export class Cart {
     }
 
     /**
-     * Function on() : Delcare event callback
+     * Function on() : Declare event callback
      *
-     * @param {'get'|'received'|'amountChange'|'emptyState'|'checkout'} event
+     * @param {'ui:checkout'|'cart:request'|'cart:received'|'amount:change'|'state:empty'} event
      * @param {{function()}} callback
      */
     on( event, callback ) {
         this.logger.startWith( { event, callback } );
 
         switch ( event ) {
-            case 'get': {
-                this.events.onGet = callback;
-            } break;
-
-            case 'received': {
-                this.events.onReceived = callback;
-            } break;
-
-            case 'amountChange': {
-                this.events.onAmountChange = callback;
-            } break;
-
-            case 'emptyState': {
-                this.events.onEmptyState = callback;
-            } break;
-
-            case 'checkout': {
+            case 'ui:checkout': {
                 this.events.onCheckout = callback;
-            } break;
+            }
+            break;
+
+            case 'cart:request': {
+                this.events.onCartRequest = callback;
+            }
+            break;
+
+            case 'cart:received': {
+                this.events.onCartReceived = callback;
+            }
+            break;
+
+            case 'amount:change': {
+                this.events.onAmountChange = callback;
+            }
+            break;
+
+            case 'state:empty': {
+                this.events.onStateEmpty = callback;
+            }
+            break;
 
             default: {
                 alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
             }
         }
     }
-
 
     /**
      * Function open() :  Open the cart
@@ -375,7 +377,7 @@ export class Cart {
         this.logger.startEmpty();
 
         if ( Cart.reloadCartEachOpen ) {
-            this._get();
+            this.request();
         }
     }
 
@@ -415,7 +417,7 @@ export class Cart {
             itemsTotal.classList.remove( 'open' );
         }
 
-        this.events.onEmptyState( state );
+        this.events.onStateEmpty( state );
     }
 
     /**
