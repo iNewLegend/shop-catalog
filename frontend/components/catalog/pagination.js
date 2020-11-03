@@ -6,10 +6,7 @@
 
 import * as core from 'CORE';
 import * as services from 'SERVICES';
-import {
-    Component,
-    Logger,
-} from 'MODULES';
+import { Component, Logger } from 'MODULES';
 
 import './pagination.css';
 
@@ -26,122 +23,122 @@ import './pagination.css';
  * @memberOf components
  */
 export class Pagination extends Component {
-    constructor( parent, options ) {
-        super( parent, options );
+	static getNamespace() {
+		return 'Components/Catalog'
+	}
 
-        // TODO: Logger should work like product.
-        this.logger = new Logger( Pagination.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
+	static getName() {
+		return 'Components/Catalog/Pagination';
+	}
 
-        this.logger.startWith( { options } );
+	constructor( parent, options ) {
+		super( parent, options );
 
-        this.page = 0;
+		// TODO: Logger should work like product.
+		this.logger = new Logger( Pagination.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.events = {
-            onPageChange: ( page ) => {},
-        };
+		this.logger.startWith( { options } );
 
-        this.afterRender = () => {
-            super.afterRender();
+		this.page = 0;
 
-            this.elements = {
-                self: this.view.element,
-                prev: core.Factory.createElement( "#pagination .prev" ),
-                next: core.Factory.createElement( "#pagination .next" ),
-                placeHolder: core.Factory.createElement( '#pagination .placeholder' )
-            };
-        }
-    }
+		this.events = {
+			onPageChange: ( page ) => {},
+		};
 
-    static getNamespace() {
-        return 'Components/Catalog'
-    }
+		this.afterRender = () => {
+			super.afterRender();
 
-    static getName() {
-        return 'Components/Catalog/Pagination';
-    }
+			this.elements = {
+				self: this.view.element,
+				prev: core.Factory.createElement( "#pagination .prev" ),
+				next: core.Factory.createElement( "#pagination .next" ),
+				placeHolder: core.Factory.createElement( '#pagination .placeholder' )
+			};
+		}
+	}
 
-    /**
-     * Function onPageChange() : Call on page change.
-     *
-     * @param {number} page
-     */
-    onPageChange( page ) {
-        const { self, placeHolder } = this.elements;
+	/**
+	 * Function onPageChange() : Call on page change.
+	 *
+	 * @param {number} page
+	 */
+	onPageChange( page ) {
+		const { self, placeHolder } = this.elements;
 
-        this.logger.startWith( { page } );
+		this.logger.startWith( { page } );
 
-        // Hide self.
-        self.hide();
+		// Hide self.
+		self.hide();
 
-        // Clear.
-        placeHolder.html('');
+		// Clear.
+		placeHolder.html( '' );
 
-        // Notify events.
-        this.events.onPageChange( page );
-    }
+		// Notify events.
+		this.events.onPageChange( page );
+	}
 
-    /**
-     * Function set() : Set pagination to dom.
-     *
-     * @param {PaginationData} paginationData
-     */
-    set( paginationData ) {
-        this.logger.startWith( {  paginationData } );
+	/**
+	 * Function set() : Set pagination to dom.
+	 *
+	 * @param {PaginationData} paginationData
+	 */
+	set( paginationData ) {
+		this.logger.startWith( { paginationData } );
 
-        const { placeHolder, next, prev, self } = this.elements;
+		const { placeHolder, next, prev, self } = this.elements;
 
-        // Create pages.
-        for ( let i = 0; i < paginationData.pages; ++i ) {
-            const anchor = new core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
+		// Create pages.
+		for ( let i = 0; i < paginationData.pages; ++i ) {
+			const anchor = new core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
-            anchor.render();
-            anchor.click( () => this.onPageChange( i + 1 ) );
+			anchor.render();
+			anchor.click( () => this.onPageChange( i + 1 ) );
 
-            self.show();
-        }
+			self.show();
+		}
 
-        // Set page.
-        this.page = paginationData.current + 1;
+		// Set page.
+		this.page = paginationData.current + 1;
 
-        // Next.
-        if ( paginationData.current >= ( paginationData.pages - 1 ) ) {
-            next.hide();
-        } else {
-            next.show();
-        }
+		// Next.
+		if ( paginationData.current >= (paginationData.pages - 1) ) {
+			next.hide();
+		} else {
+			next.show();
+		}
 
-        // Prev.
-        if ( 1 === this.page ) {
-            prev.hide();
-        } else {
-            prev.show();
-        }
-    }
+		// Prev.
+		if ( 1 === this.page ) {
+			prev.hide();
+		} else {
+			prev.show();
+		}
+	}
 
-    /**
-     * Function on() : Declare event callback
-     *
-     * @param {'page:change'} event
-     * @param {{function()}} callback
-     */
-    on( event, callback ) {
-        this.logger.startWith( { event, callback } );
+	/**
+	 * Function on() : Declare event callback
+	 *
+	 * @param {'page:change'} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		this.logger.startWith( { event, callback } );
 
-        switch ( event ) {
-            case 'page:change': {
-                this.events.onPageChange = callback;
-            }
-            break;
+		switch ( event ) {
+			case 'page:change': {
+				this.events.onPageChange = callback;
+			}
+				break;
 
-            default: {
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-            }
-        }
-    }
+			default: {
+				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+			}
+		}
+	}
 
-    template() {
-        return (`
+	template() {
+		return (`
             <div id="pagination" class="pagination hidden">
                 <div class="pagination">
                     <a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
@@ -151,7 +148,7 @@ export class Pagination extends Component {
                 </div>
             </div>
         `);
-    }
+	}
 }
 
 export default Pagination;

@@ -14,239 +14,241 @@ import Spinner from './catalog/spinner';
  * @memberOf components
  */
 export class Catalog extends Component {
-    static amountMaxValue = 999;
-    static amountMinValue = 1;
+	static amountMaxValue = 999;
+	static amountMinValue = 1;
 
-    /**
-     * Current page number.
-     * @type {number}
-     */
-    page = 0;
+	/**
+	 * Current page number.
+	 *
+	 * @type {number}
+	 */
+	page = 0;
 
-    /**
-     * Loaded products to be rendered.
-     * @type {Array.<components.Product>}
-     */
-    products = [];
+	/**
+	 * Loaded products to be rendered.
+	 *
+	 * @type {Array.<components.Product>}
+	 */
+	products = [];
 
-    constructor( parent, options ) {
-        super( parent, options );
+	static getNamespace() {
+		return 'Components'
+	}
 
-        this.logger = new Logger( Catalog.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
-        this.logger.startWith( { options } );
+	static getName() {
+		return 'Components/Catalog';
+	}
 
-        this.apis = {
-            catalog: options.api,
-        };
+	constructor( parent, options ) {
+		super( parent, options );
 
-        this.events = {
-            onRecvOnce: () => {},
-            onProductAdd: ( product ) => {},
-        };
+		this.logger = new Logger( Catalog.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
+		this.logger.startWith( { options } );
 
-        this.components = {
-            pagination: new Pagination( this.view.element ),
-        };
+		this.apis = {
+			catalog: options.api,
+		};
 
-        // After render.
-        this.afterRender = () => {
-            super.afterRender();
+		this.events = {
+			onRecvOnce: () => {},
+			onProductAdd: ( product ) => {},
+		};
 
-            this.elements = {
-                row: this.view.element.children[ 0 ],
-            };
+		this.components = {
+			pagination: new Pagination( this.view.element ),
+		};
 
-            this.components.spinner = new Spinner( this.elements.row );
+		// After render.
+		this.afterRender = () => {
+			super.afterRender();
 
-            this.getProducts( 0, this.onRecvOnce.bind( this ) );
-        }
-    }
+			this.elements = {
+				row: this.view.element.children[ 0 ],
+			};
 
-    static getNamespace() {
-        return 'Components'
-    }
+			this.components.spinner = new Spinner( this.elements.row );
 
-    static getName() {
-        return 'Components/Catalog';
-    }
+			this.getProducts( 0, this.onRecvOnce.bind( this ) );
+		}
+	}
 
-    /**
-     * Function onPageChange() : Called on page change.
-     *
-     * @param {number} page
-     */
-    onPageChange( page ) {
-        this.logger.startWith( { page } );
+	/**
+	 * Function onPageChange() : Called on page change.
+	 *
+	 * @param {number} page
+	 */
+	onPageChange( page ) {
+		this.logger.startWith( { page } );
 
-        const { spinner } = this.components;
+		const { spinner } = this.components;
 
-        // Remove all products.
-        this.products.forEach( ( product ) =>
-            product.remove()
-        );
+		// Remove all products.
+		this.products.forEach( ( product ) =>
+			product.remove()
+		);
 
-        // Show spinner.
-        spinner.show();
+		// Show spinner.
+		spinner.show();
 
-        this.getProducts( page - 1, () => {
-            this.renderProducts();
-        } );
-    }
+		this.getProducts( page - 1, () => {
+			this.renderProducts();
+		} );
+	}
 
-    /**
-     * Function onProductAdd() : Called on "Add to cart button".
-     *
-     * @param {Product} product
-     */
-    onProductAdd( product ) {
-        this.logger.startWith( { product } );
+	/**
+	 * Function onProductAdd() : Called on "Add to cart button".
+	 *
+	 * @param {Product} product
+	 */
+	onProductAdd( product ) {
+		this.logger.startWith( { product } );
 
-        // Call callback.
-        this.events.onProductAdd( product );
-    }
+		// Call callback.
+		this.events.onProductAdd( product );
+	}
 
-    /**
-     * Function onProductAmountChange() : Called on "Product Amount Change".
-     *
-     * Function override amount ( Used as filter ).
-     *
-     * @param {components.Product} product
-     * @param {number} amount
-     */
-    onProductAmountChange( product, amount ) {
-        this.logger.startWith( { amount } );
+	/**
+	 * Function onProductAmountChange() : Called on "Product Amount Change".
+	 *
+	 * Function override amount ( Used as filter ).
+	 *
+	 * @param {components.Product} product
+	 * @param {number} amount
+	 */
+	onProductAmountChange( product, amount ) {
+		this.logger.startWith( { amount } );
 
-        if ( amount > Catalog.amountMaxValue ) {
-            amount = Catalog.amountMaxValue;
-        } else if ( amount < Catalog.amountMinValue ) {
-            amount = Catalog.amountMinValue;
-        }
+		if ( amount > Catalog.amountMaxValue ) {
+			amount = Catalog.amountMaxValue;
+		} else if ( amount < Catalog.amountMinValue ) {
+			amount = Catalog.amountMinValue;
+		}
 
-        product.setAmount( amount );
-    }
+		product.setAmount( amount );
+	}
 
-    /**
-     * Function addProduct() : Add's a product.
-     *
-     * Function Create product component and push it `this.products`.
-     *
-     * @param {Product} product
-     *
-     * @returns {Product}
-     */
-    addProduct( product ) {
-        const productComponent = new Product( this.elements.row, {
-            api: {
-                catalog: this.apis.catalog,
-            },
+	/**
+	 * Function addProduct() : Add's a product.
+	 *
+	 * Function Create product component and push it `this.products`.
+	 *
+	 * @param {Product} product
+	 *
+	 * @returns {Product}
+	 */
+	addProduct( product ) {
+		const productComponent = new Product( this.elements.row, {
+			api: {
+				catalog: this.apis.catalog,
+			},
 
-            logger: this.logger,
+			logger: this.logger,
 
-            ... product,
-        } );
+			...product,
+		} );
 
-        productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
-        productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
+		productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
+		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 
-        this.products.push( productComponent );
+		this.products.push( productComponent );
 
-        return productComponent;
-    }
+		return productComponent;
+	}
 
-    /**
-     * Function getProducts() : Get products from catalog endpoint.
-     *
-     * @param {number} page
-     * @param {{function()}} onSuccess
-     */
-    getProducts( page, onSuccess ) {
-        this.logger.startWith( { page, onSuccess } );
+	/**
+	 * Function getProducts() : Get products from catalog endpoint.
+	 *
+	 * @param {number} page
+	 * @param {{function()}} onSuccess
+	 */
+	getProducts( page, onSuccess ) {
+		this.logger.startWith( { page, onSuccess } );
 
-        const { spinner } = this.components;
+		const { spinner } = this.components;
 
-        this.apis.catalog.get( data => {
-            // Clear old products.
-            this.products = [];
+		this.apis.catalog.get( data => {
+			// Clear old products.
+			this.products = [];
 
-            // Used '1000' ms here to fake loading.
-            spinner.fadeOut( 1000, () => {
-                if ( !data.error ) {
-                    this.components.pagination.set( data.pagination );
+			// Used '1000' ms here to fake loading.
+			spinner.fadeOut( 1000, () => {
+				if ( ! data.error ) {
+					this.components.pagination.set( data.pagination );
 
-                    data.result.forEach( ( product ) =>
-                        this.addProduct( product )
-                    );
+					data.result.forEach( ( product ) =>
+						this.addProduct( product )
+					);
 
-                    if ( onSuccess ) onSuccess();
-                }
-            } );
-        }, page );
-    }
+					if ( onSuccess ) onSuccess();
+				}
+			} );
+		}, page );
+	}
 
-    template() {
-        return (`
+	template() {
+		return (`
             <div class="container" style="max-width: 1080px;">
                 <div id="catalog" class="row">
                 </div>
             </div>
         `);
-    }
+	}
 
-    render() {
-        super.render();
+	render() {
+		super.render();
 
-        const { pagination, spinner } = this.components;
+		const { pagination, spinner } = this.components;
 
-        spinner.render();
+		spinner.render();
 
-        pagination.render();
-        pagination.on( 'page:change', this.onPageChange.bind( this ) );
-    }
+		pagination.render();
+		pagination.on( 'page:change', this.onPageChange.bind( this ) );
+	}
 
-    /**
-     * Function renderProducts() : Render products.
-     */
-    renderProducts() {
-        this.products.forEach( ( product ) => {
-            product.render();
-        } );
-    }
+	/**
+	 * Function renderProducts() : Render products.
+	 */
+	renderProducts() {
+		this.products.forEach( ( product ) => {
+			product.render();
+		} );
+	}
 
-    /**
-     * Function onRecvOnce() : Called on success of initial getCatalog request.
-     */
-    onRecvOnce() {
-        this.renderProducts();
+	/**
+	 * Function onRecvOnce() : Called on success of initial getCatalog request.
+	 */
+	onRecvOnce() {
+		this.renderProducts();
 
-        this.events.onRecvOnce();
-    }
+		this.events.onRecvOnce();
+	}
 
-    /**
-     * Function on() : Declare event callback.
-     *
-     * @param {'product:add','recv:once'|} event
-     * @param {{function()}} callback
-     */
-    on( event, callback ) {
-        this.logger.startWith( { event, callback } );
+	/**
+	 * Function on() : Declare event callback.
+	 *
+	 * @param {'product:add','recv:once'|} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		this.logger.startWith( { event, callback } );
 
-        switch ( event ) {
-            case 'product:add': {
-                this.events.onProductAdd = callback;
-            }
-            break;
+		switch ( event ) {
+			case 'product:add': {
+				this.events.onProductAdd = callback;
+			}
+				break;
 
-            case 'recv:once': {
-                this.events.onRecvOnce = callback;
-            }
-            break;
+			case 'recv:once': {
+				this.events.onRecvOnce = callback;
+			}
+				break;
 
-            default: {
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-            }
-        }
-    }
+			default: {
+				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+			}
+		}
+	}
 }
 
 export default Catalog;

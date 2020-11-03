@@ -10,91 +10,91 @@ import * as core from 'CORE';
  * @memberOf modules
  */
 export class Component {
-    constructor( parent, options = {} ) {
-        this.parent = parent;
-        this.options = options;
+	static getNamespace() {
+		return 'Modules'
+	}
 
-        this.initialize( this.options );
-    }
+	static getName() {
+		return 'Modules/Component';
+	}
 
-    static getNamespace() {
-        return 'Modules'
-    }
+	constructor( parent, options = {} ) {
+		this.parent = parent;
+		this.options = options;
 
-    static getName() {
-        return 'Modules/Component';
-    }
+		this.initialize( this.options );
+	}
 
-    initialize( options ) {
-        let { model, view, controller } = options;
+	initialize( options ) {
+		let { model, view, controller } = options;
 
-        if ( ! model ) {
-            model = new core.Model();
-        }
+		if ( ! model ) {
+			model = new core.Model();
+		}
 
-        if ( ! view ) {
-            const template = this.template() || this.options.template || '<div>_EMPTY_TEMPLATE_</div>';
-            view = new core.View( this.parent, { template } );
-        }
+		if ( ! view ) {
+			const template = this.template() || this.options.template || '<div>_EMPTY_TEMPLATE_</div>';
+			view = new core.View( this.parent, { template } );
+		}
 
-        if ( ! controller ) {
-            controller = this;
-        }
+		if ( ! controller ) {
+			controller = this;
+		}
 
-        this.model = model;
-        this.view = view;
-        this.controller = controller;
+		this.model = model;
+		this.view = view;
+		this.controller = controller;
 
-        // Alias.
-        this.context = view.element.context;
+		// Alias.
+		this.context = view.element.context;
 
-        // Attach listeners of view.element to the controller.
-        this.view.element.attachListeners = () => {
-            return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
-        }
+		// Attach listeners of view.element to the controller.
+		this.view.element.attachListeners = () => {
+			return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
+		}
 
-        // Disable default attach Listeners from element.
-        this.view.element.afterRender = () => {
-            core.Element.prototype.afterRender.call( this.view.element, false );
-            core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.controller );
+		// Disable default attach Listeners from element.
+		this.view.element.afterRender = () => {
+			core.Element.prototype.afterRender.call( this.view.element, false );
+			core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.controller );
 
-            this.view.element.attachListeners();
-        };
-    }
+			this.view.element.attachListeners();
+		};
+	}
 
-    beforeRender() {
+	beforeRender() {
 
-    }
+	}
 
-    template() {
+	template() {
 
-    }
+	}
 
-    render() {
-        this.beforeRender();
+	render() {
+		this.beforeRender();
 
-        this.view.render();
+		this.view.render();
 
-        this.afterRender();
-    }
+		this.afterRender();
+	}
 
-    afterRender() {
-    }
+	afterRender() {
+	}
 
-    show() {
-        this.view.element.show();
-    }
+	show() {
+		this.view.element.show();
+	}
 
-    hide() {
-        this.view.element.hide();
-    }
+	hide() {
+		this.view.element.hide();
+	}
 
-    remove() {
-        const element = this.view.element,
-            parentElement = element.parent.element;
+	remove() {
+		const element = this.view.element,
+			parentElement = element.parent.element;
 
-        parentElement.removeChild( element.element );
-    }
+		parentElement.removeChild( element.element );
+	}
 }
 
 export default Component;

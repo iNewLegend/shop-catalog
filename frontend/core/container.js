@@ -10,73 +10,74 @@ import ElementBase from './element/base.js';
  * @memberOf core
  */
 export class Container extends ElementBase {
-    static getNamespace() {
-        return 'Core'
-    }
+	static getNamespace() {
+		return 'Core'
+	}
 
-    static getName() {
-        return 'Core/Container';
-    }
+	static getName() {
+		return 'Core/Container';
+	}
 
-    initialize() {
-	    this.events = {
-		    onAfterRender: () => {},
-	    };
+	initialize() {
+		this.events = {
+			onAfterRender: () => {
+			},
+		};
 
-        super.initialize();
-    }
+		super.initialize();
+	}
 
-    afterRender() {
-        super.afterRender();
+	afterRender() {
+		super.afterRender();
 
-        if ( this.events && this.events.onAfterRender ) {
-            this.events.onAfterRender( this.child );
-        }
-    }
+		if ( this.events && this.events.onAfterRender ) {
+			this.events.onAfterRender( this.child );
+		}
+	}
 
-    /**
-     * @param {Container} child
-     */
-    set( child ) {
-        if ( ! ( child instanceof Container ) ) {
-            throw new Error();
-        }
+	/**
+	 * @param {Container} child
+	 */
+	set( child ) {
+		if ( ! (child instanceof Container) ) {
+			throw new Error();
+		}
 
-        this.child = child;
-    }
+		this.child = child;
+	}
 
-    render( preventDefault ) {
-        if ( ! preventDefault ) this.beforeRender();
+	render( preventDefault ) {
+		if ( ! preventDefault ) this.beforeRender();
 
-        // Self Re-render.
-        super.render( true );
+		// Self Re-render.
+		super.render( true );
 
-        // Re-render of child.
-        if ( this.child ) {
-            this.child.render();
-        }
+		// Re-render of child.
+		if ( this.child ) {
+			this.child.render();
+		}
 
-        if ( ! preventDefault )  this.afterRender();
-    }
+		if ( ! preventDefault ) this.afterRender();
+	}
 
-    /**
-     * Function on() : Declare event callback
-     *
-     * @param {'render:after'} event
-     * @param {{function()}} callback
-     */
-    on( event, callback ) {
-        switch ( event ) {
-            case 'render:after': {
-                this.events.onAfterRender = callback;
-            }
-            break;
+	/**
+	 * Function on() : Declare event callback
+	 *
+	 * @param {'render:after'} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		switch ( event ) {
+			case 'render:after': {
+				this.events.onAfterRender = callback;
+			}
+				break;
 
-            default: {
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-            }
-        }
-    }
+			default: {
+				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+			}
+		}
+	}
 }
 
 export default Container;

@@ -1,64 +1,65 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>MyShop</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <base href="/frontend/">
-        <link rel="icon" href="../img/icon.png" sizes="192x192" />
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/fonts.css">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="css/mobile.css">
-        <link rel="stylesheet" href="css/terminal.css">
-        <meta name="theme-color" content="#fafafa">
-    </head>
+<head>
+	<meta charset="utf-8">
+	<title>MyShop</title>
+	<meta content="" name="description">
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<base href="/frontend/">
+	<link href="../img/icon.png" rel="icon" sizes="192x192"/>
+	<link href="css/normalize.css" rel="stylesheet">
+	<link href="css/fonts.css" rel="stylesheet">
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	<link href="css/mobile.css" rel="stylesheet">
+	<link href="css/terminal.css" rel="stylesheet">
+	<meta content="#fafafa" name="theme-color">
+</head>
 
-    <body>
-        <!--[if IE]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-        <![endif]-->
-        <!-- Add your site or application content here -->
-        <header>
-            <ul>
-                <li>
-                    <a href="#" id="logo"><h2>My Shop</h2></a>
-                </li>
+<body>
+<!--[if IE]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade
+	your browser</a> to improve your experience and security.</p>
+<![endif]-->
+<!-- Add your site or application content here -->
+<header>
+	<ul>
+		<li>
+			<a href="#" id="logo"><h2>My Shop</h2></a>
+		</li>
 
-                <li id="toggle" class="pointer">
-                    <img class="cart hidden" src="img/cart.png">
-                    <span class="amount hidden bg-light">0</span>
-                    <div class="spinner" style="border-top-color: lightskyblue"></div>
-                </li>
-            </ul>
-        </header>
+		<li class="pointer" id="toggle">
+			<img class="cart hidden" src="img/cart.png">
+			<span class="amount hidden bg-light">0</span>
+			<div class="spinner" style="border-top-color: lightskyblue"></div>
+		</li>
+	</ul>
+</header>
 
-        <section>
-            <div id="sidebar">
-                <div id="header">
-                    <h2>YOUR CART</h2>
-                    <button id="close">&#12297;</button>
-                </div>
-            </div>
+<section>
+	<div id="sidebar">
+		<div id="header">
+			<h2>YOUR CART</h2>
+			<button id="close">&#12297;</button>
+		</div>
+	</div>
 
-            <div id="overlay" class="pointer"></div>
-        </section>
+	<div class="pointer" id="overlay"></div>
+</section>
 
-        <section class="main">
+<section class="main">
 
-        </section>
+</section>
 
-        <!-- this is should be in terminal service it self -->
-        <div id="terminal">
-            <div class="buttons">
-                <button class="resize">︽</button>
-                <button class="close" title="Close terminal">X</button>
-            </div>
-        </div>
+<!-- this is should be in terminal service it self -->
+<div id="terminal">
+	<div class="buttons">
+		<button class="resize">︽</button>
+		<button class="close" title="Close terminal">X</button>
+	</div>
+</div>
 
-        <script src="vendor/jquery-3.4.1.min.js"></script>
-        <script src="dist/app.bundle.js"></script>
-    </body>
+<script src="vendor/jquery-3.4.1.min.js"></script>
+<script src="dist/app.bundle.js"></script>
+</body>
 </html>
