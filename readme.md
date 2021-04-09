@@ -61,10 +61,10 @@ git clone https://github.com/iNewLegend/shop-catalog.git
 ```/backend/inewlegend/php``` Simple, no composer, no dependencies backend:
 *
     
-    ```
+
     $ cd shop-catalog/backend/inewlegend.php
     $ php -S localhost:8081
-    ````
+
 * Access this url `http://localhost:8081/?cmd=admin/install/localhost/<mysql_username>/<mysql_password>/<mysql_database_name>` and dont forget replace <> with yours real credentials. this will create the database and create simple mock catalog.
 
 
