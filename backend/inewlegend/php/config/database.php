@@ -7,12 +7,10 @@
 namespace Config;
 
 class Database {
+	const IS_CONFIGURED = true;
 
 	const HOST = 'localhost';
-
-	const NAME = 'market';
-
+	const NAME = 'shop_catalog';
 	const USERNAME = 'admin';
-
 	const PASSWORD = 'mysql';
 }

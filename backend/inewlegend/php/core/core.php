@@ -57,6 +57,14 @@ class Core {
 			if ( is_array( $r ) || is_object( $r ) ) {
 				header( 'Content-Type: application/json' );
 
+				if ( $r instanceof \Exception ) {
+					return print json_encode( [
+						'message' => $r->getMessage(),
+						'code' => $r->getCode(),
+						'trace' =>$r->getTrace(),
+					] );
+				}
+
 				echo json_encode( $r );
 			} else {
 				echo $r;

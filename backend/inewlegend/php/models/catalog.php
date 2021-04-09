@@ -77,4 +77,23 @@ class Catalog {
 
 		return [];
 	}
+
+	public function createTable() {
+		$name = self::TABLE;
+		$query =
+<<<EOT
+			DROP TABLE IF EXISTS `$name`;
+			CREATE TABLE `$name` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `name` varchar(255) NOT NULL,
+			  `price` decimal(10,2) DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+EOT;
+		return $this->db->exec( $query );
+	}
+
+	public function insertMock() {
+		return $this->db->exec( "INSERT INTO `catalog` VALUES (1,'Pen',99.90),(2,'Clock',99.90),(3,'Watch',9.90),(4,'Sun Glasses',17.05),(5,'Flowers',59.90),(6,'Glass',59.90),(7,'Coca Cola',59.90),(8,'Pants',19.90),(9,'Red Roses',19.90),(10,'Black Roses',19.90),(11,'T-Shirt',19.90);" );
+	}
 }

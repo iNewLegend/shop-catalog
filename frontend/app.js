@@ -24,7 +24,7 @@ class App {
 
         this.logger.startEmpty();
 
-        const remoteAddress = window.location.href.substring( 0, window.location.href.lastIndexOf( "/" ) ) + '/../api/?cmd=',
+        const remoteAddress = 'http://localhost:8081?cmd=',
             http = new api.Http( remoteAddress );
 
         this.apis = {

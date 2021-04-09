@@ -9,10 +9,13 @@ module.exports = {
         mvc: './dev/mvc/index.js'
     },
     output: {
-        filename: '[name].bundle.js',
+        filename: '[name].js',
         path: path.resolve( __dirname, 'frontend/dist' )
     },
-    module: {
+	devServer: {
+		contentBase: 'frontend/dist'
+	},
+	module: {
         rules: [
             {
                 test: /\.css$/i,

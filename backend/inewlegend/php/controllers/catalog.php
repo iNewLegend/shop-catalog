@@ -26,7 +26,7 @@ class Catalog {
 	 * Function __construct() Create Catalog Controller
 	 */
 	public function __construct() {
-		$this->catalogModel = new \Models\Catalog( Database::getInstance()->getPDO() );
+		$this->catalogModel = new \Models\Catalog( Database::getInstance()->getConnection() );
 	}
 
 	/**

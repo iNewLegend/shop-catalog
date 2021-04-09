@@ -31,7 +31,7 @@ class Cart {
 	 * Function __construct() Create Cart Controller
 	 */
 	public function __construct() {
-		$this->catalogModel = new \Models\Catalog( Database::getInstance()->getPDO() );
+		$this->catalogModel = new \Models\Catalog( Database::getInstance()->getConnection() );
 
 		if ( ! isset( $_COOKIE['cart'] ) ) {
 			$this->cart = [];

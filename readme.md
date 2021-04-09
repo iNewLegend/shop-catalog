@@ -23,9 +23,7 @@
   - Modular
   - Well structured
   - Apply MVC.
-
-# Code
-Editor: PhpStrom
+  - No dependencies except babel and webpack. 
 
 ## Rules:
 ### Code Access
@@ -49,19 +47,23 @@ No hosting at the moment
 # install:
 ```
 git clone https://github.com/iNewLegend/shop-catalog.git
-cd shop-catalog/frontend
-npm install
-npm run watch
 ```
+## Frontend
+*
+    ```
+    $ cd shop-catalog
+    $ npm install
+    $ npm run watch_server
+    ```
+* Access this url `http://localhost:8080`
+## Backend
+### Few backends are available
+```/backend/inewlegend/php``` Simple, no composer, no dependencies backend:
+*
+    ```
+    $ cd shop-catalog/backend/inewlegend.php
+    $ php -S localhost:8081
+    ````
+* Access this url `http://localhost:8081/?cmd=admin/install/localhost/<mysql_username>/<mysql_password>/<mysql_database_name>` and dont forget replace <> with yours real credentials. this will create the database and create simple mock catalog.
 
-Another session
-```
-cd shop-catalog
-mysql <your mysql auth>
-mysql> create database market
-$ mysql -u <your user> market < database.sql
-$ nano api/config/database.php
-$ php -S localhost:8080
-````
-## http://localhost:8080/frontend/
 
