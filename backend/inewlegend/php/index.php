@@ -47,11 +47,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' ) {
 	exit();
 }
 
-$cmd = '';
-
-if ( isset( $_GET['cmd'] ) ) {
-	$cmd = $_GET['cmd'];
-}
+$cmd = ltrim( $_SERVER['PATH_INFO'], '/' );
 
 if ( $cmd == 'phpinfo' ) {
 	phpinfo();
