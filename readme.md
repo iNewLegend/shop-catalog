@@ -1,7 +1,8 @@
 # Shop-Catalog
 
 ## Backend
-  - Core PHP Backend
+  - Core PHP
+  - NestJS.
   
 ## Frontend
   - Simple API
