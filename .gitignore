@@ -4,4 +4,4 @@ node_modules
 .DS_Store
 app.bundle.js
 
-frontend/dist/mvc.bundle.js
+frontend/dist/*.js

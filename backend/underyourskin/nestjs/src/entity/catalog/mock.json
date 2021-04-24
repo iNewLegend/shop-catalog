@@ -1,0 +1,42 @@
+[
+	{
+		"name": "Pen",
+		"price": 99.90
+	},
+	{
+		"name": "Clock",
+		"price": 99.90
+	},
+	{
+		"name": "Watch",
+		"price": 99.90
+	},
+	{
+		"name": "Sun Glasses",
+		"price": 17.05
+	},
+	{
+		"name": "Flowers",
+		"price": 59.90
+	},
+	{
+		"name": "Glass",
+		"price": 59.90
+	},
+	{
+		"name": "Coca Cola",
+		"price": 59.90
+	},
+	{
+		"name": "Red Roses",
+		"price": 19.90
+	},
+	{
+		"name": "Black Roses",
+		"price": 19.90
+	},
+	{
+		"name": "T-Shirt",
+		"price": 19.90
+	}
+]

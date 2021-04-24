@@ -7,7 +7,7 @@
 namespace Config;
 
 class Database {
-	const IS_CONFIGURED = true;
+	const IS_CONFIGURED = false;
 
 	const HOST = 'localhost';
 	const NAME = 'shop_catalog';
