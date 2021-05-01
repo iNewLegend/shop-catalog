@@ -71,7 +71,27 @@ export class Catalog extends Component {
         return 'Components/Catalog';
     }
 
-    /**
+	template() {
+		return (`
+            <div class="container" style="max-width: 1080px;">
+                <div id="catalog" class="row">
+                </div>
+            </div>
+        `);
+	}
+
+	render() {
+		super.render();
+
+		const { pagination, spinner } = this.components;
+
+		spinner.render();
+
+		pagination.render();
+		pagination.on( 'page:change', this.onPageChange.bind( this ) );
+	}
+
+	/**
      * Function onPageChange() : Called on page change.
      *
      * @param {number} page
@@ -182,26 +202,6 @@ export class Catalog extends Component {
                 }
             } );
         }, page );
-    }
-
-    template() {
-        return (`
-            <div class="container" style="max-width: 1080px;">
-                <div id="catalog" class="row">
-                </div>
-            </div>
-        `);
-    }
-
-    render() {
-        super.render();
-
-        const { pagination, spinner } = this.components;
-
-        spinner.render();
-
-        pagination.render();
-        pagination.on( 'page:change', this.onPageChange.bind( this ) );
     }
 
     /**
