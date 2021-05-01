@@ -8,7 +8,11 @@ namespace Controllers;
 
 class Admin {
 
-	function install( $database_host, $database_user, $database_password, $database_name = 'shop_catalog', $skip_create = false ) {
+	function install( $database_host = null, $database_user = null, $database_password = null, $database_name = 'shop_catalog', $skip_create = false ) {
+		if ( null === $database_host) {
+			return '[syntax]: ' . $_SERVER["PATH_INFO"] . '/[db_host]/[db_user]/[db_password]/[db_name]';
+		}
+
 		try {
 			if ( \Config\Database::IS_CONFIGURED ) {
 				throw new \Exception( 'Install is already configured.' );

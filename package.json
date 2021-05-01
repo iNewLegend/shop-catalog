@@ -1,23 +1,26 @@
 {
-  "scripts": {
-    "watch": "webpack --watch --watchContentBase",
-    "watch_server": "npx webpack serve --watch-content-base"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.13.15",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/preset-env": "^7.13.15",
-    "@webpack-cli/serve": "^1.3.1",
-    "babel-loader": "^8.2.2",
-    "css-loader": "^3.4.2",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2",
-    "ssri": ">=8.0.1"
-  },
-  "dependencies": {
-    "@babel/polyfill": "^7.7.0",
-    "css-loader": "^3.4.2",
-    "style-loader": "^1.1.3"
-  }
+	"scripts": {
+		"frontend:watch": "webpack --watch --watchContentBase",
+		"frontend:watch:sever": "npx webpack serve --watch-content-base",
+		"backend:php:debug": "cd backend/inewlegend/php; php -S localhost:8081",
+		"backend:nestjs:debug": "cd backend/underyourskin/nestjs; npm run start:debug",
+		"postinstall": "cd backend/underyourskin/nestjs; npm i"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.13.15",
+		"@babel/plugin-proposal-class-properties": "^7.13.0",
+		"@babel/preset-env": "^7.13.15",
+		"@webpack-cli/serve": "^1.3.1",
+		"babel-loader": "^8.2.2",
+		"css-loader": "^3.4.2",
+		"webpack": "^4.46.0",
+		"webpack-cli": "^4.5.0",
+		"webpack-dev-server": "^3.11.2",
+		"ssri": ">=8.0.1"
+	},
+	"dependencies": {
+		"@babel/polyfill": "^7.7.0",
+		"css-loader": "^3.4.2",
+		"style-loader": "^1.1.3"
+	}
 }
