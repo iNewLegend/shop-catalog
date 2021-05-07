@@ -50,10 +50,11 @@ export class Element extends Container {
 
     attachListener( method, callback ) {
         switch ( method ) {
+        	// TDO: Try remove the switch with good a guess.
             case 'onClick': {
                 this.element.addEventListener( 'click', callback );
             }
-                break;
+            break;
         }
     }
 
@@ -121,7 +122,6 @@ export class Element extends Container {
                 }
 
                 if ( i.startsWith( 'on' ) && node[ i ] ) {
-                    debugger;
                     this.evalHandlers( node[ i ] );
                 }
             }
