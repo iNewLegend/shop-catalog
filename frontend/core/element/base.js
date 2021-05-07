@@ -16,6 +16,11 @@ export class Base {
      */
     element;
 
+	/**
+	 * @type {Object}
+	 */
+	options;
+
     /**
      * Function constructor() : Create Custom Element.
      *
@@ -30,6 +35,7 @@ export class Base {
 
         this.context = context;
         this.parent = parent;
+	    this.options = options;
 
         if ( context instanceof HTMLElement ) {
             this.element = context;
