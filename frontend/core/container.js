@@ -10,6 +10,8 @@ import ElementBase from './element/base.js';
  * @memberOf core
  */
 export class Container extends ElementBase {
+	static RENDER_WITHOUT_CHILD = 'RENDER_WITHOUT_CHILD';
+
     static getNamespace() {
         return 'Core'
     }
@@ -20,17 +22,44 @@ export class Container extends ElementBase {
 
     initialize() {
 	    this.events = {
-		    onAfterRender: () => {},
+		    onBeforeRender: ( /* Container */ container ) => {},
+		    onAfterRender: ( /* Container */ Container ) => {},
 	    };
 
-        super.initialize();
     }
 
-    afterRender() {
+	beforeRender() {
+		const { onBeforeRender } = this.events;
+
+		if ( onBeforeRender ) {
+			onBeforeRender( this.child || Container.RENDER_WITHOUT_CHILD );
+		}
+
+		super.beforeRender();
+	}
+
+	render( preventDefault ) {
+		if ( ! preventDefault ) this.beforeRender();
+
+		// Self Re-render.
+		super.render( true );
+
+		// Re-render of child.
+		if ( this.child ) {
+			this.child.render();
+		}
+
+		if ( ! preventDefault )  this.afterRender();
+	}
+
+
+	afterRender() {
         super.afterRender();
 
-        if ( this.events && this.events.onAfterRender ) {
-            this.events.onAfterRender( this.child );
+        const { onAfterRender } = this.events;
+
+        if ( onAfterRender ) {
+	        onAfterRender( this.child || Container.RENDER_WITHOUT_CHILD );
         }
     }
 
@@ -39,42 +68,30 @@ export class Container extends ElementBase {
      */
     set( child ) {
         if ( ! ( child instanceof Container ) ) {
-            throw new Error();
+            throw new Error( 'Child required to be container' );
         }
 
         this.child = child;
     }
 
-    render( preventDefault ) {
-        if ( ! preventDefault ) this.beforeRender();
-
-        // Self Re-render.
-        super.render( true );
-
-        // Re-render of child.
-        if ( this.child ) {
-            this.child.render();
-        }
-
-        if ( ! preventDefault )  this.afterRender();
-    }
-
     /**
      * Function on() : Declare event callback
      *
-     * @param {'render:after'} event
+     * @param {'render:before'|'render:after'} event
      * @param {{function()}} callback
+     *
+     * @returns {Boolean}
      */
     on( event, callback ) {
         switch ( event ) {
-            case 'render:after': {
-                this.events.onAfterRender = callback;
-            }
-            break;
+	        case 'render:before':
+		        return !! ( this.events.onBeforeRender = callback );
 
-            default: {
+            case 'render:after':
+               return !! ( this.events.onAfterRender = callback );
+
+            default:
                 alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-            }
         }
     }
 }
