@@ -18,16 +18,16 @@ export class Spinner extends Component {
         return 'Components/Catalog/Spinner';
     }
 
+	template() {
+		return '<div class="spinner" style="border-top-color: lightskyblue"></div>';
+	}
+
     fadeOut( ms, callback ) {
         setTimeout( () => {
             this.view.element.hide();
 
             callback();
         }, ms );
-    }
-
-    template() {
-        return '<div class="spinner" style="border-top-color: lightskyblue"></div>';
     }
 }
 

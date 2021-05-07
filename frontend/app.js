@@ -43,7 +43,7 @@ class App {
             },
 
             sidebar: {
-                self: core.Factory.createElement( '#sidebar' ), // Self should not be exist, if you use self, it should be component.
+                self: core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
                 closeButton: core.Factory.createElement( '#sidebar #close' ),
             },
 
@@ -75,7 +75,8 @@ class App {
 
         const { header, overlay, sidebar } = this.elements;
 
-        this.container.on( 'render:after', this._onContainerRender.bind( this ) );
+        this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
+        this.container.on( 'render:after', this.onPageContainerAfterRender.bind( this ) );
 
         overlay.click( () => this.sidebarToggle( false ) );
 
@@ -92,30 +93,29 @@ class App {
         this.container.render();
     }
 
+	/**
+	 * Function onBeforeRender() :.
+	 *
+	 * @param {modules.Page} pageModule
+	 */
+	onPageContainerBeforeRender( pageModule ) {
+		this.logger.startWith( { pageModule: pageModule?.constructor.name } );
+
+		if ( pageModule instanceof pages.Catalog ) {
+			this.pages.catalog.on( 'render:after', this.onCatalogAfterRender.bind( this ) );
+		}
+	}
+
     /**
-     * Function _onContainerReady() : Called when container ready.
+     * Function onAfterRender() :.
      *
      * @param {modules.Page} pageModule
      */
-    _onContainerRender( pageModule ) {
+    onPageContainerAfterRender( pageModule ) {
         this.logger.startWith( { pageModule: pageModule.constructor.name } );
 
         if ( pageModule instanceof pages.Catalog ) {
             this.pages.catalog.on( 'product:add', this.onCatalogProductAdd.bind( this ) );
-
-            if ( !this.cart ) {
-                this.cart = new components.Cart( this.apis.cart, this.apis.catalog );
-
-                this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-                this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-                this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
-                this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-                this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
-
-                // TODO: should use 'this.elements.sidebar.self' instead of 'this.elements.sidebar.self.element'
-                // TODO: FIX ASAP.
-                this.cart.render( this.elements.sidebar.self.element );
-            }
         }
     }
 
@@ -185,6 +185,25 @@ class App {
         this.container.render();
     }
 
+	/**
+	 * Function onCatalogAfterRender() : Called on catalog initial recv done.
+	 */
+    onCatalogAfterRender() {
+    	if ( ! this.catalogRenderOnce ) {
+    		this.catalogRenderOnce = true;
+
+		    this.cart = new components.Cart(  this.elements.sidebar.self, this.apis );
+
+		    this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+		    this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+		    this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
+		    this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+		    this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
+
+		    this.cart.render();
+	    }
+    }
+
     /**
      * Function onCatalogProductAdd() : Called on catalog item add
      */
@@ -220,7 +239,6 @@ class App {
             this.cart.close();
         }
     }
-
 }
 
 (new App().initialize());
