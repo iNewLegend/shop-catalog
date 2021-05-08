@@ -87,20 +87,19 @@ export class Product extends Component {
 		const { id, name, price } = this.options;
 
 		return (`
-            <div class="product">
-                <img src="img/product-${id}.jpg" alt="product-${id}" />
-                <h4 class="name color-secondary">${name}</h4>
-
-                <div class="footer">
-                    <h5>Price: <span class="price">${price}$</span></h5>
-                    <div class="row">
-                        <button onclick="this.onProductAdd()" class="bg-primary">Add To Cart</button>
-                        <input onchange="this.onProductChange()" class="amount" type="number" name="amount"
-                            value="1" min="1">
-                    </div>
-                </div>
-            </div>
-        `);
+				<div class="product">
+					<img src="img/product-${id}.jpg" alt="product-${id}" />
+					<h4 class="name color-secondary">${name}</h4>
+					
+					<div class="footer">
+						<h5>Price: <span class="price">${price}$</span></h5>
+						<div class="row">
+							<button onclick="this.onProductAdd()" class="bg-primary">Add To Cart</button>
+							<input onchange="this.onProductChange()" class="amount" type="number" name="amount"	value="1" min="1">
+						</div>
+					</div>
+				</div>
+	    `);
 	}
 
 	onProductAdd( e ) {

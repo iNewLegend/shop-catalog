@@ -104,9 +104,9 @@ export class Element extends Container {
 		// Attach All `context` element events, to `target` component.
         let nodes = [];
 
-        if ( context.node ) {
-            nodes = [context.node];
-        }
+		if ( context.node ) {
+			nodes = [ context.node ];
+		}
 
         if ( nodes.length > 0 && context.node.childNodes ) {
             nodes = [nodes, ...context.node.childNodes];
@@ -201,7 +201,7 @@ export class Element extends Container {
 	fadeOut( sensitivity = .1 ) {
 		const el = this.element;
 
-        el.style.opacity = 1;
+		el.style.opacity = 1;
 
         (function fade() {
             if ( ( el.style.opacity -= sensitivity ) < 0 ) {

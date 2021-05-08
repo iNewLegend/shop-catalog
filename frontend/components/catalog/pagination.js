@@ -48,14 +48,13 @@ export class Pagination extends Component {
 
 	template() {
 		return (`
-            <div id="pagination" class="pagination hidden">
-                <div class="pagination">
-                    <a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
-                    <span class="placeholder">
-                    </span>
-                    <a onclick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
-                </div>
-            </div>
+			<div id="pagination" class="pagination hidden">
+				<div class="pagination">
+					<a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
+					<span class="placeholder"></span>
+					<a onclick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
+				</div>
+			</div>
         `);
 	}
 

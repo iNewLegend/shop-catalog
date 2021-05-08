@@ -32,14 +32,14 @@ export class Catalog extends Component {
 	products = [];
 
 	constructor( parent, options ) {
-        super( parent, options );
+		super( parent, options );
 
-        this.events = {
-            onRecvOnce: () => {},
-            onProductAdd: ( product ) => {},
-        };
+		this.events = {
+			onRecvOnce: () => {},
+			onProductAdd: ( product ) => {},
+		};
 
-        this.components = {
+		this.components = {
 			pagination: new Pagination( this.view.element ),
 		};
 	}
@@ -66,10 +66,10 @@ export class Catalog extends Component {
 
 	template() {
 		return (`
-            <div class="container" style="max-width: 1080px;">
-                <div id="catalog" class="row">
-                </div>
-            </div>
+			<div class="container" style="max-width: 1080px;">
+				<div id="catalog" class="row">
+				</div>
+			</div>
         `);
 	}
 

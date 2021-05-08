@@ -79,7 +79,7 @@ export class Item extends Component {
 	                </div>
 	                <div class="clearfix"></div>
 	            </li>
-        `);
+		`);
 	}
 
 	afterRender() {
@@ -98,7 +98,7 @@ export class Item extends Component {
 
 		// TODO: Change via model.
 		amount.innerHTML = this.amount;
-		sum.innerHTML = ( parseFloat( this.getTotal().toString() ).toFixed( 2 ));
+		sum.innerHTML = (parseFloat( this.getTotal().toString() ).toFixed( 2 ));
 	}
 
 	/**
