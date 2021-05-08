@@ -12,13 +12,13 @@ import ElementBase from './element/base.js';
 export class Container extends ElementBase {
 	static RENDER_WITHOUT_CHILD = 'RENDER_WITHOUT_CHILD';
 
-    static getNamespace() {
-        return 'Core'
-    }
+	static getNamespace() {
+		return 'Core'
+	}
 
-    static getName() {
-        return 'Core/Container';
-    }
+	static getName() {
+		return 'Core/Container';
+	}
 
     initialize() {
 	    this.events = {
@@ -49,21 +49,20 @@ export class Container extends ElementBase {
 			this.child.render();
 		}
 
-		if ( ! preventDefault )  this.afterRender();
+		if ( ! preventDefault ) this.afterRender();
 	}
 
-
 	afterRender() {
-        super.afterRender();
+		super.afterRender();
 
-        const { onAfterRender } = this.events;
+		const { onAfterRender } = this.events;
 
-        if ( onAfterRender ) {
-	        onAfterRender( this.child || Container.RENDER_WITHOUT_CHILD );
-        }
-    }
+		if ( onAfterRender ) {
+			onAfterRender( this.child || Container.RENDER_WITHOUT_CHILD );
+		}
+	}
 
-    /**
+	/**
      * @param {Container} child
      */
     set( child ) {
@@ -71,17 +70,17 @@ export class Container extends ElementBase {
             throw new Error( 'Child required to be container' );
         }
 
-        this.child = child;
-    }
+		this.child = child;
+	}
 
-    /**
-     * Function on() : Declare event callback
-     *
-     * @param {'render:before'|'render:after'} event
-     * @param {{function()}} callback
-     *
-     * @returns {Boolean}
-     */
+	/**
+	 * Function on() : Declare event callback
+	 *
+	 * @param {'render:before'|'render:after'} event
+	 * @param {{function()}} callback
+	 *
+	 * @returns {Boolean}
+	 */
     on( event, callback ) {
         switch ( event ) {
 	        case 'render:before':
@@ -92,8 +91,8 @@ export class Container extends ElementBase {
 
             default:
                 alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-        }
-    }
+		}
+	}
 }
 
 export default Container;

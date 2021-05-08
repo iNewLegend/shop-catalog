@@ -10,42 +10,42 @@ import HTML from '../library/html.js';
  * @memberOf core
  */
 export class Context {
-    /**
-     * @type {Node}
-     */
-    node;
+	/**
+	 * @type {Node}
+	 */
+	node;
 
-    constructor( context ) {
-        this.context = context;
-    }
+	constructor( context ) {
+		this.context = context;
+	}
 
-    static getNamespace() {
-        return 'Core'
-    }
+	static getNamespace() {
+		return 'Core'
+	}
 
-    static getName() {
-        return 'Core/Context';
-    }
+	static getName() {
+		return 'Core/Context';
+	}
 
-    /**
-     *
-     * @returns {Node}
-     */
-    create() {
-        this.beforeCreate();
+	/**
+	 *
+	 * @returns {Node}
+	 */
+	create() {
+		this.beforeCreate();
 
-        this.node = HTML.toNode( this.context );
+		this.node = HTML.toNode( this.context );
 
-        this.afterCreate();
+		this.afterCreate();
 
-        return this.node;
-    }
+		return this.node;
+	}
 
-    beforeCreate() {
-    }
+	beforeCreate() {
+	}
 
-    afterCreate() {
-    }
+	afterCreate() {
+	}
 }
 
 export default Context;

@@ -10,31 +10,31 @@ import Element from './element.js';
  * @memberOf core
  */
 export class View {
-    /**
-     * @type {core.Element}
-     */
-    element;
+	/**
+	 * @type {core.Element}
+	 */
+	element;
 
-    constructor( parent, options = {} ) {
-        this.element = new Element(
-            parent,
-            options.template || this.template(),
-            options,
-        );
+	constructor( parent, options = {} ) {
+		this.element = new Element(
+			parent,
+			options.template || this.template(),
+			options,
+		);
 
-        this.initialize( options );
-    }
+		this.initialize( options );
+	}
 
-    initialize( options ) {
-    }
+	initialize( options ) {
+	}
 
-    template() {
-        throw('no template');
-    }
+	template() {
+		throw('no template');
+	}
 
-    render() {
-        this.element.render();
-    }
+	render() {
+		this.element.render();
+	}
 }
 
 export default View;
