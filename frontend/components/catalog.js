@@ -14,24 +14,24 @@ import Spinner from './catalog/spinner';
  * @memberOf components
  */
 export class Catalog extends Component {
-    static amountMaxValue = 999;
-    static amountMinValue = 1;
+	static amountMaxValue = 999;
+	static amountMinValue = 1;
 
-    /**
-     * Current page number.
-     *
-     * @type {number}
-     */
-    page = 0;
+	/**
+	 * Current page number.
+	 *
+	 * @type {number}
+	 */
+	page = 0;
 
-    /**
-     * Loaded products to be rendered.
-     *
-     * @type {Array.<components.catalog.Product>}
-     */
-    products = [];
+	/**
+	 * Loaded products to be rendered.
+	 *
+	 * @type {Array.<components.catalog.Product>}
+	 */
+	products = [];
 
-    constructor( parent, options ) {
+	constructor( parent, options ) {
         super( parent, options );
 
         this.events = {
@@ -40,29 +40,29 @@ export class Catalog extends Component {
         };
 
         this.components = {
-            pagination: new Pagination( this.view.element ),
-        };
-    }
+			pagination: new Pagination( this.view.element ),
+		};
+	}
 
-    static getNamespace() {
-        return 'Components'
-    }
+	static getNamespace() {
+		return 'Components'
+	}
 
-    static getName() {
-        return 'Components/Catalog';
-    }
+	static getName() {
+		return 'Components/Catalog';
+	}
 
-    initialize( options ) {
-	    this.logger = new Logger( Catalog.getName(), true );
-	    this.logger.setOutputHandler( services.Terminal.onOutput );
-	    this.logger.startWith( { options } );
+	initialize( options ) {
+		this.logger = new Logger( Catalog.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
+		this.logger.startWith( { options } );
 
-	    this.apis = {
-		    catalog: options.api,
-	    };
+		this.apis = {
+			catalog: options.api,
+		};
 
-	    return super.initialize( options );
-    }
+		return super.initialize( options );
+	}
 
 	template() {
 		return (`
@@ -97,59 +97,59 @@ export class Catalog extends Component {
 	}
 
 	/**
-     * Function onPageChange() : Called on page change.
-     *
-     * @param {number} page
-     */
-    onPageChange( page ) {
-        this.logger.startWith( { page } );
+	 * Function onPageChange() : Called on page change.
+	 *
+	 * @param {number} page
+	 */
+	onPageChange( page ) {
+		this.logger.startWith( { page } );
 
-        const { spinner } = this.components;
+		const { spinner } = this.components;
 
-        // Remove all products.
-        this.products.forEach( ( product ) =>
-            product.remove()
-        );
+		// Remove all products.
+		this.products.forEach( ( product ) =>
+			product.remove()
+		);
 
-        // Show spinner.
-        spinner.show();
+		// Show spinner.
+		spinner.show();
 
-        this.getProducts( page - 1, () => {
-            this.renderProducts();
-        } );
-    }
+		this.getProducts( page - 1, () => {
+			this.renderProducts();
+		} );
+	}
 
-    /**
-     * Function onProductAdd() : Called on "Add to cart button".
-     *
-     * @param {Product} product
-     */
-    onProductAdd( product ) {
-        this.logger.startWith( { product } );
+	/**
+	 * Function onProductAdd() : Called on "Add to cart button".
+	 *
+	 * @param {Product} product
+	 */
+	onProductAdd( product ) {
+		this.logger.startWith( { product } );
 
-        // Call callback.
-        this.events.onProductAdd( product );
-    }
+		// Call callback.
+		this.events.onProductAdd( product );
+	}
 
-    /**
-     * Function onProductAmountChange() : Called on "Product Amount Change".
-     *
-     * Function override amount ( Used as filter ).
-     *
-     * @param {components.catalog.Product} product
-     * @param {number} amount
-     */
-    onProductAmountChange( product, amount ) {
-        this.logger.startWith( { amount } );
+	/**
+	 * Function onProductAmountChange() : Called on "Product Amount Change".
+	 *
+	 * Function override amount ( Used as filter ).
+	 *
+	 * @param {components.catalog.Product} product
+	 * @param {number} amount
+	 */
+	onProductAmountChange( product, amount ) {
+		this.logger.startWith( { amount } );
 
-        if ( amount > Catalog.amountMaxValue ) {
-            amount = Catalog.amountMaxValue;
-        } else if ( amount < Catalog.amountMinValue ) {
-            amount = Catalog.amountMinValue;
-        }
+		if ( amount > Catalog.amountMaxValue ) {
+			amount = Catalog.amountMaxValue;
+		} else if ( amount < Catalog.amountMinValue ) {
+			amount = Catalog.amountMinValue;
+		}
 
-        product.setAmount( amount );
-    }
+		product.setAmount( amount );
+	}
 
 	/**
 	 * Function onRecvOnce() : Called on success of initial getCatalog request.
@@ -160,20 +160,20 @@ export class Catalog extends Component {
 		this.events.onRecvOnce();
 	}
 
-    /**
-     * Function addProduct() : Add's a product.
-     *
-     * Function Create product component and push it `this.products`.
-     *
-     * @param {components.catalog.Product} product
-     *
-     * @returns {components.catalog.Product}
-     */
-    addProduct( product ) {
-        const productComponent = new Product( this.elements.row, {
-            api: {
-                catalog: this.apis.catalog,
-            },
+	/**
+	 * Function addProduct() : Add's a product.
+	 *
+	 * Function Create product component and push it `this.products`.
+	 *
+	 * @param {components.catalog.Product} product
+	 *
+	 * @returns {components.catalog.Product}
+	 */
+	addProduct( product ) {
+		const productComponent = new Product( this.elements.row, {
+			api: {
+				catalog: this.apis.catalog,
+			},
 
             logger: this.logger,
 
@@ -181,72 +181,72 @@ export class Catalog extends Component {
         } );
 
         productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
-        productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
+		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 
-        this.products.push( productComponent );
+		this.products.push( productComponent );
 
-        return productComponent;
-    }
+		return productComponent;
+	}
 
-    /**
-     * Function getProducts() : Get products from catalog endpoint.
-     *
-     * @param {number} page
-     * @param {{function()}} onSuccess
-     */
-    getProducts( page, onSuccess ) {
-        this.logger.startWith( { page, onSuccess } );
+	/**
+	 * Function getProducts() : Get products from catalog endpoint.
+	 *
+	 * @param {number} page
+	 * @param {{function()}} onSuccess
+	 */
+	getProducts( page, onSuccess ) {
+		this.logger.startWith( { page, onSuccess } );
 
-        const { spinner } = this.components;
+		const { spinner } = this.components;
 
-        this.apis.catalog.get( data => {
-            // Clear old products.
-            this.products = [];
+		this.apis.catalog.get( data => {
+			// Clear old products.
+			this.products = [];
 
-            // Used '1000' ms here to fake loading.
-            spinner.fadeOut( 1000, () => {
-                if ( !data.error ) {
-                    this.components.pagination.set( data.pagination );
+			// Used '1000' ms here to fake loading.
+			spinner.fadeOut( 1000, () => {
+				if ( ! data.error ) {
+					this.components.pagination.set( data.pagination );
 
-                    data.result.forEach( ( product ) =>
-                        this.addProduct( product )
-                    );
+					data.result.forEach( ( product ) =>
+						this.addProduct( product )
+					);
 
-                    if ( onSuccess ) onSuccess();
-                }
-            } );
-        }, page );
-    }
+					if ( onSuccess ) onSuccess();
+				}
+			} );
+		}, page );
+	}
 
-    /**
-     * Function renderProducts() : Render products.
-     */
-    renderProducts() {
-        this.products.forEach( ( product ) => {
-            product.render();
-        } );
-    }
+	/**
+	 * Function renderProducts() : Render products.
+	 */
+	renderProducts() {
+		this.products.forEach( ( product ) => {
+			product.render();
+		} );
+	}
 
-    /**
-     * Function on() : Declare event callback.
-     *
-     * @param {'product:add','recv:once'|} event
-     * @param {{function()}} callback
-     */
-    on( event, callback ) {
-        this.logger.startWith( { event, callback } );
+	/**
+	 * Function on() : Declare event callback.
+	 *
+	 * @param {'product:add','recv:once'|} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		this.logger.startWith( { event, callback } );
 
-        switch ( event ) {
-            case 'product:add':
-            	return this.events.onProductAdd = callback;
+		switch ( event ) {
+			case 'product:add':
+				return this.events.onProductAdd = callback;
 
-            case 'recv:once':
-            	return this.events.onRecvOnce = callback;
-        }
+			case 'recv:once':
+				return this.events.onRecvOnce = callback;
+		}
 
-        // Handle situations when there is require to call parent 'on' because this method is already the callback.
-        return false;
-    }
+		// Handle situations when there is require to call parent 'on' because this method is already the callback.
+		return false;
+	}
 }
 
 export default Catalog;

@@ -13,85 +13,85 @@ import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
 
 class App {
-    /**
-     * Function constructor() : Create App
-     */
-    constructor() {
-        services.Terminal.initialize();
+	/**
+	 * Function constructor() : Create App
+	 */
+	constructor() {
+		services.Terminal.initialize();
 
-        this.logger = new modules.Logger( this, true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
+		this.logger = new modules.Logger( this, true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.logger.startEmpty();
+		this.logger.startEmpty();
 
-        const remoteAddress = 'http://localhost:8081/',
-            http = new api.Http( remoteAddress );
+		const remoteAddress = 'http://localhost:8081/',
+			http = new api.Http( remoteAddress );
 
-        this.apis = {
-            catalog: new api.Catalog( http ),
-            cart: new api.Cart( http ),
-        };
+		this.apis = {
+			catalog: new api.Catalog( http ),
+			cart: new api.Cart( http ),
+		};
 
-        this.elements = {
-            header: {
-                logo: core.Factory.createElement( 'header #logo' ),
-                toggle: core.Factory.createElement( 'header #toggle' ),
+		this.elements = {
+			header: {
+				logo: core.Factory.createElement( 'header #logo' ),
+				toggle: core.Factory.createElement( 'header #toggle' ),
 
-                cart: core.Factory.createElement( 'header #toggle .cart' ),
-                amount: core.Factory.createElement( 'header #toggle .amount' ),
-                spinner: core.Factory.createElement( 'header #toggle .spinner' )
-            },
+				cart: core.Factory.createElement( 'header #toggle .cart' ),
+				amount: core.Factory.createElement( 'header #toggle .amount' ),
+				spinner: core.Factory.createElement( 'header #toggle .spinner' )
+			},
 
-            sidebar: {
-                self: core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
-                closeButton: core.Factory.createElement( '#sidebar #close' ),
-            },
+			sidebar: {
+				self: core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
+				closeButton: core.Factory.createElement( '#sidebar #close' ),
+			},
 
-            overlay: core.Factory.createElement( '#overlay' ),
+			overlay: core.Factory.createElement( '#overlay' ),
 
-            sections: {
-                main: core.Factory.createElement( "section.main" )
-            }
-        };
+			sections: {
+				main: core.Factory.createElement( "section.main" )
+			}
+		};
 
-        this.container = new core.Container( this.elements.sections.main, '<div class="page container"></div>' );
+		this.container = new core.Container( this.elements.sections.main, '<div class="page container"></div>' );
 
-        this.pages = {
-            catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>', {
-                api: this.apis.catalog,
-            } ),
-            checkout: new pages.Checkout( this.container, '<div class="pages checkout">' +
-                '   <h1>Check OUT.</h1>' +
-                '</div>'
-            ),
-        }
-    }
+		this.pages = {
+			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>', {
+				api: this.apis.catalog,
+			} ),
+			checkout: new pages.Checkout( this.container, '<div class="pages checkout">' +
+				'   <h1>Check OUT.</h1>' +
+				'</div>'
+			),
+		}
+	}
 
-    /**
-     * Function initialize() : Initialize App
-     */
-    initialize() {
-        this.logger.startEmpty();
+	/**
+	 * Function initialize() : Initialize App
+	 */
+	initialize() {
+		this.logger.startEmpty();
 
-        const { header, overlay, sidebar } = this.elements;
+		const { header, overlay, sidebar } = this.elements;
 
-        this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
-        this.container.on( 'render:after', this.onPageContainerAfterRender.bind( this ) );
+		this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
+		this.container.on( 'render:after', this.onPageContainerAfterRender.bind( this ) );
 
-        overlay.click( () => this.sidebarToggle( false ) );
+		overlay.click( () => this.sidebarToggle( false ) );
 
-        header.toggle.click( () => this.sidebarToggle( true ) );
+		header.toggle.click( () => this.sidebarToggle( true ) );
 
-        header.logo.click( () => {
-            this.container.set( this.pages.catalog );
-            this.container.render();
-        } );
+		header.logo.click( () => {
+			this.container.set( this.pages.catalog );
+			this.container.render();
+		} );
 
-        sidebar.closeButton.click( () => this.sidebarToggle( false ) );
+		sidebar.closeButton.click( () => this.sidebarToggle( false ) );
 
-        this.container.set( this.pages.catalog );
-        this.container.render();
-    }
+		this.container.set( this.pages.catalog );
+		this.container.render();
+	}
 
 	/**
 	 * Function onBeforeRender() :.
@@ -106,139 +106,139 @@ class App {
 		}
 	}
 
-    /**
-     * Function onAfterRender() :.
-     *
-     * @param {modules.Page} pageModule
-     */
-    onPageContainerAfterRender( pageModule ) {
-        this.logger.startWith( { pageModule: pageModule.constructor.name } );
+	/**
+	 * Function onAfterRender() :.
+	 *
+	 * @param {modules.Page} pageModule
+	 */
+	onPageContainerAfterRender( pageModule ) {
+		this.logger.startWith( { pageModule: pageModule.constructor.name } );
 
-        if ( pageModule instanceof pages.Catalog ) {
-            this.pages.catalog.on( 'product:add', this.onCatalogProductAdd.bind( this ) );
-        }
-    }
+		if ( pageModule instanceof pages.Catalog ) {
+			this.pages.catalog.on( 'product:add', this.onCatalogProductAdd.bind( this ) );
+		}
+	}
 
-    /**
-     * Function onCartRequest() : Called on request cart from the server
-     */
-    onCartRequest() {
-        this.logger.startEmpty();
+	/**
+	 * Function onCartRequest() : Called on request cart from the server
+	 */
+	onCartRequest() {
+		this.logger.startEmpty();
 
-        const { spinner } = this.elements.header;
+		const { spinner } = this.elements.header;
 
-        spinner.show();
-    }
+		spinner.show();
+	}
 
-    /**
-     * Function onCartReceived() : Called after cart received
-     */
-    onCartReceived() {
-        this.logger.startEmpty();
+	/**
+	 * Function onCartReceived() : Called after cart received
+	 */
+	onCartReceived() {
+		this.logger.startEmpty();
 
-        const { cart, spinner } = this.elements.header;
+		const { cart, spinner } = this.elements.header;
 
-        cart.show();
-        spinner.hide();
-    }
+		cart.show();
+		spinner.hide();
+	}
 
-    /**
-     * Function onCartAmountChange() : Called on cart amount change.
-     *
-     * @param {Number} count
-     */
-    onCartAmountChange( count ) {
-        this.logger.startWith( { count } );
+	/**
+	 * Function onCartAmountChange() : Called on cart amount change.
+	 *
+	 * @param {Number} count
+	 */
+	onCartAmountChange( count ) {
+		this.logger.startWith( { count } );
 
-        const { amount } = this.elements.header;
+		const { amount } = this.elements.header;
 
-        amount.html( count );
-    }
+		amount.html( count );
+	}
 
-    /**
-     * Function onCartStateEmpty() : Called on cart empty state change (cart have items|cart does have items)
-     *
-     * @param {Boolean} state
-     */
-    onCartStateEmpty( state ) {
-        this.logger.startWith( { state } );
+	/**
+	 * Function onCartStateEmpty() : Called on cart empty state change (cart have items|cart does have items)
+	 *
+	 * @param {Boolean} state
+	 */
+	onCartStateEmpty( state ) {
+		this.logger.startWith( { state } );
 
-        const { amount } = this.elements.header;
+		const { amount } = this.elements.header;
 
-        state ? amount.show() : amount.hide();
-    }
+		state ? amount.show() : amount.hide();
+	}
 
-    /**
-     * Function onCartCheckout() : Called on cart checkout
-     */
-    onCartCheckout() {
-        this.logger.startEmpty();
+	/**
+	 * Function onCartCheckout() : Called on cart checkout
+	 */
+	onCartCheckout() {
+		this.logger.startEmpty();
 
-        this.sidebarToggle( false );
+		this.sidebarToggle( false );
 
-        this.container.set( this.pages.checkout );
+		this.container.set( this.pages.checkout );
 
-        this.pages.checkout.on( 'render:after', () => {
-            console.log( 'onCartCheckout this.page.checkout rendered' );
-        } );
+		this.pages.checkout.on( 'render:after', () => {
+			console.log( 'onCartCheckout this.page.checkout rendered' );
+		} );
 
-        this.container.render();
-    }
+		this.container.render();
+	}
 
 	/**
 	 * Function onCatalogAfterRender() : Called on catalog initial recv done.
 	 */
-    onCatalogAfterRender() {
-    	if ( ! this.catalogRenderOnce ) {
-    		this.catalogRenderOnce = true;
+	onCatalogAfterRender() {
+		if ( ! this.catalogRenderOnce ) {
+			this.catalogRenderOnce = true;
 
-		    this.cart = new components.Cart(  this.elements.sidebar.self, this.apis );
+			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-		    this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-		    this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-		    this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
-		    this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-		    this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
+			this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+			this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
+			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
 
-		    this.cart.render();
-	    }
-    }
+			this.cart.render();
+		}
+	}
 
-    /**
-     * Function onCatalogProductAdd() : Called on catalog item add
-     */
-    onCatalogProductAdd( product ) {
-        this.logger.startWith( { product } );
+	/**
+	 * Function onCatalogProductAdd() : Called on catalog item add
+	 */
+	onCatalogProductAdd( product ) {
+		this.logger.startWith( { product } );
 
-        this.cart.itemAdd( product, () => {
-            if ( components.Cart.openCartOnUpdate ) {
-                this.sidebarToggle( true );
-            }
-        } );
-    }
+		this.cart.itemAdd( product, () => {
+			if ( components.Cart.openCartOnUpdate ) {
+				this.sidebarToggle( true );
+			}
+		} );
+	}
 
-    /**
-     * Function sidebarToggle() : Change the sidebar state
-     *
-     * @param {boolean} state
-     */
-    sidebarToggle( state ) {
-        this.logger.startWith( { state } );
+	/**
+	 * Function sidebarToggle() : Change the sidebar state
+	 *
+	 * @param {boolean} state
+	 */
+	sidebarToggle( state ) {
+		this.logger.startWith( { state } );
 
-        const { sidebar, overlay } = this.elements;
+		const { sidebar, overlay } = this.elements;
 
-        if ( state ) {
-            overlay.fadeIn();
-            sidebar.self.addClass( 'show' );
+		if ( state ) {
+			overlay.fadeIn();
+			sidebar.self.addClass( 'show' );
 
-            this.cart.open();
-        } else {
-            overlay.fadeOut();
-            sidebar.self.removeClass( 'show' );
+			this.cart.open();
+		} else {
+			overlay.fadeOut();
+			sidebar.self.removeClass( 'show' );
 
-            this.cart.close();
-        }
-    }
+			this.cart.close();
+		}
+	}
 }
 
 (new App().initialize());

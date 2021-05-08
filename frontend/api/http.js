@@ -10,133 +10,133 @@ import * as modules from 'MODULES';
  * @memberOf API
  */
 export class Http {
-    /**
-     * Function constructor() : Create API
-     *
-     * @param {string} apiBaseUrl
-     */
-    constructor( apiBaseUrl = 'http://localhost' ) {
-        this.logger = new modules.Logger( Http.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
+	/**
+	 * Function constructor() : Create API
+	 *
+	 * @param {string} apiBaseUrl
+	 */
+	constructor( apiBaseUrl = 'http://localhost' ) {
+		this.logger = new modules.Logger( Http.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.logger.startWith( { apiBaseUrl } );
+		this.logger.startWith( { apiBaseUrl } );
 
-        this.apiBaseUrl = apiBaseUrl;
-    }
+		this.apiBaseUrl = apiBaseUrl;
+	}
 
-    static getNamespace() {
-        return 'API'
-    }
+	static getNamespace() {
+		return 'API'
+	}
 
-    static getName() {
-        return 'API/Http';
-    }
+	static getName() {
+		return 'API/Http';
+	}
 
-    /**
-     * Function fetch() : fetch api
-     *
-     * @param {string} path
-     * @param {string} method
-     * @param {{}} body
-     *
-     * @return {*}
-     */
-    async _fetch( path, method, body = null ) {
-        this.logger.startWith( { path, method, body } );
+	/**
+	 * Function fetch() : fetch api
+	 *
+	 * @param {string} path
+	 * @param {string} method
+	 * @param {{}} body
+	 *
+	 * @return {*}
+	 */
+	async _fetch( path, method, body = null ) {
+		this.logger.startWith( { path, method, body } );
 
-        const params = { 'credentials': 'include' }; // cookies
+		const params = { 'credentials': 'include' }; // cookies
 
-        const headers = {};
+		const headers = {};
 
-        if ( method === 'post' ) {
-            Object.assign( headers, { 'Content-Type': 'application/json' } );
-            Object.assign( params, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify( body )
-            } );
+		if ( method === 'post' ) {
+			Object.assign( headers, { 'Content-Type': 'application/json' } );
+			Object.assign( params, {
+				method: 'POST',
+				headers: headers,
+				body: JSON.stringify( body )
+			} );
 
-        } else {
-            Object.assign( params, { headers } );
-        }
+		} else {
+			Object.assign( params, { headers } );
+		}
 
-        // since i made it async function
-        const response = await fetch( this.apiBaseUrl + path, params );
-        let data = undefined;
+		// since i made it async function
+		const response = await fetch( this.apiBaseUrl + path, params );
+		let data = undefined;
 
-        try {
-            data = await response.json();
-        } catch ( e ) {
-            console.error( e );
+		try {
+			data = await response.json();
+		} catch ( e ) {
+			console.error( e );
 
-            return false;
-        }
+			return false;
+		}
 
-        this.logger.recv( { path }, data );
+		this.logger.recv( { path }, data );
 
-        if ( data.error ) {
-            data.message = this.translateError( data.message );
+		if ( data.error ) {
+			data.message = this.translateError( data.message );
 
-            if ( data.global ) {
-                throw data.message;
-            }
-        }
+			if ( data.global ) {
+				throw data.message;
+			}
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    /**
-     * Function translateError() : Used to translate server error.
-     *
-     * TODO Function should be exported to api.js
-     *
-     * @param {({}|string)} message
-     *
-     * @return {string}
-     */
-    translateError( message ) {
-        this.logger.startWith( { message } );
+	/**
+	 * Function translateError() : Used to translate server error.
+	 *
+	 * TODO Function should be exported to api.js
+	 *
+	 * @param {({}|string)} message
+	 *
+	 * @return {string}
+	 */
+	translateError( message ) {
+		this.logger.startWith( { message } );
 
-        if ( typeof message == 'object' ) {
-            message = message.map( element => {
-                return this.translateError( element );
-            } );
-        }
+		if ( typeof message == 'object' ) {
+			message = message.map( element => {
+				return this.translateError( element );
+			} );
+		}
 
-        switch ( message ) {
-            case 'system_error':
-                return 'system error. please contact the system administrator';
-        }
+		switch ( message ) {
+			case 'system_error':
+				return 'system error. please contact the system administrator';
+		}
 
-        return message;
-    }
+		return message;
+	}
 
-    /**
-     * Function get() : Send get request
-     *
-     * @param {string} path
-     *
-     * @return {*}
-     */
-    get( path ) {
-        this.logger.startWith( { path } );
+	/**
+	 * Function get() : Send get request
+	 *
+	 * @param {string} path
+	 *
+	 * @return {*}
+	 */
+	get( path ) {
+		this.logger.startWith( { path } );
 
-        return this._fetch( path, 'get' );
-    }
+		return this._fetch( path, 'get' );
+	}
 
-    /**
-     * Function post() : Send post request
-     *
-     * @param {string} path
-     * @param {{}} params
-     *
-     * @return {*}
-     */
-    post( path, params ) {
-        this.logger.startWith( { path, params } );
+	/**
+	 * Function post() : Send post request
+	 *
+	 * @param {string} path
+	 * @param {{}} params
+	 *
+	 * @return {*}
+	 */
+	post( path, params ) {
+		this.logger.startWith( { path, params } );
 
-        return this._fetch( path, 'post', params );
-    }
+		return this._fetch( path, 'post', params );
+	}
 }
 
 export default Http;

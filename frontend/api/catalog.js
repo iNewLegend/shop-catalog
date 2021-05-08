@@ -10,88 +10,88 @@ import * as modules from 'MODULES';
  */
 export class Catalog {
 
-    /**
-     * Function constructor() Create Catalog Api
-     *
-     * @param {Http} api
-     */
-    constructor( http ) {
-        this.logger = new modules.Logger( Catalog.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
+	/**
+	 * Function constructor() Create Catalog Api
+	 *
+	 * @param {Http} api
+	 */
+	constructor( http ) {
+		this.logger = new modules.Logger( Catalog.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.logger.startWith( { http } );
+		this.logger.startWith( { http } );
 
-        this.http = http;
+		this.http = http;
 
-        this.catalog = [];
-    }
+		this.catalog = [];
+	}
 
-    static getNamespace() {
-        return 'API'
-    }
+	static getNamespace() {
+		return 'API'
+	}
 
-    static getName() {
-        return 'API/Catalog';
-    }
+	static getName() {
+		return 'API/Catalog';
+	}
 
-    /**
-     * Function get() : Get catalog from the server
-     *
-     * @param {{function()}} callback
-     * @param {number} page
-     */
-    get( callback, page = 0 ) {
-        this.logger.startWith( { callback, page } );
+	/**
+	 * Function get() : Get catalog from the server
+	 *
+	 * @param {{function()}} callback
+	 * @param {number} page
+	 */
+	get( callback, page = 0 ) {
+		this.logger.startWith( { callback, page } );
 
-        this.http.get( `catalog/index/${page}` ).then( data => {
-            if ( !data.error ) {
-                this.catalog = data.result;
-            }
+		this.http.get( `catalog/index/${page}` ).then( data => {
+			if ( ! data.error ) {
+				this.catalog = data.result;
+			}
 
-            callback( data )
-        } );
-    }
+			callback( data )
+		} );
+	}
 
-    /**
-     * Function getById() : Return product with specific id's
-     *
-     * @param {{function()}} callback
-     * @param {number[]} ids
-     */
-    getByIds( callback, ids ) {
-        this.logger.startWith( { callback, ids } );
+	/**
+	 * Function getById() : Return product with specific id's
+	 *
+	 * @param {{function()}} callback
+	 * @param {number[]} ids
+	 */
+	getByIds( callback, ids ) {
+		this.logger.startWith( { callback, ids } );
 
-        // on empty, fake empty callback.
-        if ( ids.length <= 0 ) {
-            callback( [] );
-        } else {
-            this.http.get( `catalog/get/${ids}` ).then( data => {
-                callback( data )
-            } );
-        }
-    }
+		// on empty, fake empty callback.
+		if ( ids.length <= 0 ) {
+			callback( [] );
+		} else {
+			this.http.get( `catalog/get/${ids}` ).then( data => {
+				callback( data )
+			} );
+		}
+	}
 
-    /**
-     * Function getLocalProductById() : Get product from local catalog
-     *
-     * @param {number} id
-     * @return {{}|null}
-     */
-    getLocalProductById( id ) {
-        this.logger.startWith( { id } );
+	/**
+	 * Function getLocalProductById() : Get product from local catalog
+	 *
+	 * @param {number} id
+	 * @return {{}|null}
+	 */
+	getLocalProductById( id ) {
+		this.logger.startWith( { id } );
 
-        for ( let i in this.catalog ) {
-            if ( this.catalog[ i ].id == id ) {
-                let tmp = {};
-                // return copy since this, catalog may be not writeable.
-                Object.assign( tmp, this.catalog[ i ] );
+		for ( let i in this.catalog ) {
+			if ( this.catalog[ i ].id == id ) {
+				let tmp = {};
+				// return copy since this, catalog may be not writeable.
+				Object.assign( tmp, this.catalog[ i ] );
 
-                return tmp;
-            }
-        }
+				return tmp;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }
 
 export default Catalog;

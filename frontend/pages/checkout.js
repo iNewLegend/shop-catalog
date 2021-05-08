@@ -9,28 +9,28 @@ import { Page } from 'MODULES';
  * @memberOf pages
  */
 export class Checkout extends Page {
-    static getNamespace() {
-        return 'Pages'
-    }
+	static getNamespace() {
+		return 'Pages'
+	}
 
-    static getName() {
-        return 'Pages/Checkout';
-    }
+	static getName() {
+		return 'Pages/Checkout';
+	}
 
-    initialize( options ) {
-        super.initialize( options );
+	initialize( options ) {
+		super.initialize( options );
 
-        this.logger.name = Checkout.getName();
-        this.logger.startWith( { options } );
-    }
+		this.logger.name = Checkout.getName();
+		this.logger.startWith( { options } );
+	}
 
-    _render() {
-        return (`
+	_render() {
+		return (`
             <div class="checkout">
                 <h1 style="text-align: center">Checkout</h1>
             </div>
         `);
-    }
+	}
 }
 
 export default Checkout;
