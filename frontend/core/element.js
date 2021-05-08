@@ -102,17 +102,17 @@ export class Element extends Container {
 	 */
 	attachListenersFromContext( context ) {
 		// Attach All `context` element events, to `target` component.
-		let nodes = [];
+        let nodes = [];
 
 		if ( context.node ) {
 			nodes = [ context.node ];
 		}
 
-		if ( nodes.length > 0 && context.node.childNodes ) {
-			nodes = [ nodes, ...context.node.childNodes ];
-		} else {
-			debugger; // Never happens?
-			nodes = context.childNodes;
+        if ( nodes.length > 0 && context.node.childNodes ) {
+            nodes = [nodes, ...context.node.childNodes];
+        } else {
+            debugger; // Never happens?
+            nodes = context.childNodes;
 		}
 
 		nodes.forEach( ( node ) => {
@@ -186,12 +186,12 @@ export class Element extends Container {
 		el.style.opacity = 0;
 		el.style.display = "block";
 
-		(function fade() {
-			let val = parseFloat( el.style.opacity );
-			if ( ! ((val += sensitivity) > 1) ) {
-				el.style.opacity = val;
-				requestAnimationFrame( fade );
-			}
+        (function fade() {
+            let val = parseFloat( el.style.opacity );
+            if ( ! ( ( val += sensitivity ) > 1 ) ) {
+                el.style.opacity = val;
+                requestAnimationFrame( fade );
+            }
 		})();
 	}
 
@@ -203,11 +203,11 @@ export class Element extends Container {
 
 		el.style.opacity = 1;
 
-		(function fade() {
-			if ( (el.style.opacity -= sensitivity) < 0 ) {
-				el.style.display = "none";
-			} else {
-				requestAnimationFrame( fade );
+        (function fade() {
+            if ( ( el.style.opacity -= sensitivity ) < 0 ) {
+                el.style.display = "none";
+            } else {
+                requestAnimationFrame( fade );
 			}
 		})();
 	}

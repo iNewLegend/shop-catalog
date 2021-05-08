@@ -26,12 +26,12 @@ export class Base {
 	 *
 	 * @param {Node|HTMLElement|Base} parent
 	 * @param {String|HTMLElement|Context} context
-	 * @param {{}} [options={}]
-	 */
-	constructor( parent, context, options = {} ) {
-		if ( ! parent ) {
-			throw Error( 'parent is required.' );
-		}
+     * @param {{}} [options={}]
+     */
+    constructor( parent, context, options = {} ) {
+        if ( !parent ) {
+            throw Error( 'parent is required.' );
+        }
 
 		this.context = context;
 		this.parent = parent;
