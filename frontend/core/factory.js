@@ -18,7 +18,10 @@ export class Factory {
         return 'Core/Factory';
     }
 
-    static createElement( selector ) {
+	/**
+	 * @returns {core.Element}
+	 */
+	static createElement( selector ) {
         selector = document.querySelector( selector );
 
         return new modules.Element( selector.parentElement, selector );

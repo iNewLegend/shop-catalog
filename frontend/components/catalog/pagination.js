@@ -6,10 +6,7 @@
 
 import * as core from 'CORE';
 import * as services from 'SERVICES';
-import {
-    Component,
-    Logger,
-} from 'MODULES';
+import { Component, Logger, } from 'MODULES';
 
 import './pagination.css';
 
@@ -29,7 +26,6 @@ export class Pagination extends Component {
     constructor( parent, options ) {
         super( parent, options );
 
-        // TODO: Logger should work like product.
         this.logger = new Logger( Pagination.getName(), true );
         this.logger.setOutputHandler( services.Terminal.onOutput );
 
@@ -40,17 +36,6 @@ export class Pagination extends Component {
         this.events = {
             onPageChange: ( page ) => {},
         };
-
-        this.afterRender = () => {
-            super.afterRender();
-
-            this.elements = {
-                self: this.view.element,
-                prev: core.Factory.createElement( "#pagination .prev" ),
-                next: core.Factory.createElement( "#pagination .next" ),
-                placeHolder: core.Factory.createElement( '#pagination .placeholder' )
-            };
-        }
     }
 
     static getNamespace() {
@@ -61,7 +46,31 @@ export class Pagination extends Component {
         return 'Components/Catalog/Pagination';
     }
 
-    /**
+	template() {
+		return (`
+            <div id="pagination" class="pagination hidden">
+                <div class="pagination">
+                    <a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
+                    <span class="placeholder">
+                    </span>
+                    <a onclick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
+                </div>
+            </div>
+        `);
+	}
+
+    afterRender() {
+	    super.afterRender();
+
+	    this.elements = {
+		    self: this.view.element,
+		    prev: core.Factory.createElement( "#pagination .prev" ),
+		    next: core.Factory.createElement( "#pagination .next" ),
+		    placeHolder: core.Factory.createElement( '#pagination .placeholder' )
+	    };
+    }
+
+	/**
      * Function onPageChange() : Call on page change.
      *
      * @param {number} page
@@ -138,19 +147,6 @@ export class Pagination extends Component {
                 alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
             }
         }
-    }
-
-    template() {
-        return (`
-            <div id="pagination" class="pagination hidden">
-                <div class="pagination">
-                    <a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
-                    <span class="placeholder">
-                    </span>
-                    <a onclick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
-                </div>
-            </div>
-        `);
     }
 }
 

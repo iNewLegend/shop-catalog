@@ -7,100 +7,86 @@ import { Component } from 'MODULES';
 import './product.css';
 
 /**
- * @memberOf components
+ * @memberOf components.catalog
  */
 export class Product extends Component {
-    constructor( parent, options ) {
-        super( parent, options );
+	/**
+	 * Item id.
+	 *
+	 * @type {Number}
+	 */
+	id = null;
 
-        /**
-         * @type {modules.Logger}
-         */
-        this.logger = options.logger;
+	/**
+	 * Item name.
+	 *
+	 * @type {string}
+	 */
+	name = '';
 
-        // If parent logger 'Components/Catalog' passed, clone and extend its name.
-        if ( this.logger ) {
-            const { id, name, price } = this.options;
+	/**
+	 * Price of current product.
+	 *
+	 * @type {number}
+	 */
+	price = 0;
 
-            this.logger = this.logger.clone();
-            this.logger.name = Product.getName() + '/' + id;
+	constructor( parent, options ) {
+		super( parent, options );
 
-            this.logger.startWith( { id, name, price } );
-        }
+		this.events = {
+			onProductAdd: ( product ) => {},
+			onProductChange: ( product, amount ) => {},
+		};
+	}
 
-        this.apis = {
-            catalog: options.api.catalog,
-        }
+	static getNamespace() {
+		return 'Components/Catalog'
+	}
 
-        this.events = {
-            onProductAdd: ( product ) => {},
-            onProductChange: ( product, amount ) => {},
-        };
+	static getName() {
+		return 'Components/Catalog/Product';
+	}
 
-        // After render.
-        this.afterRender = () => {
-            super.afterRender();
+	initialize( options ) {
+		const { id, name, price } = this.options;
 
-            this.elements = {
-                amount: this.view.element.element.querySelector( '.amount' ),
-            }
-        };
-    }
+		this.id = id;
+		this.name = name;
+		this.price = price;
 
-    static getNamespace() {
-        return 'Components/Catalog'
-    }
+		/**
+		 * @type {modules.Logger}
+		 */
+		this.logger = options.logger;
 
-    static getName() {
-        return 'Components/Catalog/Product';
-    }
+		// If parent logger 'Components/Catalog' passed, clone and extend its name.
+		if ( this.logger ) {
+			this.logger = this.logger.clone();
+			this.logger.name = Product.getName() + '/' + id;
 
-    setAmount( amount ) {
-        if ( this.logger ) {
-            this.logger.startWith( { amount } );
-        }
+			this.logger.startWith( { id, name, price } );
+		}
 
-        this.elements.amount.value = amount;
-    }
+		this.apis = {
+			catalog: options.api.catalog,
+		}
 
-    onProductAdd( e ) {
-        if ( this.logger ) {
-            this.logger.startWith( { e } );
-        }
+		return super.initialize( options );
+	}
 
-        const id = parseInt( this.options.id ),
-            amount = parseInt( this.elements.amount.value );
+	afterRender() {
+		super.afterRender();
 
-        let product = this.apis.catalog.getLocalProductById( id );
+		this.elements = {
+			amount: this.view.element.element.querySelector( '.amount' ),
+		}
+	}
 
-        // Assign `id` and `amount`.
-        product = Object.assign( {}, product, { id, amount } );
+	template() {
+		const { id, name, price } = this.options;
 
-        // Call callback
-        this.events.onProductAdd( product );
-
-        // Put it back to 1.
-        this.setAmount( 1 );
-    }
-
-    onProductChange( e ) {
-        if ( this.logger ) {
-            this.logger.startWith( { e } );
-        }
-
-        const val = e.currentTarget.value;
-
-        if ( this.logger ) {
-            this.logger.debug( `val: '${val}'` );
-        }
-
-        this.events.onProductChange( this, parseInt( val ) );
-    }
-
-    template() {
-        const { id, name, price } = this.options;
-
-        return (`
+		return (`
             <div class="product">
                 <img src="img/product-${id}.jpg" alt="product-${id}" />
                 <h4 class="name color-secondary">${name}</h4>
@@ -115,31 +101,73 @@ export class Product extends Component {
                 </div>
             </div>
         `);
-    }
+	}
 
-    /**
-     * Function on() : Declare event callback
-     *
-     * @param {'product:add'|'product:change'} event
-     * @param {{function()}} callback
-     */
-    on( event, callback ) {
-        switch ( event ) {
-            case 'product:add': {
-                this.events.onProductAdd = callback;
-            }
-                break;
+	onProductAdd( e ) {
+		if ( this.logger ) {
+			this.logger.startWith( { e } );
+		}
 
-            case 'product:change': {
-                this.events.onProductChange = callback;
-            }
-                break;
+		const id = parseInt( this.options.id ),
+			amount = parseInt( this.elements.amount.value );
 
-            default: {
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-            }
-        }
-    }
+		let product = this.apis.catalog.getLocalProductById( id );
+
+		// Assign `id` and `amount`.
+		product = Object.assign( {}, product, { id, amount } );
+
+		// Call callback
+		this.events.onProductAdd( product );
+
+		// Put it back to 1.
+		this.setAmount( 1 );
+	}
+
+	onProductChange( e ) {
+		if ( this.logger ) {
+			this.logger.startWith( { e } );
+		}
+
+		const val = e.currentTarget.value;
+
+		if ( this.logger ) {
+			this.logger.debug( `val: '${val}'` );
+		}
+
+		this.events.onProductChange( this, parseInt( val ) );
+	}
+
+	setAmount( amount ) {
+		if ( this.logger ) {
+			this.logger.startWith( { amount } );
+		}
+
+		this.elements.amount.value = amount;
+	}
+
+	/**
+	 * Function on() : Declare event callback
+	 *
+	 * @param {'product:add'|'product:change'} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		switch ( event ) {
+			case 'product:add': {
+				this.events.onProductAdd = callback;
+			}
+				break;
+
+			case 'product:change': {
+				this.events.onProductChange = callback;
+			}
+				break;
+
+			default: {
+				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+			}
+		}
+	}
 }
 
 export default Product;

@@ -19,26 +19,20 @@ export class Catalog extends Component {
 
     /**
      * Current page number.
+     *
      * @type {number}
      */
     page = 0;
 
     /**
      * Loaded products to be rendered.
-     * @type {Array.<components.Product>}
+     *
+     * @type {Array.<components.catalog.Product>}
      */
     products = [];
 
     constructor( parent, options ) {
         super( parent, options );
-
-        this.logger = new Logger( Catalog.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
-        this.logger.startWith( { options } );
-
-        this.apis = {
-            catalog: options.api,
-        };
 
         this.events = {
             onRecvOnce: () => {},
@@ -48,19 +42,6 @@ export class Catalog extends Component {
         this.components = {
             pagination: new Pagination( this.view.element ),
         };
-
-        // After render.
-        this.afterRender = () => {
-            super.afterRender();
-
-            this.elements = {
-                row: this.view.element.children[ 0 ],
-            };
-
-            this.components.spinner = new Spinner( this.elements.row );
-
-            this.getProducts( 0, this.onRecvOnce.bind( this ) );
-        }
     }
 
     static getNamespace() {
@@ -69,6 +50,18 @@ export class Catalog extends Component {
 
     static getName() {
         return 'Components/Catalog';
+    }
+
+    initialize( options ) {
+	    this.logger = new Logger( Catalog.getName(), true );
+	    this.logger.setOutputHandler( services.Terminal.onOutput );
+	    this.logger.startWith( { options } );
+
+	    this.apis = {
+		    catalog: options.api,
+	    };
+
+	    return super.initialize( options );
     }
 
 	template() {
@@ -89,6 +82,18 @@ export class Catalog extends Component {
 
 		pagination.render();
 		pagination.on( 'page:change', this.onPageChange.bind( this ) );
+	}
+
+	afterRender() {
+		super.afterRender();
+
+		this.elements = {
+			row: this.view.element.children[ 0 ],
+		};
+
+		this.components.spinner = new Spinner( this.elements.row );
+
+		this.getProducts( 0, this.onRecvOnce.bind( this ) );
 	}
 
 	/**
@@ -131,7 +136,7 @@ export class Catalog extends Component {
      *
      * Function override amount ( Used as filter ).
      *
-     * @param {components.Product} product
+     * @param {components.catalog.Product} product
      * @param {number} amount
      */
     onProductAmountChange( product, amount ) {
@@ -146,14 +151,23 @@ export class Catalog extends Component {
         product.setAmount( amount );
     }
 
+	/**
+	 * Function onRecvOnce() : Called on success of initial getCatalog request.
+	 */
+	onRecvOnce() {
+		this.renderProducts();
+
+		this.events.onRecvOnce();
+	}
+
     /**
      * Function addProduct() : Add's a product.
      *
      * Function Create product component and push it `this.products`.
      *
-     * @param {Product} product
+     * @param {components.catalog.Product} product
      *
-     * @returns {Product}
+     * @returns {components.catalog.Product}
      */
     addProduct( product ) {
         const productComponent = new Product( this.elements.row, {
@@ -214,15 +228,6 @@ export class Catalog extends Component {
     }
 
     /**
-     * Function onRecvOnce() : Called on success of initial getCatalog request.
-     */
-    onRecvOnce() {
-        this.renderProducts();
-
-        this.events.onRecvOnce();
-    }
-
-    /**
      * Function on() : Declare event callback.
      *
      * @param {'product:add','recv:once'|} event
@@ -232,20 +237,15 @@ export class Catalog extends Component {
         this.logger.startWith( { event, callback } );
 
         switch ( event ) {
-            case 'product:add': {
-                this.events.onProductAdd = callback;
-            }
-            break;
+            case 'product:add':
+            	return this.events.onProductAdd = callback;
 
-            case 'recv:once': {
-                this.events.onRecvOnce = callback;
-            }
-            break;
-
-            default: {
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
-            }
+            case 'recv:once':
+            	return this.events.onRecvOnce = callback;
         }
+
+        // Handle situations when there is require to call parent 'on' because this method is already the callback.
+        return false;
     }
 }
 

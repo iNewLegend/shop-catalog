@@ -26,7 +26,7 @@ export class Component {
     }
 
     initialize( options ) {
-        let { model, view, controller } = options;
+        let { model, view } = options;
 
         if ( ! model ) {
             model = new core.Model();
@@ -37,38 +37,40 @@ export class Component {
             view = new core.View( this.parent, { template } );
         }
 
-        if ( ! controller ) {
-            controller = this;
-        }
-
-        this.model = model;
-        this.view = view;
-        this.controller = controller;
+        // TODO: move to class instead in initialize.
+	    /**
+	     * @type {core.Model}
+	     */
+	    this.model = model;
+	    /**
+	     * @type {core.View}
+	     */
+	    this.view = view;
 
         // Alias.
         this.context = view.element.context;
 
-        // Attach listeners of view.element to the controller.
         this.view.element.attachListeners = () => {
-            return core.Element.prototype.attachListeners.call( this.view.element, this.controller );
+            return core.Element.prototype.attachListeners.call( this.view.element, this.getController() );
         }
 
-        // Disable default attach Listeners from element.
-        this.view.element.afterRender = () => {
-            core.Element.prototype.afterRender.call( this.view.element, false );
-            core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.controller );
-
-            this.view.element.attachListeners();
-        };
+        this.attachListeners();
     }
 
-    beforeRender() {
+    attachListeners() {
+	    // Hook default Listeners from element.
+	    // Attach listeners of view.element to the controller.
+	    this.view.element.afterRender = () => {
+		    core.Element.prototype.afterRender.call( this.view.element, false );
+		    core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.getController() );
 
+		    this.view.element.attachListeners();
+	    };
     }
 
-    template() {
+    beforeRender() {}
 
-    }
+    template() {}
 
     render() {
         this.beforeRender();
@@ -78,8 +80,7 @@ export class Component {
         this.afterRender();
     }
 
-    afterRender() {
-    }
+    afterRender() {}
 
     show() {
         this.view.element.show();
@@ -94,6 +95,10 @@ export class Component {
             parentElement = element.parent.element;
 
         parentElement.removeChild( element.element );
+    }
+
+    getController() {
+    	return this.options.controller || this;
     }
 }
 

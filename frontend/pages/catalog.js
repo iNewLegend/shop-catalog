@@ -42,13 +42,15 @@ export class Catalog extends Page {
     /**
      * Function on() : Declare event callback
      *
-     * @param {'product:add','recv:once'|} event
+     * @inheritDoc
+     *
+     * @param {'product:add','recv:once'} event
      * @param {{function()}} callback
      */
     on( event, callback ) {
         this.logger.startWith( { event, callback } );
 
-        this.catalog.on( event, callback );
+	    return this.catalog.on( event, callback ) || super.on( event, callback );
     }
 }
 
