@@ -8,6 +8,7 @@ import * as core from 'CORE';
 
 /**
  * @memberOf modules
+ * TODO: Move to core.
  */
 export class Component {
 	constructor( parent, options = {} ) {
@@ -65,25 +66,25 @@ export class Component {
 			core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.getController() );
 
 			this.view.element.attachListeners();
-	    };
-    }
+		};
+	}
 
-    beforeRender() {}
+	beforeRender() {}
 
-    template() {}
+	template() {}
 
-    render() {
-        this.beforeRender();
+	render() {
+		this.beforeRender();
 
 		this.view.render();
 
-        this.afterRender();
-    }
+		this.afterRender();
+	}
 
-    afterRender() {}
+	afterRender() {}
 
-    show() {
-        this.view.element.show();
+	show() {
+		this.view.element.show();
 	}
 
 	hide() {
