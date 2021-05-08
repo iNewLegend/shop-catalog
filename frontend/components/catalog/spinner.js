@@ -10,25 +10,25 @@ import './spinner.css';
  * @memberOf components
  */
 export class Spinner extends Component {
-    static getNamespace() {
-        return 'Components/Catalog'
-    }
+	static getNamespace() {
+		return 'Components/Catalog'
+	}
 
-    static getName() {
-        return 'Components/Catalog/Spinner';
-    }
+	static getName() {
+		return 'Components/Catalog/Spinner';
+	}
 
 	template() {
 		return '<div class="spinner" style="border-top-color: lightskyblue"></div>';
 	}
 
-    fadeOut( ms, callback ) {
-        setTimeout( () => {
-            this.view.element.hide();
+	fadeOut( ms, callback ) {
+		setTimeout( () => {
+			this.view.element.hide();
 
-            callback();
-        }, ms );
-    }
+			callback();
+		}, ms );
+	}
 }
 
 export default Spinner;

@@ -10,61 +10,61 @@ import * as core from 'CORE';
  * @memberOf modules
  */
 export class Component {
-    constructor( parent, options = {} ) {
-        this.parent = parent;
-        this.options = options;
+	constructor( parent, options = {} ) {
+		this.parent = parent;
+		this.options = options;
 
-        this.initialize( this.options );
-    }
+		this.initialize( this.options );
+	}
 
-    static getNamespace() {
-        return 'Modules'
-    }
+	static getNamespace() {
+		return 'Modules'
+	}
 
-    static getName() {
-        return 'Modules/Component';
-    }
+	static getName() {
+		return 'Modules/Component';
+	}
 
-    initialize( options ) {
-        let { model, view } = options;
+	initialize( options ) {
+		let { model, view } = options;
 
-        if ( ! model ) {
-            model = new core.Model();
-        }
+		if ( ! model ) {
+			model = new core.Model();
+		}
 
-        if ( ! view ) {
-            const template = this.template() || this.options.template || '<div>_EMPTY_TEMPLATE_</div>';
-            view = new core.View( this.parent, { template } );
-        }
+		if ( ! view ) {
+			const template = this.template() || this.options.template || '<div>_EMPTY_TEMPLATE_</div>';
+			view = new core.View( this.parent, { template } );
+		}
 
-        // TODO: move to class instead in initialize.
-	    /**
-	     * @type {core.Model}
-	     */
-	    this.model = model;
-	    /**
-	     * @type {core.View}
-	     */
-	    this.view = view;
+		// TODO: move to class instead in initialize.
+		/**
+		 * @type {core.Model}
+		 */
+		this.model = model;
+		/**
+		 * @type {core.View}
+		 */
+		this.view = view;
 
-        // Alias.
-        this.context = view.element.context;
+		// Alias.
+		this.context = view.element.context;
 
-        this.view.element.attachListeners = () => {
-            return core.Element.prototype.attachListeners.call( this.view.element, this.getController() );
-        }
+		this.view.element.attachListeners = () => {
+			return core.Element.prototype.attachListeners.call( this.view.element, this.getController() );
+		}
 
-        this.attachListeners();
-    }
+		this.attachListeners();
+	}
 
-    attachListeners() {
-	    // Hook default Listeners from element.
-	    // Attach listeners of view.element to the controller.
-	    this.view.element.afterRender = () => {
-		    core.Element.prototype.afterRender.call( this.view.element, false );
-		    core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.getController() );
+	attachListeners() {
+		// Hook default Listeners from element.
+		// Attach listeners of view.element to the controller.
+		this.view.element.afterRender = () => {
+			core.Element.prototype.afterRender.call( this.view.element, false );
+			core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.getController() );
 
-		    this.view.element.attachListeners();
+			this.view.element.attachListeners();
 	    };
     }
 
@@ -75,7 +75,7 @@ export class Component {
     render() {
         this.beforeRender();
 
-        this.view.render();
+		this.view.render();
 
         this.afterRender();
     }
@@ -84,22 +84,22 @@ export class Component {
 
     show() {
         this.view.element.show();
-    }
+	}
 
-    hide() {
-        this.view.element.hide();
-    }
+	hide() {
+		this.view.element.hide();
+	}
 
-    remove() {
-        const element = this.view.element,
-            parentElement = element.parent.element;
+	remove() {
+		const element = this.view.element,
+			parentElement = element.parent.element;
 
-        parentElement.removeChild( element.element );
-    }
+		parentElement.removeChild( element.element );
+	}
 
-    getController() {
-    	return this.options.controller || this;
-    }
+	getController() {
+		return this.options.controller || this;
+	}
 }
 
 export default Component;

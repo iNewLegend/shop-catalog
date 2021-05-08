@@ -10,22 +10,22 @@ import * as modules from './index.js'
  * @memberOf core
  */
 export class Factory {
-    static getNamespace() {
-        return 'Core'
-    }
+	static getNamespace() {
+		return 'Core'
+	}
 
-    static getName() {
-        return 'Core/Factory';
-    }
+	static getName() {
+		return 'Core/Factory';
+	}
 
 	/**
 	 * @returns {core.Element}
 	 */
 	static createElement( selector ) {
-        selector = document.querySelector( selector );
+		selector = document.querySelector( selector );
 
-        return new modules.Element( selector.parentElement, selector );
-    }
+		return new modules.Element( selector.parentElement, selector );
+	}
 }
 
 export default Factory;

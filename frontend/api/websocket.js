@@ -14,122 +14,122 @@ import * as services from 'SERVICES';
  * @memberOf API
  */
 export class Websocket {
-    constructor( address, port, autoInit = false ) {
-        this.logger = new modules.Logger( Websocket.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
+	constructor( address, port, autoInit = false ) {
+		this.logger = new modules.Logger( Websocket.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
 
-        this.logger.startWith( { address, port, autoInit } );
+		this.logger.startWith( { address, port, autoInit } );
 
-        this.binds = [];
+		this.binds = [];
 
-        this.webSocket = null;
-        this.connectionString = `ws://${address}:${port}/`;
+		this.webSocket = null;
+		this.connectionString = `ws://${address}:${port}/`;
 
-        this.logger.debug( `connection string: '${this.connectionString}'` );
+		this.logger.debug( `connection string: '${this.connectionString}'` );
 
-        if ( autoInit ) this.initialize();
-    }
+		if ( autoInit ) this.initialize();
+	}
 
-    static getNamespace() {
-        return 'API'
-    }
+	static getNamespace() {
+		return 'API'
+	}
 
-    static getName() {
-        return 'API/Websocket';
-    }
+	static getName() {
+		return 'API/Websocket';
+	}
 
-    initialize() {
-        this.logger.startEmpty();
+	initialize() {
+		this.logger.startEmpty();
 
-        this.webSocket = new WebSocket( this.connectionString );
+		this.webSocket = new WebSocket( this.connectionString );
 
-        this.webSocket.onopen = ( e ) => this._onOpen( e );
-        this.webSocket.onmessage = ( e ) => this._onMessage( e );
-        this.webSocket.onclose = ( e ) => this._onClose( e );
-        this.webSocket.onerror = ( e ) => this._onError( e );
-    }
+		this.webSocket.onopen = ( e ) => this._onOpen( e );
+		this.webSocket.onmessage = ( e ) => this._onMessage( e );
+		this.webSocket.onclose = ( e ) => this._onClose( e );
+		this.webSocket.onerror = ( e ) => this._onError( e );
+	}
 
-    _onOpen( e ) {
-        this.logger.startWith( { e } );
+	_onOpen( e ) {
+		this.logger.startWith( { e } );
 
-        const bind = this.binds.find( ( bind ) => bind.type === 'open' );
+		const bind = this.binds.find( ( bind ) => bind.type === 'open' );
 
-        if ( bind ) {
-            bind.callback( e );
-        }
-    }
+		if ( bind ) {
+			bind.callback( e );
+		}
+	}
 
-    _onMessage( e ) {
-        this.logger.startWith( { e } );
+	_onMessage( e ) {
+		this.logger.startWith( { e } );
 
-        const bind = this.binds.find( ( bind ) => bind.type === 'message' );
+		const bind = this.binds.find( ( bind ) => bind.type === 'message' );
 
-        if ( bind ) {
-            bind.callback( e );
-        }
-    }
+		if ( bind ) {
+			bind.callback( e );
+		}
+	}
 
-    _onClose( e ) {
-        this.logger.startWith( { e } );
+	_onClose( e ) {
+		this.logger.startWith( { e } );
 
-        const bind = this.binds.find( ( bind ) => bind.type === 'close' );
+		const bind = this.binds.find( ( bind ) => bind.type === 'close' );
 
-        if ( bind ) {
-            bind.callback( e );
-        }
-    }
+		if ( bind ) {
+			bind.callback( e );
+		}
+	}
 
-    _onError( e ) {
-        this.logger.startWith( { e } );
+	_onError( e ) {
+		this.logger.startWith( { e } );
 
-        const bind = this.binds.find( ( bind ) => bind.type === 'error' );
+		const bind = this.binds.find( ( bind ) => bind.type === 'error' );
 
-        if ( bind ) {
-            bind.callback( e );
-        }
-    }
+		if ( bind ) {
+			bind.callback( e );
+		}
+	}
 
-    /**
-     * @param {API_Websocket_Events} type
-     */
-    bind( id, type, callback ) {
-        this.logger.startWith( { id, type, callback } );
+	/**
+	 * @param {API_Websocket_Events} type
+	 */
+	bind( id, type, callback ) {
+		this.logger.startWith( { id, type, callback } );
 
-        switch ( type ) {
-            case 'open':
-            case 'message':
-            case 'close':
-            case 'error':
-                break;
-            // ----
-            default:
-                throw (`unknown type: '${type}'`);
-        }
+		switch ( type ) {
+			case 'open':
+			case 'message':
+			case 'close':
+			case 'error':
+				break;
+			// ----
+			default:
+				throw (`unknown type: '${type}'`);
+		}
 
-        this.binds.push( { id, type, callback } );
-    }
+		this.binds.push( { id, type, callback } );
+	}
 
-    unbind( id ) {
-        this.logger.startWith( { id } );
+	unbind( id ) {
+		this.logger.startWith( { id } );
 
-        let index = list.map( x => {
-            return x.id;
-        } ).indexOf( id );
+		let index = list.map( x => {
+			return x.id;
+		} ).indexOf( id );
 
-        this.binds.splice( index, 1 );
-    }
+		this.binds.splice( index, 1 );
+	}
 
-    send( data ) {
-        this.logger.startWith( { data } );
+	send( data ) {
+		this.logger.startWith( { data } );
 
-        this.webSocket.send( data );
-    }
+		this.webSocket.send( data );
+	}
 
-    close() {
-        this.logger.startWith();
+	close() {
+		this.logger.startWith();
 
-        this.webSocket.close();
-    }
+		this.webSocket.close();
+	}
 }
 
 export default Websocket;

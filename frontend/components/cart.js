@@ -65,18 +65,18 @@ export class Cart extends Component {
 
 	template() {
 		return (`
-	          <div class="cart">
-                <h1 id="empty" style="text-align: center">Your cart is empty.</h1>
-
-                <ul class="items">
-                    <li class="total">
-                        <h2>TOTAL</h2>
-                        <h3>$<span class="price">0</span></h3>
-                    </li>
-                </ul>
-
-                <button class="checkout bg-info" onclick="this.events.onCheckout()">CHECKOUT</button>
-            </div>
+			<div class="cart">
+				<h1 id="empty" style="text-align: center">Your cart is empty.</h1>
+				
+				<ul class="items">
+					<li class="total">
+						<h2>TOTAL</h2>
+						<h3>$<span class="price">0</span></h3>
+					</li>
+				</ul>
+				
+				<button class="checkout bg-info" onclick="this.events.onCheckout()">CHECKOUT</button>
+			</div>
 	    `)
 	}
 
