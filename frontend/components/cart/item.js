@@ -79,7 +79,7 @@ export class Item extends Component {
 	                </div>
 	                <div class="clearfix"></div>
 	            </li>
-        `);
+		`);
 	}
 
 	afterRender() {
