@@ -30,8 +30,8 @@ export class Component extends $core.Component {
 		return 'Components/Cart/Item/Component';
 	}
 
-	static getControllerName() {
-		return 'Components/Cart/Item/Controller'
+	static getControllerClass() {
+		return Controller;
 	}
 
 	/**
@@ -90,10 +90,6 @@ export class Component extends $core.Component {
 			amount: this.view.element.element.querySelector( '.amount' ),
 			sum: this.view.element.element.querySelector( '.sum .value' ),
 		}
-	}
-
-	registerController() {
-		return new Controller();
 	}
 
 	updateAmount( amountOfItems ) {

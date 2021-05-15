@@ -50,8 +50,8 @@ export class Component extends $core.Component {
 		return 'Components/Cart/Component';
 	}
 
-	static getControllerName() {
-		return 'Components/Cart/Controller'
+	static getControllerClass() {
+		return Controller;
 	}
 
 	initialize( options ) {
@@ -99,10 +99,6 @@ export class Component extends $core.Component {
 		};
 
 		this.request();
-	}
-
-	registerController() {
-		return new Controller();
 	}
 
 	/**

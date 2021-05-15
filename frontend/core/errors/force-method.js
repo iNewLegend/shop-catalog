@@ -14,7 +14,7 @@ export default class ForceMethod extends Error {
 	 * @param {string} methodName
 	 */
 	constructor( core, methodName ) {
-		super( `ForeMethod implementation: at '${ core.constructor.getName() }' method: '${ methodName }'   ` );
+		super( `ForeMethod implementation: at '${ core.getName() }' method: '${ methodName }'   ` );
 	}
 }
 

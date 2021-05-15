@@ -30,8 +30,8 @@ export class Component extends Core {
 		return 'Core/Component';
 	}
 
-	static getControllerName() {
-		return '';
+	static getControllerClass() {
+		return null;
 	}
 
 	initialize( options ) {
@@ -112,20 +112,13 @@ export class Component extends Core {
 	}
 
 	/**
-	 * @returns {core.controllers.Controller}
-	 */
-	registerController() {
-		throw new ForceMethod( this, 'registerController' );
-	}
-
-	/**
 	 * @returns {core.controllers.Controller|modules.Component}
 	 */
 	getController() {
-		const controllerName = this.constructor.getControllerName();
+		const ControllerClass = this.constructor.getControllerClass();
 
-		if ( controllerName ) {
-			return $core.controllers.get( controllerName) || $core.controllers.register( this.registerController() );
+		if ( ControllerClass ) {
+			return $core.controllers.get( ControllerClass.getName() ) || $core.controllers.register( new ControllerClass );
 		}
 
 		return this.options.controller || this;
