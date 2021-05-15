@@ -6,5 +6,4 @@
 
 export { Logger } from './logger.js';
 export { Page } from './page.js';
-export { Component } from './component.js';
 

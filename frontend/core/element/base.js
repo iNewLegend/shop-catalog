@@ -5,12 +5,12 @@
  * TODO:
  */
 import Context from '../context.js';
+import Core from "CORE/base/core";
 
 /**
- * @memberOf core;
- * @name ElementBase
+ * @memberOf core.element
  */
-export class Base {
+export class Base extends Core {
 	/**
 	 * @type {HTMLElement}
 	 */
@@ -29,6 +29,8 @@ export class Base {
      * @param {{}} [options={}]
      */
     constructor( parent, context, options = {} ) {
+    	super();
+
         if ( !parent ) {
             throw Error( 'parent is required.' );
         }

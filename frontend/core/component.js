@@ -1,17 +1,21 @@
 /**
- * @file: modules/component.js
+ * @file: core/component.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  * TODO:
  */
 import * as core from 'CORE';
+import Core from "CORE/base/core";
+import Controllers from "CORE/controllers";
+import ForceMethod from "CORE/errors/force-method";
 
 /**
- * @memberOf modules
- * TODO: Move to core.
+ * @memberOf core
  */
-export class Component {
+export class Component extends Core {
 	constructor( parent, options = {} ) {
+		super();
+
 		this.parent = parent;
 		this.options = options;
 
@@ -19,11 +23,15 @@ export class Component {
 	}
 
 	static getNamespace() {
-		return 'Modules'
+		return 'Core'
 	}
 
 	static getName() {
-		return 'Modules/Component';
+		return 'Core/Component';
+	}
+
+	static getControllerName() {
+		return '';
 	}
 
 	initialize( options ) {
@@ -48,22 +56,27 @@ export class Component {
 		 */
 		this.view = view;
 
+		this.controller = this.getController();
+
 		// Alias.
 		this.context = view.element.context;
-
-		this.view.element.attachListeners = () => {
-			return core.Element.prototype.attachListeners.call( this.view.element, this.getController() );
-		}
 
 		this.attachListeners();
 	}
 
+	/**
+	 * TODO: Currently its binds the element events only to component, which is wrong.
+	 */
 	attachListeners() {
+		this.view.element.attachListeners = () => {
+			return core.Element.prototype.attachListeners.call( this.view.element, /* this.getController() */ this );
+		}
+
 		// Hook default Listeners from element.
-		// Attach listeners of view.element to the controller.
+		// Attach listeners of view.element to the controller/view ?.
 		this.view.element.afterRender = () => {
 			core.Element.prototype.afterRender.call( this.view.element, false );
-			core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, this.getController() );
+			core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, /* this.getController() */ this );
 
 			this.view.element.attachListeners();
 		};
@@ -98,7 +111,23 @@ export class Component {
 		parentElement.removeChild( element.element );
 	}
 
+	/**
+	 * @returns {core.controllers.Controller}
+	 */
+	registerController() {
+		throw new ForceMethod( this, 'registerController' );
+	}
+
+	/**
+	 * @returns {core.controllers.Controller|modules.Component}
+	 */
 	getController() {
+		const controllerName = this.constructor.getControllerName();
+
+		if ( controllerName ) {
+			return $core.controllers.get( controllerName) || $core.controllers.register( this.registerController() );
+		}
+
 		return this.options.controller || this;
 	}
 }

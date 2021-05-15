@@ -5,11 +5,19 @@
  * TODO:
  */
 
+import Core from "CORE/base/core";
+
 /**
  * @memberOf core
  */
-export class Model {
+export class Model extends Core {
+	static getNamespace() {
+		return 'Core';
+	}
 
+	static getName() {
+		return 'Core/Model';
+	}
 }
 
 export default Model;
