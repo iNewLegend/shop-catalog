@@ -3,13 +3,12 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one product unit.
  */
-import { Component } from 'MODULES';
 import './product.css';
 
 /**
  * @memberOf components.catalog
  */
-export class Product extends Component {
+export class Product extends $core.Component {
 	/**
 	 * Item id.
 	 *
@@ -95,7 +94,7 @@ export class Product extends Component {
 						<h5>Price: <span class="price">${price}$</span></h5>
 						<div class="row">
 							<button onclick="this.onProductAdd()" class="bg-primary">Add To Cart</button>
-							<input onchange="this.onProductChange()" class="amount" type="number" name="amount"	value="1" min="1">
+							<input onchange="this.onProductChange( event )" class="amount" type="number" name="amount"	value="1" min="1">
 						</div>
 					</div>
 				</div>

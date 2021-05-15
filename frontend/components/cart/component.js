@@ -3,25 +3,24 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages cart
  */
-import * as core from "CORE";
 import * as services from 'SERVICES';
-
-import { Component, Logger } from 'MODULES';
-import Item from './cart/item';
+import { Logger } from 'MODULES';
+import CartItemComponent from '../cart/item/component';
 
 import './cart.css';
+import Controller from "COMPONENTS/cart/controller";
 
 /**
- * @memberOf components
+ * @memberOf components.cart
  */
-export class Cart extends Component {
+export class Component extends $core.Component {
 	static openCartOnUpdate = true;
 	static reloadCartEachOpen = false; // Highlight of new cart item, while this option set to true, will not work.
 
 	/**
 	 * Loaded items to be rendered.
 	 *
-	 * @type {Array.<components.cart.Item>}
+	 * @type {Array.<components.cart.item.Component>}
 	 */
 	items = [];
 
@@ -44,21 +43,26 @@ export class Cart extends Component {
 	}
 
 	static getNamespace() {
-		return 'Components'
+		return 'Components/Cart'
 	}
 
 	static getName() {
-		return 'Components/Cart';
+		return 'Components/Cart/Component';
+	}
+
+	static getControllerName() {
+		return 'Components/Cart/Controller'
 	}
 
 	initialize( options ) {
-		this.logger = new Logger( Cart.getName(), true );
+		this.logger = new Logger( Component.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.items = [];
 
 		this.apiCart = options.cart;
 		this.apiCatalog = options.catalog;
+
 
 		return super.initialize( options );
 	}
@@ -86,15 +90,19 @@ export class Cart extends Component {
 		this.logger.startEmpty();
 
 		this.elements = {
-			self: core.Factory.createElement( 'div.cart' ),
-			empty: core.Factory.createElement( '.cart #empty' ),
-			items: core.Factory.createElement( '.cart .items' ),
-			itemsTotal: core.Factory.createElement( '.cart .items .total' ),
-			totalPrice: core.Factory.createElement( '.cart .total .price' ),
-			checkout: core.Factory.createElement( '.cart .checkout' )
+			self: $core.Factory.createElement( 'div.cart' ),
+			empty: $core.Factory.createElement( '.cart #empty' ),
+			items: $core.Factory.createElement( '.cart .items' ),
+			itemsTotal: $core.Factory.createElement( '.cart .items .total' ),
+			totalPrice: $core.Factory.createElement( '.cart .total .price' ),
+			checkout: $core.Factory.createElement( '.cart .checkout' )
 		};
 
 		this.request();
+	}
+
+	registerController() {
+		return new Controller();
 	}
 
 	/**
@@ -204,22 +212,22 @@ export class Cart extends Component {
 	/**
 	 * function doInsertItem() : Insert item.
 	 *
-	 * @param {components.cart.Item} item
+	 * @param {components.cart.item.Component} item
 	 */
 	doInsertItem( item ) {
+		// Hook item insert.
 		this.logger.startWith( { item } );
 
 		this.items.push( item );
 
-		item.on( 'item:remove', this.onItemRemove.bind( this ) );
 		item.render();
 	}
 
 	/**
 	 * Function doUpdateItem() : Update item.
 	 *
-	 * @param {components.cart.Item} newItem
-	 * @param {components.cart.Item} existItem
+	 * @param {components.cart.item.Component} newItem
+	 * @param {components.cart.item.Component} existItem
 	 */
 	doUpdateItem( newItem, existItem ) {
 		this.logger.startWith( { newItem, existItem } );
@@ -230,7 +238,7 @@ export class Cart extends Component {
 	/**
 	 * Function doAddItem() : Adds item to cart
 	 *
-	 * @param {components.cart.Item} item
+	 * @param {components.cart.item.Component} item
 	 * @param {boolean} notifyCartChanged
 	 * @param {boolean} highlight
 	 */
@@ -255,7 +263,7 @@ export class Cart extends Component {
 	/**
 	 * Function doRemoveItem() : Remove's item from cart
 	 *
-	 * @param {components.cart.Item} item
+	 * @param {components.cart.item.Component} item
 	 * @param {boolean} notifyCartChanged
 	 */
 	doRemoveItem( item, notifyCartChanged = true ) {
@@ -301,7 +309,7 @@ export class Cart extends Component {
 	 *
 	 * @param {Object} data
 	 *
-	 * @returns {components.cart.Item}
+	 * @returns {components.cart.item.Component}
 	 */
 	createItem( data ) {
 		const { logger } = this;
@@ -310,7 +318,7 @@ export class Cart extends Component {
 
 		data.id = parseInt( data.id );
 
-		return new Item( this.elements.items, { ... data, logger } );
+		return new CartItemComponent( this.elements.items, { ... data, logger, parentComponent: this } ); // TODO: remove parentComponent.
 	}
 
 	/**
@@ -318,7 +326,7 @@ export class Cart extends Component {
 	 *
 	 * @param {number} id
 	 *
-	 * @returns {components.cart.Item}
+	 * @returns {components.cart.item.Component}
 	 */
 	getItemKeyById( id ) {
 		this.logger.startWith( { id } );
@@ -332,7 +340,7 @@ export class Cart extends Component {
 	open() {
 		this.logger.startEmpty();
 
-		if ( Cart.reloadCartEachOpen ) {
+		if ( Component.reloadCartEachOpen ) {
 			this.request();
 		}
 	}
@@ -406,4 +414,4 @@ export class Cart extends Component {
 	}
 }
 
-export default Cart;
+export default Component;

@@ -3,13 +3,12 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one item unit.
  */
-import { Component } from 'MODULES';
+import Controller from "COMPONENTS/cart/item/controller";
 
 /**
- * TODO: This is will be rule example of coding standards in terms of methods order.
- * @memberOf components.cart
+ * @memberOf components.cart.item
  */
-export class Item extends Component {
+export class Component extends $core.Component {
 	/**
 	 * @inheritDoc
 	 *
@@ -24,11 +23,15 @@ export class Item extends Component {
 	}
 
 	static getNamespace() {
-		return 'Components/Cart'
+		return 'Components/Cart/Item'
 	}
 
 	static getName() {
-		return 'Components/Cart/Item';
+		return 'Components/Cart/Item/Component';
+	}
+
+	static getControllerName() {
+		return 'Components/Cart/Item/Controller'
 	}
 
 	/**
@@ -54,7 +57,7 @@ export class Item extends Component {
 		// TODO: If this code is require and become duplicate over time hold a method to cover it. like `cloneWithName`.
 		if ( this.logger ) {
 			this.logger = this.logger.clone();
-			this.logger.name = Item.getName() + '/' + id;
+			this.logger.name = Component.getName() + '/' + id;
 
 			this.logger.startWith( { id, name, price } );
 		}
@@ -71,7 +74,7 @@ export class Item extends Component {
 	                <div class="thumbnail"><img alt="item" src="img/product-${id}.jpg" /></div>
 	                <div class="info">
 	                    <h2>${name}</h2>
-	                    <button class="color-primary close" onclick="this.events.onItemRemove(this)">&times;</button>
+	                    <button class="color-primary close" onclick="$core.commands.run( 'Components/Cart/Item/Commands/Remove', { component: this } )">&times;</button>
 	                    <div class="amount-price">
 	                        <span class="amount">${amount}</span> x <strong>${price}</strong>
 	                        <p class="sum">$<span class="value">${sum}</span></p>
@@ -87,6 +90,10 @@ export class Item extends Component {
 			amount: this.view.element.element.querySelector( '.amount' ),
 			sum: this.view.element.element.querySelector( '.sum .value' ),
 		}
+	}
+
+	registerController() {
+		return new Controller();
 	}
 
 	updateAmount( amountOfItems ) {
@@ -133,4 +140,4 @@ export class Item extends Component {
 	}
 }
 
-export default Item;
+export default Component;

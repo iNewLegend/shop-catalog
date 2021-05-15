@@ -2,14 +2,12 @@
  * @file: components/pagination.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
-
-import { Component } from 'MODULES';
 import './spinner.css';
 
 /**
  * @memberOf components
  */
-export class Spinner extends Component {
+export class Spinner extends $core.Component {
 	static getNamespace() {
 		return 'Components/Catalog'
 	}
@@ -19,6 +17,7 @@ export class Spinner extends Component {
 	}
 
 	template() {
+		// TODO: Avoid style, move to css.
 		return '<div class="spinner" style="border-top-color: lightskyblue"></div>';
 	}
 

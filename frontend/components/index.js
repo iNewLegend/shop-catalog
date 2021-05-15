@@ -5,4 +5,4 @@
  */
 
 export { Catalog } from './catalog.js';
-export { Cart } from './cart.js';
+export { default as Cart } from './cart/component.js';

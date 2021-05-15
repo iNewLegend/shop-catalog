@@ -3,10 +3,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: component for pagination.
  */
-
-import * as core from 'CORE';
 import * as services from 'SERVICES';
-import { Component, Logger, } from 'MODULES';
+import { Logger } from 'MODULES';
 
 import './pagination.css';
 
@@ -22,7 +20,7 @@ import './pagination.css';
 /**
  * @memberOf components
  */
-export class Pagination extends Component {
+export class Pagination extends $core.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
@@ -63,9 +61,9 @@ export class Pagination extends Component {
 
 		this.elements = {
 			self: this.view.element,
-			prev: core.Factory.createElement( "#pagination .prev" ),
-			next: core.Factory.createElement( "#pagination .next" ),
-			placeHolder: core.Factory.createElement( '#pagination .placeholder' )
+			prev: $core.Factory.createElement( "#pagination .prev" ),
+			next: $core.Factory.createElement( "#pagination .next" ),
+			placeHolder: $core.Factory.createElement( '#pagination .placeholder' )
 		};
 	}
 
@@ -101,7 +99,7 @@ export class Pagination extends Component {
 
 		// Create pages.
 		for ( let i = 0; i < paginationData.pages; ++i ) {
-			const anchor = new core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
+			const anchor = new $core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
 			anchor.render();
 			anchor.click( () => this.onPageChange( i + 1 ) );
