@@ -6,7 +6,6 @@ module.exports = {
     watch: true,
     entry: {
         app: './frontend/app.js',
-        mvc: './dev/mvc/index.js'
     },
     output: {
         filename: '[name].js',
@@ -21,21 +20,26 @@ module.exports = {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader'],
             },
-            {
-                test: /\.m?js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env'],
-                        plugins: ['@babel/plugin-proposal-object-rest-spread']
-                    }
-                }
-            },
+	        {
+		        test: /\.(ts|js)x?$/,
+		        exclude: /node_modules/,
+		        use: {
+			        loader: 'babel-loader',
+			        options: {
+				        presets: [
+				        	'@babel/preset-env',
+					        '@babel/preset-typescript'
+				        ],
+				        plugins: ['@babel/plugin-proposal-object-rest-spread']
+			        }
+		        }
+	        },
         ]
     },
     resolve: {
-        // TODO: Read jsconfig.json for aliases.
+	    extensions: ['.tsx', '.ts', '.js'],
+
+	    // TODO: Read jsconfig.json for aliases.
         alias: {
             'API': path.resolve( __dirname, 'frontend/api' ),
             'COMPONENTS': path.resolve( __dirname, 'frontend/components' ),
