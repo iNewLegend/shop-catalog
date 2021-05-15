@@ -5,6 +5,7 @@
  */
 import * as modules from 'MODULES';
 import JQuery from '../library/jquery.js';
+const CircularJSON = require( 'circular-json' );
 
 const LOCAL_STORAGE_KEY = 'local_storage_key';
 
@@ -294,9 +295,9 @@ Terminal.onOutput = function( output ) {
 				selector += '.' + [ ...el.classList ].join( '.' );
 			}
 
-			output = `[Event]: type: '${output.type}' element: '${selector}'`;
-		} else {
-			output = JSON.stringify( output, null, 4 );
+            output = `[Event]: type: '${output.type}' element: '${selector}'`;
+        } else {
+            output = CircularJSON.stringify( output, null, 4 );
 
 			output = `<pre>${output}</pre>`;
 		}

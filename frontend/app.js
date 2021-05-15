@@ -94,7 +94,7 @@ class App {
 	}
 
 	/**
-	 * Function onBeforeRender() :.
+	 * Function onPageContainerBeforeRender()
 	 *
 	 * @param {modules.Page} pageModule
 	 */

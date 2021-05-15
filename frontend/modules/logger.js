@@ -4,6 +4,7 @@
  * @description: Module for logging instances.
  * TODO: on constructor add prefix for owner
  */
+const CircularJSON = require( 'circular-json' );
 
 /**
  * @memberOf modules
@@ -11,15 +12,15 @@
 export class Logger {
 	static colorsInUse = [];
 
-	/**
+    /**
 	 * Function constructor() : Create logger class
 	 *
 	 * @param {*} owner
-	 * @param {boolean} state
-	 */
-	constructor( owner, state = false ) {
-		this.state = state;
-		this._name = '';
+     * @param {boolean} state
+     */
+    constructor( owner, state = false ) {
+        this.state = state;
+        this._name = '';
 
 		if ( typeof owner == 'string' ) {
 			this._name = owner;
@@ -89,25 +90,25 @@ export class Logger {
 	 *
 	 * @param {string} type
 	 * @param {string} source
-	 * @param {*} output
-	 */
-	_printFunctionNotify( type, source, output ) {
-		this.out.apply( this, [ `%c(${type})-> %c%c${this._name}%c::%c${source}%c() ${output}%c` ].concat( this.defaultStyle ) );
-	}
+     * @param {*} output
+     */
+    _printFunctionNotify( type, source, output ) {
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ${output}%c`].concat( this.defaultStyle ) );
+    }
 
-	/**
+    /**
 	 * Function _printInLineElement() : Print in line element
 	 *
 	 * @param {string} type
 	 * @param {string} source
 	 * @param {string} key
-	 * @param {*} value
-	 */
-	_printInLineElement( type, source, key, value ) {
-		this.out.apply( this, [ `%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${value}'%c` ].concat( this.defaultStyle ) );
-	}
+     * @param {*} value
+     */
+    _printInLineElement( type, source, key, value ) {
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${value}'%c`].concat( this.defaultStyle ) );
+    }
 
-	/**
+    /**
 	 * Function __printInLineFunction() : Print in line function
 	 *
 	 * @param {string} type
@@ -138,13 +139,13 @@ export class Logger {
 	 * @param {string} type
 	 * @param {string} source
 	 * @param {string} key
-	 * @param {{}} obj
-	 */
-	_printNextlineObject( type, source, key, obj ) {
-		this.out.apply( this, [ `%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key} %c↓` ].concat( this.defaultStyle ) );
-		// print in next line
-		this.out( obj );
-	}
+     * @param {{}} obj
+     */
+    _printNextlineObject( type, source, key, obj ) {
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key} %c↓`].concat( this.defaultStyle ) );
+        // print in next line
+        this.out( obj );
+    }
 
 	/**
 	 * Function _printMultiLineObject() : Print object in multiline format
@@ -152,17 +153,17 @@ export class Logger {
 	 * @param {string} type
 	 * @param {string} source
 	 * @param {{}} obj
-	 */
-	_printMultiLineObject( type, source, obj ) {
-		// print long (multiline) object
-		this.out.apply( this, [ `%c(${type})-> %c%c${this._name}%c::%c${source}%c(${Object.keys( obj ).join( ', ' )}) %c↓` ].concat( this.defaultStyle ) );
+     */
+    _printMultiLineObject( type, source, obj ) {
+        // print long (multiline) object
+        this.out.apply( this, [`%c(${type})-> %c%c${this._name}%c::%c${source}%c(${Object.keys( obj ).join( ', ' )}) %c↓`].concat( this.defaultStyle ) );
 
-		for ( let key in obj ) {
-			if ( typeof obj[ key ] === 'object' ) {
-				obj[ key ] = JSON.stringify( obj[ key ] );
-			} else if ( typeof obj[ key ] == 'function' ) {
-				obj[ key ] = this._functionView( obj[ key ] );
-			}
+        for ( let key in obj ) {
+            if ( typeof obj[ key ] === 'object' ) {
+                obj[ key ] = CircularJSON.stringify( obj[ key ] );
+            } else if ( typeof obj[ key ] == 'function' ) {
+                obj[ key ] = this._functionView( obj[ key ] );
+            }
 
 			this.out.apply( this, [ "%c" + key + ": `" + obj[ key ] + "`", 'color: #a3a3a3' ] );
 		}
@@ -263,10 +264,10 @@ export class Logger {
 	/**
 	 * Function startEmpty() : Notify function start without args.
 	 *
-	 * @param {string} output
-	 */
-	startEmpty( output = '' ) {
-		if ( ! this.state ) return;
+     * @param {string} output
+     */
+    startEmpty( output = '' ) {
+        if ( !this.state ) return;
 
 		this._printFunctionNotify( 'se', this._getCallerName(), output );
 	}
@@ -274,10 +275,10 @@ export class Logger {
 	/**
 	 * Function startWith() : Notify function start with args.
 	 *
-	 * @param {*} output
-	 */
-	startWith( params ) {
-		if ( ! this.state ) return;
+     * @param {*} output
+     */
+    startWith( params ) {
+        if ( !this.state ) return;
 
 		const type = 'se';
 		const source = this._getCallerName();
@@ -306,10 +307,10 @@ export class Logger {
 	 * Function recv() : Notify recv from server
 	 *
 	 * @param {{}} params
-	 * @param {{}|[]} data
-	 */
-	recv( params, data ) {
-		if ( ! this.state ) return;
+     * @param {{}|[]} data
+     */
+    recv( params, data ) {
+        if ( !this.state ) return;
 
 		const source = this._getCallerName();
 
@@ -317,17 +318,17 @@ export class Logger {
 			this.out.apply( this, [ `%c(rv)-> %c%c${this._name}%c::%c${source}%c() ->> ${key}: '${params[ key ]}' %c↓` ].concat( this.defaultStyle ) );
 		}
 
-		this.out( data );
+        this.out( data );
 	}
 
 	/**
 	 * Function object() : Prints object
 	 *
 	 * @param {{}} params
-	 * @param {string} notice
-	 */
-	object( params, notice = '' ) {
-		if ( ! this.state ) return;
+     * @param {string} notice
+     */
+    object( params, notice = '' ) {
+        if ( !this.state ) return;
 
 		const source = this._getCallerName();
 
@@ -335,8 +336,8 @@ export class Logger {
 
 		for ( let key in params ) {
 			if ( typeof params[ key ] === 'object' ) {
-				params[ key ] = JSON.stringify( params[ key ] );
-			}
+                params[ key ] = JSON.stringify( params[ key ] );
+            }
 
 			this.out.apply( this, [ `%c(ob)-> %c%c${this._name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[ key ]}'%c` ].concat( this.defaultStyle ) );
 		}
@@ -345,10 +346,10 @@ export class Logger {
 	/**
 	 * Function debug() : Notify debug.
 	 * `
-	 * @param {string} output
-	 */
-	debug( output ) {
-		if ( ! this.state ) return;
+     * @param {string} output
+     */
+    debug( output ) {
+        if ( !this.state ) return;
 
 		this._printFunctionNotify( 'db', this._getCallerName(), output );
 	}
