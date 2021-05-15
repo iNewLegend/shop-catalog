@@ -224,18 +224,6 @@ export class Component extends $core.Component {
 	}
 
 	/**
-	 * Function doUpdateItem() : Update item.
-	 *
-	 * @param {components.cart.item.Component} newItem
-	 * @param {components.cart.item.Component} existItem
-	 */
-	doUpdateItem( newItem, existItem ) {
-		this.logger.startWith( { newItem, existItem } );
-
-		existItem.updateAmount( newItem.amount );
-	}
-
-	/**
 	 * Function doAddItem() : Adds item to cart
 	 *
 	 * @param {components.cart.item.Component} item
@@ -248,7 +236,7 @@ export class Component extends $core.Component {
 		const existItem = this.getItemKeyById( item.id )
 
 		existItem ?
-			this.doUpdateItem( item, existItem ) :
+			existItem.updateAmount( item.amount ) :
 			this.doInsertItem( item );
 
 		if ( highlight ) {
@@ -281,12 +269,12 @@ export class Component extends $core.Component {
 	}
 
 	/**
-	 * Function itemAdd() : Add items or update
+	 * Function addItem() : Add items or update
 	 *
 	 * @param {Object} productData
 	 * @param {{function()}} onSuccess
 	 */
-	itemAdd( productData, onSuccess = null ) {
+	addItem( productData, onSuccess = null ) {
 		this.logger.startWith( { product: productData, onSuccess } );
 
 		this.apiCart.addItem( ( data ) => {

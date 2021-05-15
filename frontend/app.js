@@ -210,7 +210,7 @@ class App {
 	onCatalogProductAdd( product ) {
 		this.logger.startWith( { product } );
 
-		this.cart.itemAdd( product, () => {
+		this.cart.addItem( product, () => {
 			if ( components.Cart.openCartOnUpdate ) {
 				this.sidebarToggle( true );
 			}
