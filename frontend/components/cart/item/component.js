@@ -9,19 +9,6 @@ import Controller from "COMPONENTS/cart/item/controller";
  * @memberOf components.cart.item
  */
 export class Component extends $core.Component {
-	/**
-	 * @inheritDoc
-	 *
-	 * @param {modules.Logger} options.logger
-	 */
-	constructor( parent, options ) {
-		super( parent, options );
-
-		this.events = {
-			onItemRemove: ( /* components.cart.Item */ item ) => {},
-		}
-	}
-
 	static getNamespace() {
 		return 'Components/Cart/Item'
 	}
@@ -116,23 +103,6 @@ export class Component extends $core.Component {
 
 	getTotal() {
 		return this.amount * this.price;
-	}
-
-	/**
-	 * Function on() : Declare event callback.
-	 *
-	 * @param {'item:remove'|} event
-	 * @param {{function()}} callback
-	 */
-	on( event, callback ) {
-		this.logger.startWith( { event, callback } );
-
-		switch ( event ) {
-			case 'item:remove':
-				return this.events.onItemRemove = callback;
-		}
-
-		return false;
 	}
 }
 
