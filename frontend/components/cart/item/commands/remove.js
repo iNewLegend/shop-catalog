@@ -1,3 +1,12 @@
+/**
+ * @file: components/cart/item/commands/remove.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: Tells the cart to remove item.
+ */
+
+/**
+ * @memberOf components.cart.item.commands
+ */
 export class Remove extends $core.commands.Command {
 	static getNamespace() {
 		return 'Components/Cart/Item/Commands'
@@ -8,6 +17,6 @@ export class Remove extends $core.commands.Command {
 	}
 
 	apply() {
-		// Nothing todo.
+		// Affect `Components/Cart/Commands/Remove`.
 	}
 }

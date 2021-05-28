@@ -4,7 +4,6 @@
  * @description: Manages catalog
  */
 import * as services from 'SERVICES';
-import { Logger } from 'MODULES';
 
 import Pagination from './catalog/pagination';
 import Product from './catalog/product';
@@ -53,7 +52,7 @@ export class Catalog extends $core.Component {
 	}
 
 	initialize( options ) {
-		this.logger = new Logger( Catalog.getName(), true );
+		this.logger = new $core.modules.Logger( Catalog.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 		this.logger.startWith( { options } );
 

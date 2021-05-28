@@ -11,7 +11,22 @@ import Controller from "../controllers/controller";
  * @memberOf core.commands
  */
 export class Command extends CommandBase {
-    public controller: Controller
+    public static controller: Controller
+
+    getNamespace() {
+        // @ts-ignore
+        return super.getNamespace();
+    }
+
+    getName() {
+        // @ts-ignore
+        return super.getName();
+    }
+
+    getController(): Controller {
+        // @ts-ignore
+        return this.constructor.controller;
+    }
 }
 
 export default Command;

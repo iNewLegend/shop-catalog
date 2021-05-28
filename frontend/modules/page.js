@@ -4,7 +4,6 @@
  * @description: Modules Namespace O__o
  */
 import { Container } from 'CORE';
-import * as modules from 'MODULES';
 import * as services from 'SERVICES';
 
 /**
@@ -20,7 +19,7 @@ export class Page extends Container {
 	}
 
 	initialize() {
-		this.logger = new modules.Logger( Page.getName(), true );
+		this.logger = new $core.modules.Logger( Page.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startWith( this.constructor.name );

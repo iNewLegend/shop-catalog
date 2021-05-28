@@ -4,7 +4,6 @@
  * @description: component for pagination.
  */
 import * as services from 'SERVICES';
-import { Logger } from 'MODULES';
 
 import './pagination.css';
 
@@ -24,7 +23,7 @@ export class Pagination extends $core.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		this.logger = new Logger( Pagination.getName(), true );
+		this.logger = new $core.modules.Logger( Pagination.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startWith( { options } );

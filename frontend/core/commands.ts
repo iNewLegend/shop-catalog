@@ -7,6 +7,8 @@ import Core from "./base/core";
 import Command from "./commands/command";
 import Controller from "./controllers/controller";
 import CommandAlreadyRegistered from "./commands/errors/command-already-registered";
+import { Logger } from "./modules/";
+import CommandNotFound from "./commands/errors/command-not-found";
 
 /**
  * TODO: Try avoid - Remove.
@@ -18,7 +20,7 @@ interface CommandsClass {
     getNamespace:() => string,
 }
 
-interface CommandArgs {
+export interface CommandArgsInterface {
     [key: string]: any
 }
 
@@ -30,27 +32,38 @@ interface OnAffectHookInterface {
  * @memberOf core
  */
 export class Commands extends Core {
-    public Command = Command;
+
+    static getNamespace() {
+        return 'Core'
+    }
+
+    static getName() {
+        return 'Core/Commands';
+    }
+
+    private logger: Logger;
+
+    constructor() {
+        super();
+
+        this.logger = new Logger( this.getName(), true );
+        this.logger.startEmpty();
+    }
+
+    get Command() {
+        return Command;
+    }
 
     commands: { [args: string]: ( CommandsClass ) } = {};
 
 	onAfterEffectHooks: OnAffectHookInterface = {};
 
-    public run( command:string, args:CommandArgs = {}, options  = {} ) {
-		const commandConstructor = this.commands[ command ];
+    public run( command:string|Command, args:CommandArgsInterface = {}, options  = {} ) {
+		if ( typeof command === "string" ) {
+		    command = this.getCommandInstance( command, args, options );
+        }
 
-		let result = new commandConstructor( args, options ).run();
-
-		if ( this.onAfterEffectHooks[ commandConstructor.getName() ] ) {
-			this.onAfterEffectHooks[ commandConstructor.getName() ].forEach( ( command ) => {
-				// @ts-ignore
-                const Command = this.commands[ command ];
-
-				args.result = result;
-
-				result = new Command( args, options ).run();
-			} );
-		}
+		return this.runInstance( command, args, options );
 	}
 
 	public register( commands: Array<Command>, controller: Controller ) {
@@ -60,8 +73,8 @@ export class Commands extends Core {
 				throw new CommandAlreadyRegistered( command );
 			}
 
-			// Register.
-			command.controller = controller;
+			// @ts-ignore
+            command.controller = controller;
 
 			// @ts-ignore
             this.commands[ command.getName() ] = command;
@@ -75,4 +88,35 @@ export class Commands extends Core {
 
 		this.onAfterEffectHooks[ hookCommand ].push( affectCommand );
 	}
+
+    public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): Command {
+        const CommandClass = this.commands[ name ];
+
+        if ( ! CommandClass ) {
+            throw new CommandNotFound( name );
+        }
+
+        return new CommandClass( args, options );
+    }
+
+    protected runInstance( command: Command, args:CommandArgsInterface = {}, options  = {} ) {
+        let result:any = null;
+
+        this.logger.startWith( { command: command.getName(), args, options } );
+
+        result = command.run();
+
+        if ( this.onAfterEffectHooks[ command.getName() ] ) {
+            this.onAfterEffectHooks[ command.getName() ].forEach( ( command ) => {
+                // @ts-ignore
+                const Command = this.commands[ command ];
+
+                args.result = result;
+
+                result = new Command( args, options ).run();
+            } );
+        }
+
+        return result;
+    }
 }

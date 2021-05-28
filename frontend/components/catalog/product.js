@@ -55,7 +55,7 @@ export class Product extends $core.Component {
 		this.price = price;
 
 		/**
-		 * @type {modules.Logger}
+		 * @type {core.modules.Logger}
 		 */
 		this.logger = options.logger;
 

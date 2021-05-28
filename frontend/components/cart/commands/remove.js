@@ -1,3 +1,12 @@
+/**
+ * @file: components/cart/commands/remove.js
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: Remove item from cart.
+ */
+
+/**
+ * @memberOf components.cart.commands
+ */
 export class Remove extends $core.commands.Command {
 	static getNamespace() {
 		return 'Components/Cart/Commands'
@@ -7,25 +16,29 @@ export class Remove extends $core.commands.Command {
 		return 'Components/Cart/Commands/Remove';
 	}
 
-	apply( args = this.args, options = this.options ) {
+	/**
+	 * @override
+	 *
+	 * @param {{}} args
+	 * @param {components.cart.item.Component} args.component
+	 * @param {{}} options
+	 */
+	async apply( args = this.args, options = this.options ) {
 		this.logger.startWith( { component: args.component } );
 
 		const { component } = args,
-			{ id } = component;
+			{ id } = component,
+			model = this.getController().getModel();
 
-		component.options.parentComponent.options.cart.removeItem( ( data ) => {
-			if ( ! data.error ) {
-				const item = component.options.parentComponent.getItemKeyById( id );
+		return $core.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
+			// Remove cart.
+			model.items = model.items.filter( ( filteredItem ) => filteredItem !== component );
 
-				if ( item ) {
-					// TODO: Change to model. model.doRemoveItem
-					component.options.parentComponent.doRemoveItem( item, true );
-				} else {
-					alert( `${this.constructor.name}::removeItem() -> item with id: '${id}' not found in cart.` );
-				}
-			} else {
-				alert( data.message );
-			}
-		}, id );
+			// Remove item from dom.
+			component.remove();
+
+			// Notify onchange, TODO: Remove.
+			component.options.parentComponent.onChange();
+		} );
 	}
 }

@@ -4,13 +4,12 @@
  * @description: Main File
  */
 import "@babel/polyfill"
-
 import * as core from 'CORE'
 import * as api from 'API';
-import * as modules from 'MODULES';
 import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
+import Http from "CORE/data/clients/http";
 
 class App {
 	/**
@@ -19,13 +18,13 @@ class App {
 	constructor() {
 		services.Terminal.initialize();
 
-		this.logger = new modules.Logger( this, true );
+		this.logger = new $core.modules.Logger( this, true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startEmpty();
 
-		const remoteAddress = 'http://localhost:8081/',
-			http = new api.Http( remoteAddress );
+		// TODO: Remove `this.apis` use `$core.data` commands.
+		const http = $core.data.constructor.client;
 
 		this.apis = {
 			catalog: new api.Catalog( http ),

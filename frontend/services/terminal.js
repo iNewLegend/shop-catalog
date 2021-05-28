@@ -3,7 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: A live console that you can open by tilda key.
  */
-import * as modules from 'MODULES';
 import JQuery from '../library/jquery.js';
 const CircularJSON = require( 'circular-json' );
 
@@ -29,7 +28,7 @@ export class Terminal {
 	constructor() {
 		if ( Terminal.instance == null ) {
 
-			this.logger = new modules.Logger( Terminal.getName(), true );
+			this.logger = new $core.modules.Logger( Terminal.getName(), true );
 			this.logger.startEmpty();
 
 			this.localStorage = window.localStorage;
@@ -264,6 +263,11 @@ export class Terminal {
  */
 Terminal.onOutput = function( output ) {
 	const _this = Terminal.instance;
+
+	// TODO: Terminal cannot log anything. debug it to find out the issue.
+	if ( ! _this ) {
+		return console.log.apply( this, arguments );
+	}
 
 	let plain = false;
 

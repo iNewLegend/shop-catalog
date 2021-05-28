@@ -3,7 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 import * as services from 'SERVICES';
-import * as modules from 'MODULES';
 
 /**
  * @memberOf API
@@ -16,7 +15,7 @@ export class Catalog {
 	 * @param {Http} api
 	 */
 	constructor( http ) {
-		this.logger = new modules.Logger( Catalog.getName(), true );
+		this.logger = new $core.modules.Logger( Catalog.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startWith( { http } );

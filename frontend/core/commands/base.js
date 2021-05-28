@@ -5,24 +5,24 @@
  */
 import ForceMethod from "CORE/errors/force-method";
 import Core from "CORE/base/core";
+import Logger from "CORE/modules/logger";
 
 /**
  * @abstract
  * @memberOf core.commands
  */
 export default class CommandBase extends Core {
+	static _logger;
+
 	constructor( args = {}, options = {} ) {
 		super();
 
-		const { component } = args;
-
-		// TODO: Duplicate code replace with `component.logger.cloneWithName`.
-		if ( component.logger ) {
-			this.logger = component.logger.clone();
-			this.logger.name = this.getName();
-
-			this.logger.startWith( { args, options } );
+		if ( ! this.constructor._logger ) {
+			this.constructor._logger = new Logger( this.constructor.getName() );
 		}
+
+		this.logger = this.constructor._logger
+		this.logger.startWith( { args, options } );
 
 		this.initialize( args, options );
 	}

@@ -1,39 +1,42 @@
 /**
- * @file: api/http.js
+ * @file: core/data/clients/http.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: instead of using jquery ajax, i choose this.
+ * @description: Used to communicate with backend.
  */
 import * as services from 'SERVICES';
-import * as modules from 'MODULES';
+import Core from "CORE/base/core";
+import { Logger } from "CORE/modules";
 
 /**
- * @memberOf API
+ * @memberOf core.data.clients
  */
-export class Http {
+export class Http extends Core {
 	/**
-	 * Function constructor() : Create API
+	 * Function constructor() : Create API.
 	 *
 	 * @param {string} apiBaseUrl
 	 */
 	constructor( apiBaseUrl = 'http://localhost' ) {
-		this.logger = new modules.Logger( Http.getName(), true );
+		super();
+
+		this.logger = new Logger( Http.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startWith( { apiBaseUrl } );
 
-		this.apiBaseUrl = apiBaseUrl;
+		this.apiBaseUrl = apiBaseUrl + '/';
 	}
 
 	static getNamespace() {
-		return 'API'
+		return 'Data'
 	}
 
 	static getName() {
-		return 'API/Http';
+		return 'Data/Http';
 	}
 
 	/**
-	 * Function fetch() : fetch api
+	 * Function fetch() : Fetch api.
 	 *
 	 * @param {string} path
 	 * @param {string} method
@@ -44,9 +47,8 @@ export class Http {
 	async _fetch( path, method, body = null ) {
 		this.logger.startWith( { path, method, body } );
 
-		const params = { 'credentials': 'include' }; // cookies
-
-		const headers = {};
+		const params = { 'credentials': 'include' }, // cookies
+			headers = {};
 
 		if ( method === 'post' ) {
 			Object.assign( headers, { 'Content-Type': 'application/json' } );
@@ -88,7 +90,7 @@ export class Http {
 	/**
 	 * Function translateError() : Used to translate server error.
 	 *
-	 * TODO Function should be exported to api.js
+	 * TODO This kinda of things should be using this hooks.
 	 *
 	 * @param {({}|string)} message
 	 *

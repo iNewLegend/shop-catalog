@@ -1,28 +1,24 @@
 /**
- * @file: components/cart.js
+ * @file: components/cart/component.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages cart
  */
-import * as services from 'SERVICES';
-import { Logger } from 'MODULES';
-import CartItemComponent from '../cart/item/component';
-
 import './cart.css';
-import Controller from "COMPONENTS/cart/controller";
+
+import * as services from 'SERVICES';
+
+import Controller from './controller'
+import Model from './model';
+
+import CartItemComponent from '../cart/item/component';
 
 /**
  * @memberOf components.cart
+ * @property {components.cart.Model} model
  */
 export class Component extends $core.Component {
 	static openCartOnUpdate = true;
 	static reloadCartEachOpen = false; // Highlight of new cart item, while this option set to true, will not work.
-
-	/**
-	 * Loaded items to be rendered.
-	 *
-	 * @type {Array.<components.cart.item.Component>}
-	 */
-	items = [];
 
 	/**
 	 * @inheritDoc
@@ -54,15 +50,18 @@ export class Component extends $core.Component {
 		return Controller;
 	}
 
-	initialize( options ) {
-		this.logger = new Logger( Component.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
+	static getModelClass() {
+		return Model;
+	}
 
-		this.items = [];
+	initialize( options ) {
+		this.logger = new $core.modules.Logger( Component.getName(), true );
+		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.apiCart = options.cart;
 		this.apiCatalog = options.catalog;
 
+		options.logger = this.logger;
 
 		return super.initialize( options );
 	}
@@ -109,41 +108,15 @@ export class Component extends $core.Component {
 
 		const { totalPrice } = this.elements;
 
-		this.efficientEmptyState( Boolean( this.items.length ) );
+		this.efficientEmptyState( Boolean( this.model.items.length ) );
 
 		let totalPriceOfAllItems = 0;
 
-		this.items.forEach( ( item ) => totalPriceOfAllItems += item.getTotal() )
+		this.model.items.forEach( ( item ) => totalPriceOfAllItems += item.getTotal() )
 
 		totalPrice.element.innerText = totalPriceOfAllItems.toFixed( 2 );
 
-		this.events.onAmountChange( this.items.length );
-	}
-
-	/**
-	 * Function onItemRemove() : Called on item remove
-	 *
-	 * @param {Item} item
-	 */
-	onItemRemove( item ) {
-		this.logger.startWith( { e: item } );
-
-		const itemId = item.id;
-
-		this.apiCart.removeItem( ( data ) => {
-			if ( ! data.error ) {
-				const item = this.getItemKeyById( itemId );
-
-				if ( item ) {
-					this.doRemoveItem( item, true );
-				} else {
-					alert( `${this.constructor.name}::removeItem() -> item with id: '${item.id}' not found in cart.` );
-				}
-
-			} else {
-				alert( data.message );
-			}
-		}, itemId );
+		this.events.onAmountChange( this.model.items.length );
 	}
 
 	/**
@@ -160,7 +133,7 @@ export class Component extends $core.Component {
 		this.events.onAmountChange( 0 );
 
 		// Clear visual cart.
-		this.items = [];
+		this.model.items = [];
 
 		this.apiCart.get( this.receive.bind( this ) );
 	}
@@ -214,7 +187,7 @@ export class Component extends $core.Component {
 		// Hook item insert.
 		this.logger.startWith( { item } );
 
-		this.items.push( item );
+		this.model.items.push( item );
 
 		item.render();
 	}
@@ -229,7 +202,7 @@ export class Component extends $core.Component {
 	doAddItem( item, notifyCartChanged = true, highlight = false ) {
 		this.logger.startWith( { item, notifyCartChanged, highlight } );
 
-		const existItem = this.getItemKeyById( item.id )
+		const existItem = this.model.getById( item.id )
 
 		existItem ?
 			existItem.updateAmount( item.amount ) :
@@ -238,26 +211,6 @@ export class Component extends $core.Component {
 		if ( highlight ) {
 			(existItem || item).highlightItem();
 		}
-
-		if ( notifyCartChanged ) {
-			this.onChange();
-		}
-	}
-
-	/**
-	 * Function doRemoveItem() : Remove's item from cart
-	 *
-	 * @param {components.cart.item.Component} item
-	 * @param {boolean} notifyCartChanged
-	 */
-	doRemoveItem( item, notifyCartChanged = true ) {
-		this.logger.startWith( { item, notifyCartChanged } );
-
-		// Remove cart.
-		this.items = this.items.filter( ( filteredItem ) => filteredItem !== item );
-
-		// Remove from dom.
-		item.remove();
 
 		if ( notifyCartChanged ) {
 			this.onChange();
@@ -306,19 +259,6 @@ export class Component extends $core.Component {
 	}
 
 	/**
-	 * Function getItemKeyById() : Get Item key from cart by id.
-	 *
-	 * @param {number} id
-	 *
-	 * @returns {components.cart.item.Component}
-	 */
-	getItemKeyById( id ) {
-		this.logger.startWith( { id } );
-
-		return this.items.find( ( item ) => item.id === id );
-	}
-
-	/**
 	 * Function open() :  Open the cart
 	 */
 	open() {
@@ -338,7 +278,7 @@ export class Component extends $core.Component {
 		const { items } = this.elements;
 
 		// Clear highlight.
-		this.items.forEach( ( item ) => {
+		this.model.items.forEach( ( item ) => {
 			item.view.element.element.style = 'animation: none';
 		} );
 	}

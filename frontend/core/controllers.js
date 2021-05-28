@@ -36,12 +36,17 @@ export default class Controllers extends Core {
 
 	/**
 	 * @param {core.controllers.Controller} controller
+	 * @param {core.Model} model
 	 *
 	 * @return {core.controllers.Controller}
 	 */
-	register( controller ) {
+	register( controller, model ) {
 		if ( this.controllers[ controller.getName() ] ) {
-			throw new ControllerAlreadyRegistered( command );
+			throw new ControllerAlreadyRegistered( controller );
+		}
+
+		if ( model ) {
+			controller.constructor.model = model;
 		}
 
 		// Register.

@@ -34,11 +34,17 @@ export class Component extends Core {
 		return null;
 	}
 
+	static getModelClass() {
+		return null;
+	}
+
 	initialize( options ) {
 		let { model, view } = options;
 
 		if ( ! model ) {
-			model = new core.Model();
+			const ModelClass = this.constructor.getModelClass();
+
+			model = ModelClass ? new ModelClass( options ) : new core.Model( options );
 		}
 
 		if ( ! view ) {
@@ -118,7 +124,8 @@ export class Component extends Core {
 		const ControllerClass = this.constructor.getControllerClass();
 
 		if ( ControllerClass ) {
-			return $core.controllers.get( ControllerClass.getName() ) || $core.controllers.register( new ControllerClass );
+			return $core.controllers.get( ControllerClass.getName() ) ||
+				$core.controllers.register( new ControllerClass, this.model );
 		}
 
 		return this.options.controller || this;

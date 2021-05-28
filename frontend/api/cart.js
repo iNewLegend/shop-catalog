@@ -3,7 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 import * as services from 'SERVICES';
-import * as modules from 'MODULES';
 
 /**
  * @memberOf API
@@ -15,7 +14,7 @@ export class Cart {
 	 * @param {Http} http
 	 */
 	constructor( http ) {
-		this.logger = new modules.Logger( Cart.getName(), true );
+		this.logger = new $core.modules.Logger( Cart.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startWith( { http } );
