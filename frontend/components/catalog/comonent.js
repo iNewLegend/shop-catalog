@@ -1,18 +1,18 @@
 /**
- * @file: components/catalog.js
+ * @file: components/catalog/component.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages catalog
  */
 import * as services from 'SERVICES';
 
-import Pagination from './catalog/pagination';
-import Product from './catalog/product';
-import Spinner from './catalog/spinner';
+import Pagination from './pagination/pagination';
+import Product from './product/product';
+import Spinner from './spinner/spinner';
 
 /**
- * @memberOf components
+ * @memberOf components.catalog
  */
-export class Catalog extends $core.Component {
+export class Comonent extends $core.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -44,15 +44,15 @@ export class Catalog extends $core.Component {
 	}
 
 	static getNamespace() {
-		return 'Components'
+		return 'Components/Catalog'
 	}
 
 	static getName() {
-		return 'Components/Catalog';
+		return 'Components/Catalog/Component';
 	}
 
 	initialize( options ) {
-		this.logger = new $core.modules.Logger( Catalog.getName(), true );
+		this.logger = new $core.modules.Logger( Comonent.getName(), true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 		this.logger.startWith( { options } );
 
@@ -141,10 +141,10 @@ export class Catalog extends $core.Component {
 	onProductAmountChange( product, amount ) {
 		this.logger.startWith( { amount } );
 
-		if ( amount > Catalog.amountMaxValue ) {
-			amount = Catalog.amountMaxValue;
-		} else if ( amount < Catalog.amountMinValue ) {
-			amount = Catalog.amountMinValue;
+		if ( amount > Comonent.amountMaxValue ) {
+			amount = Comonent.amountMaxValue;
+		} else if ( amount < Comonent.amountMinValue ) {
+			amount = Comonent.amountMinValue;
 		}
 
 		product.setAmount( amount );
@@ -248,4 +248,4 @@ export class Catalog extends $core.Component {
 	}
 }
 
-export default Catalog;
+export default Comonent;

@@ -1,5 +1,5 @@
 /**
- * @file: components/catalog/product.js
+ * @file: components/catalog/product/product.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one product unit.
  */
