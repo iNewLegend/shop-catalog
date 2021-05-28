@@ -1,35 +1,15 @@
 /**
- * @file: components/catalog/product/product.js
+ * @file: components/catalog/product/component.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one product unit.
  */
 import './product.css';
+import Controller from './controller';
 
 /**
  * @memberOf components.catalog
  */
-export class Product extends $core.Component {
-	/**
-	 * Item id.
-	 *
-	 * @type {Number}
-	 */
-	id = null;
-
-	/**
-	 * Item name.
-	 *
-	 * @type {string}
-	 */
-	name = '';
-
-	/**
-	 * Price of current product.
-	 *
-	 * @type {number}
-	 */
-	price = 0;
-
+export class Component extends $core.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
@@ -40,18 +20,39 @@ export class Product extends $core.Component {
 	}
 
 	static getNamespace() {
-		return 'Components/Catalog'
+		return 'Components/Catalog/Product'
 	}
 
 	static getName() {
-		return 'Components/Catalog/Product';
+		return 'Components/Catalog/Product/Component';
+	}
+
+	static getControllerClass() {
+		return Controller;
 	}
 
 	initialize( options ) {
 		const { id, name, price } = this.options;
 
+		/**
+		 * Item id.
+		 *
+		 * @type {Number}
+		 */
 		this.id = id;
+
+		/**
+		 * Item name.
+		 *
+		 * @type {string}
+		 */
 		this.name = name;
+
+		/**
+		 * Price of current product.
+		 *
+		 * @type {number}
+		 */
 		this.price = price;
 
 		/**
@@ -62,7 +63,7 @@ export class Product extends $core.Component {
 		// If parent logger 'Components/Catalog' passed, clone and extend its name.
 		if ( this.logger ) {
 			this.logger = this.logger.clone();
-			this.logger.name = Product.getName() + '/' + id;
+			this.logger.name = Component.getName() + '/' + id;
 
 			this.logger.startWith( { id, name, price } );
 		}
@@ -93,32 +94,12 @@ export class Product extends $core.Component {
 					<div class="footer">
 						<h5>Price: <span class="price">${price}$</span></h5>
 						<div class="row">
-							<button onclick="this.onProductAdd()" class="bg-primary">Add To Cart</button>
+							<button onclick="$core.commands.run( 'Components/Catalog/Product/Commands/Add', { component: this } );" class="bg-primary">Add To Cart</button>
 							<input onchange="this.onProductChange( event )" class="amount" type="number" name="amount"	value="1" min="1">
 						</div>
 					</div>
 				</div>
 	    `);
-	}
-
-	onProductAdd( e ) {
-		if ( this.logger ) {
-			this.logger.startWith( { e } );
-		}
-
-		const id = parseInt( this.options.id ),
-			amount = parseInt( this.elements.amount.value );
-
-		let product = this.apis.catalog.getLocalProductById( id );
-
-		// Assign `id` and `amount`.
-		product = Object.assign( {}, product, { id, amount } );
-
-		// Call callback
-		this.events.onProductAdd( product );
-
-		// Put it back to 1.
-		this.setAmount( 1 );
 	}
 
 	onProductChange( e ) {
@@ -168,4 +149,4 @@ export class Product extends $core.Component {
 	}
 }
 
-export default Product;
+export default Component;

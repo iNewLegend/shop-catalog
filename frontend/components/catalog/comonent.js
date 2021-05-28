@@ -6,8 +6,9 @@
 import * as services from 'SERVICES';
 
 import Pagination from './pagination/pagination';
-import Product from './product/product';
+import Product from './product/component';
 import Spinner from './spinner/spinner';
+import Controller from './controller';
 
 /**
  * @memberOf components.catalog
@@ -49,6 +50,10 @@ export class Comonent extends $core.Component {
 
 	static getName() {
 		return 'Components/Catalog/Component';
+	}
+
+	static getControllerClass() {
+		return Controller;
 	}
 
 	initialize( options ) {
@@ -198,7 +203,7 @@ export class Comonent extends $core.Component {
 
 		const { spinner } = this.components;
 
-		this.apis.catalog.get( data => {
+		$core.data.get( 'Components/Catalog/Data/Index', { page: page } ).then( data => {
 			// Clear old products.
 			this.products = [];
 

@@ -27,6 +27,10 @@ export interface CommandArgsInterface {
 interface OnAffectHookInterface {
     [key: string]: Array<String>
 }
+interface OnAfterHookInterface {
+    [key: string]: Array<Function>
+}
+
 
 /**
  * @memberOf core
@@ -57,6 +61,7 @@ export class Commands extends Core {
     commands: { [args: string]: ( CommandsClass ) } = {};
 
 	onAfterEffectHooks: OnAffectHookInterface = {};
+    onAfterOnceHooks: OnAfterHookInterface = {};
 
     public run( command:string|Command, args:CommandArgsInterface = {}, options  = {} ) {
 		if ( typeof command === "string" ) {
@@ -80,6 +85,14 @@ export class Commands extends Core {
             this.commands[ command.getName() ] = command;
 		} );
 	}
+
+    public onAfterOnce( command: string, callback: () => void ) {
+        if ( ! this.onAfterOnceHooks[ command ] ) {
+            this.onAfterOnceHooks[ command ] = [];
+        }
+
+        this.onAfterOnceHooks[ command ].push( callback );
+    }
 
 	public onAfterAffect( hookCommand:string, affectCommand:string ) {
 		if ( ! this.onAfterEffectHooks[ hookCommand ] ) {
@@ -115,6 +128,24 @@ export class Commands extends Core {
 
                 result = new Command( args, options ).run();
             } );
+        }
+
+        if ( this.onAfterOnceHooks ) {
+            const callbacks = this.onAfterOnceHooks[ command.getName() ];
+
+            if ( callbacks ) {
+                for ( let i = 0 ; i != callbacks.length ; ++i ) {
+                    const callback = callbacks.pop();
+
+                    if ( ! callback ) {
+                        break;
+                    }
+
+                    callback();
+                }
+
+                delete this.onAfterOnceHooks[ command.getName() ];
+            }
         }
 
         return result;

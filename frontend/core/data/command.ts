@@ -24,6 +24,26 @@ export abstract class Command extends CommandBase {
 	}
 
 	apply( args = this.args, options = this.options ) {
-        return Data.client._fetch( this.getEndpoint(), args.type, args.data || null );
+	    const endpoint = this.applyEndpointFormat( this.getEndpoint(), args.query );
+
+        return Data.client._fetch( endpoint, args.type, args.data || null );
     }
+
+    private applyEndpointFormat( endpoint: string, data = {} ): string {
+	    if ( endpoint.includes( '{') ) {
+            endpoint = endpoint.split( '/' ).map( ( endpointPart ) => {
+                // @ts-ignore
+                const match = endpointPart.match( '\\{(.*?)\\}');
+
+                if ( match?.length ) {
+                    if ( undefined !== typeof data[ match[ 1 ] ] ) {
+                        return data[ match[ 1 ] ];
+                    }
+                }
+                return endpointPart;
+            } ).join( '/' );
+        }
+
+	    return endpoint;
+	}
 }

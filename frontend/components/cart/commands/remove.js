@@ -23,9 +23,7 @@ export class Remove extends $core.commands.Command {
 	 * @param {components.cart.item.Component} args.component
 	 * @param {{}} options
 	 */
-	async apply( args = this.args, options = this.options ) {
-		this.logger.startWith( { component: args.component } );
-
+	async apply( args, options ) {
 		const { component } = args,
 			{ id } = component,
 			model = this.getController().getModel();

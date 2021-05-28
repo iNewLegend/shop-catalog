@@ -40,7 +40,7 @@ export class Data extends Commands {
     }
 
     public get( command: string, args: CommandArgsInterface = {}, options: {} = {} ) {
-        this.type = 'post';
+        this.type = 'get';
 
         return super.run( command, args, options );
     }
@@ -51,11 +51,10 @@ export class Data extends Commands {
         return super.run( command, args, options );
     }
 
-    protected async runInstance( command: Command, args: CommandArgsInterface = {}, options: {} = {} ) {
+    protected runInstance( command: Command, args: CommandArgsInterface = {}, options: {} = {} ) {
         if ( ! this.type ) {
             throw new Error( 'Cannot run directly' );
         }
-
         // New args.
         command.args = {
             type: this.type,

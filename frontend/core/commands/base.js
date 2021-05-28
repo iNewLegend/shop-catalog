@@ -37,6 +37,6 @@ export default class CommandBase extends Core {
 	}
 
 	run() {
-		return this.apply();
+		return this.apply( this.args, this.options );
 	}
 }

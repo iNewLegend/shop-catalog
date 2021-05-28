@@ -101,7 +101,17 @@ class App {
 		this.logger.startWith( { pageModule: pageModule?.constructor.name } );
 
 		if ( pageModule instanceof pages.Catalog ) {
-			this.pages.catalog.on( 'render:after', this.onCatalogAfterRender.bind( this ) );
+			$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+				this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
+
+				this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+				this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+				this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
+				this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+				this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
+
+				this.cart.render();
+			} );
 		}
 	}
 
@@ -182,25 +192,6 @@ class App {
 		} );
 
 		this.container.render();
-	}
-
-	/**
-	 * Function onCatalogAfterRender() : Called on catalog initial recv done.
-	 */
-	onCatalogAfterRender() {
-		if ( ! this.catalogRenderOnce ) {
-			this.catalogRenderOnce = true;
-
-			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
-
-			this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-			this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
-			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
-
-			this.cart.render();
-		}
 	}
 
 	/**
