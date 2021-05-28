@@ -19,9 +19,9 @@ export default class Model extends ( $core.Model ) {
 	/**
 	 * Loaded items to be rendered.
 	 *
-	 * @type {Array.<components.cart.item.Component>}
+	 * @type {ArrayClass.<components.cart.item.Component>}
 	 */
-	items = [];
+	items = this.array();
 
 	/**
 	 * Function getById() : Get Item key from cart by id.

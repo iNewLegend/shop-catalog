@@ -97,6 +97,8 @@ export class Component extends $core.Component {
 			checkout: $core.Factory.createElement( '.cart .checkout' )
 		};
 
+		this.model.on( 'change', this.onChange.bind( this ) );
+
 		this.request();
 	}
 
@@ -133,7 +135,7 @@ export class Component extends $core.Component {
 		this.events.onAmountChange( 0 );
 
 		// Clear visual cart.
-		this.model.items = [];
+		this.model.items.clear();
 
 		this.apiCart.get( this.receive.bind( this ) );
 	}

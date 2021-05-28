@@ -36,9 +36,6 @@ export class Remove extends $core.commands.Command {
 
 			// Remove item from dom.
 			component.remove();
-
-			// Notify onchange, TODO: Remove.
-			component.options.parentComponent.onChange();
 		} );
 	}
 }

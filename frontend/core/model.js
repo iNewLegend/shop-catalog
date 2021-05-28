@@ -37,6 +37,55 @@ export class Model extends Core {
 
 			this._logger.startWith( {  options } );
 		}
+
+		this.events = {
+			onChange: () => {},
+		}
+
+		this.initialize();
+	}
+
+	initialize() {}
+
+	/**
+	 * @returns {ArrayClass}
+	 */
+	array() {
+		const self = this;
+
+		const ArrayClass = class extends Array {
+			clear() {
+				this.length = 0;
+			}
+
+			filter( callbackfn, thisArg, notify = true ) {
+				if ( notify ) {
+					setTimeout( () => self.events.onChange() );
+				}
+
+				return super.filter( callbackfn, thisArg );
+			}
+		};
+
+		return new ArrayClass();
+	}
+
+	/**
+	 * Function on() : Declare event callback
+	 *
+	 * @param {'change'} event
+	 * @param {{function()}} callback
+	 */
+	on( event, callback ) {
+		this.logger.startWith( { event, callback } );
+
+		switch ( event ) {
+			case 'change':
+				return this.events.onChange = callback;
+
+		}
+
+		throw new Error( `event: '${ event }' not found.' `);
 	}
 }
 
