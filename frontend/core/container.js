@@ -90,7 +90,7 @@ export class Container extends ElementBase {
                return !! ( this.events.onAfterRender = callback );
 
             default:
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+                throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
 		}
 	}
 }

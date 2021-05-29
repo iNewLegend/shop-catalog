@@ -140,10 +140,10 @@ export class Component extends $core.Component {
 			case 'product:change': {
 				this.events.onProductChange = callback;
 			}
-				break;
+			break;
 
 			default: {
-				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
 			}
 		}
 	}

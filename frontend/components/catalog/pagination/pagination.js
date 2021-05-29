@@ -140,7 +140,7 @@ export class Pagination extends $core.Component {
 				break;
 
 			default: {
-				alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
 			}
 		}
 	}
