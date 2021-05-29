@@ -137,7 +137,7 @@ export class Component extends $core.Component {
 		// Clear visual cart.
 		this.model.items.clear();
 
-		this.apiCart.get( this.receive.bind( this ) );
+		$core.data.get( 'Components/Cart/Data/Index' ).then( this.receive.bind( this ) );
 	}
 
 	/**
@@ -148,14 +148,14 @@ export class Component extends $core.Component {
 	receive( data ) {
 		this.logger.object( data, 'data' );
 
-		// not all the products that are in cart exist locally since we used pages in that system,
-		// so we find out what missing and request it from the server.
+		// Not all the products that are in cart exist locally since we used pages in that system,
+		// Wo we find out what missing and request it from the server.
 		const missingProducts = data.filter( ( item ) => {
-			// we get the price and name from local catalog;
-			// there is many solutions, this is fine for that example.
-			const localProduct = this.apiCatalog.getLocalProductById( item.id );
+			// We get the price and name from local catalog.
+			// There is many solutions, this is fine for that example.
+			const localProduct = $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
 
-			// use extra info from local product
+			// Use extra info from local product
 			if ( localProduct ) {
 				item.price = localProduct.price;
 				item.name = localProduct.name;

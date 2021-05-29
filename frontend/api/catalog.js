@@ -69,28 +69,6 @@ export class Catalog {
 			} );
 		}
 	}
-
-	/**
-	 * Function getLocalProductById() : Get product from local catalog
-	 *
-	 * @param {number} id
-	 * @return {{}|null}
-	 */
-	getLocalProductById( id ) {
-		this.logger.startWith( { id } );
-
-		for ( let i in this.catalog ) {
-			if ( this.catalog[ i ].id == id ) {
-				let tmp = {};
-				// return copy since this, catalog may be not writeable.
-				Object.assign( tmp, this.catalog[ i ] );
-
-				return tmp;
-			}
-		}
-
-		return null;
-	}
 }
 
 export default Catalog;
