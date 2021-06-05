@@ -72,6 +72,8 @@ export class Commands extends Core {
 	}
 
 	public register( commands: Array<Command>, controller: Controller ) {
+        const result = [];
+
 		Object.values( commands ).forEach( ( command ) => {
 			// @ts-ignore
             if ( this.commands[ command.getName() ] ) {
@@ -83,7 +85,11 @@ export class Commands extends Core {
 
 			// @ts-ignore
             this.commands[ command.getName() ] = command;
+
+            result.push( command );
 		} );
+
+		return result;
 	}
 
     public onAfterOnce( command: string, callback: () => void ) {
