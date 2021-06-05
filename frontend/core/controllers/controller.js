@@ -31,7 +31,7 @@ export class Controller extends Core {
 
 		this.commands = $core.commands.register( commands, this );
 		this.data = $core.data.register( data, this );
-		//this.internal = $core.internal.register( internal, this );
+		this.internal = $core.internal.register( internal, this );
 	}
 
 	getCommands() {

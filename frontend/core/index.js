@@ -7,6 +7,7 @@ export { Container } from './container';
 export { Context } from './context';
 import Controllers from "./controllers";
 import { Data } from './data';
+import { Internal } from './internal';
 import { Element } from './element';
 import { Factory } from './factory';
 import { Model } from './model';
@@ -22,6 +23,7 @@ if  ( ! global.$core ) {
 		commands: new Commands(),
 		controllers: new Controllers(),
 		data: new Data(),
+		internal: new Internal(),
 
 		Model,
 
