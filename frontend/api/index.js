@@ -4,6 +4,4 @@
  * @description: API Namespace O__o
  */
 
-export { Cart } from './cart.js';
 export { Catalog } from './catalog.js';
-

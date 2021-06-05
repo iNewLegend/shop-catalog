@@ -27,7 +27,6 @@ class App {
 
 		this.apis = {
 			catalog: new api.Catalog( http ),
-			cart: new api.Cart( http ),
 		};
 
 		this.elements = {
