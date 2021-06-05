@@ -21,4 +21,5 @@ export class Index extends $core.data.Command {
 	}
 }
 
+export { Add } from './add';
 export { Remove } from './remove'
