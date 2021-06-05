@@ -16,8 +16,6 @@ export class Catalog {
 	 */
 	constructor( http ) {
 		this.logger = new $core.modules.Logger( Catalog.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
-
 		this.logger.startWith( { http } );
 
 		this.http = http;

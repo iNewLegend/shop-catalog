@@ -58,7 +58,6 @@ export class Comonent extends $core.Component {
 
 	initialize( options ) {
 		this.logger = new $core.modules.Logger( Comonent.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
 		this.logger.startWith( { options } );
 
 		this.apis = {

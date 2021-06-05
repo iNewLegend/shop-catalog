@@ -3,6 +3,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: is base class for all commands instances, part of MVC, responsible for commands, and managed by Controller.
  */
+import * as services from "SERVICES";
+
 import ForceMethod from "CORE/errors/force-method";
 import Core from "CORE/base/core";
 import Logger from "CORE/modules/logger";
@@ -19,6 +21,7 @@ export default class CommandBase extends Core {
 
 		if ( ! this.constructor._logger ) {
 			this.constructor._logger = new Logger( this.constructor.getName() );
+			this.constructor._logger.setOutputHandler( services.Terminal.onOutput );
 		}
 
 		this.logger = this.constructor._logger

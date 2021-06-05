@@ -24,7 +24,6 @@ export class Pagination extends $core.Component {
 		super( parent, options );
 
 		this.logger = new $core.modules.Logger( Pagination.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startWith( { options } );
 

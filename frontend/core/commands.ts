@@ -9,6 +9,7 @@ import Controller from "./controllers/controller";
 import CommandAlreadyRegistered from "./commands/errors/command-already-registered";
 import { Logger } from "./modules/";
 import CommandNotFound from "./commands/errors/command-not-found";
+import * as services from "../services";
 
 /**
  * TODO: Try avoid - Remove.
@@ -51,6 +52,8 @@ export class Commands extends Core {
         super();
 
         this.logger = new Logger( this.getName(), true );
+        this.logger.setOutputHandler( services.Terminal.onOutput );
+
         this.logger.startEmpty();
     }
 
@@ -121,7 +124,9 @@ export class Commands extends Core {
     protected runInstance( command: Command, args:CommandArgsInterface = {}, options  = {} ) {
         let result:any = null;
 
-        this.logger.startWith( { command: command.getName(), args, options } );
+        this.logger.startWith( { command: command.getName(), options } );
+        this.logger.debug( 'CommandArgs:' );
+        this.logger.object( args );
 
         result = command.run();
 

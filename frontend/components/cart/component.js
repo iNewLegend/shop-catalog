@@ -56,7 +56,6 @@ export class Component extends $core.Component {
 
 	initialize( options ) {
 		this.logger = new $core.modules.Logger( Component.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.apiCart = options.cart;
 		this.apiCatalog = options.catalog;

@@ -4,22 +4,27 @@
  * @description: Module for logging instances.
  * TODO: on constructor add prefix for owner
  */
+
+// TODO: Remove.
 const CircularJSON = require( 'circular-json' );
 
 /**
  * @memberOf modules
  */
 export class Logger {
+	static sharedData = {};
 	static colorsInUse = [];
 
     /**
 	 * Function constructor() : Create logger class
 	 *
-	 * @param {*} owner
+	 * @param {object} owner
      * @param {boolean} state
+     * @param {object} args
      */
-    constructor( owner, state = false ) {
+    constructor( owner, state = false, args = {} ) {
         this.state = state;
+        this.args = args;
         this._name = '';
 
 		if ( typeof owner == 'string' ) {
@@ -53,7 +58,15 @@ export class Logger {
 	 * Function _initialize() : Initialize logger class
 	 */
 	_initialize() {
-		this.color = this.getRandomColor();
+		if ( this.args.sameColor ) {
+			if ( ! Logger.sharedData[ this._name ] ) {
+				Logger.sharedData[ this._name ] = this.getRandomColor();
+			}
+
+			this.color = Logger.sharedData[ this._name ];
+		} else {
+			this.color = this.getRandomColor();
+		}
 
 		Logger.colorsInUse.push( this.color );
 
@@ -335,8 +348,15 @@ export class Logger {
 		params = Object.create( params );
 
 		for ( let key in params ) {
-			if ( typeof params[ key ] === 'object' ) {
-                params[ key ] = JSON.stringify( params[ key ] );
+			// TODO: Avoid.
+			if ( params[ key ] instanceof $core.Component ) {
+				params[ key ] = {
+					model: params[ key ].model.getModelData(),
+				}
+				params[ key ] = CircularJSON.stringify( params[ key ] );
+
+			} else if ( typeof params[ key ] === 'object' ) {
+                params[ key ] = CircularJSON.stringify( params[ key ] );
             }
 
 			this.out.apply( this, [ `%c(ob)-> %c%c${this._name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[ key ]}'%c` ].concat( this.defaultStyle ) );
