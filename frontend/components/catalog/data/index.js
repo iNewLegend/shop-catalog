@@ -8,7 +8,7 @@
  * @memberOf components.catalog.data
  */
 export class Index extends $core.data.Command {
-	static localCatalog = [];
+	static localCatalog = {};
 
 	static getNamespace() {
 		return 'Components/Catalog/Data'
@@ -27,7 +27,7 @@ export class Index extends $core.data.Command {
 
 		if ( options.local ) {
 			if ( query.id ) {
-				return this.constructor.localCatalog[ query.id ];
+				return this.constructor.localCatalog[ query.id - 1 ];
 			}
 
 			return this.constructor.localCatalog;
