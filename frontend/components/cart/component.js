@@ -220,30 +220,6 @@ export class Component extends $core.Component {
 	}
 
 	/**
-	 * Function addItem() : Add items or update
-	 *
-	 * @param {Object} productData
-	 * @param {{function()}} onSuccess
-	 */
-	addItem( productData, onSuccess = null ) {
-		this.logger.startWith( { product: productData, onSuccess } );
-
-		this.apiCart.addItem( ( data ) => {
-			if ( ! data.error ) {
-				this.doAddItem(
-					this.createItem( productData ),
-					true,
-					true
-				);
-
-				if ( onSuccess ) onSuccess();
-			} else {
-				alert( data.message );
-			}
-		}, productData.id, productData.amount );
-	}
-
-	/**
 	 * Function createItem() : Create new item.
 	 *
 	 * @param {Object} data

@@ -9,7 +9,6 @@ import * as api from 'API';
 import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
-import Http from "CORE/data/clients/http";
 
 class App {
 	/**
@@ -200,7 +199,15 @@ class App {
 	onCatalogProductAdd( product ) {
 		this.logger.startWith( { product } );
 
-		this.cart.addItem( product, () => {
+		const args = {
+			product,
+
+			// TODO: Remove - Handle with model - Do not pass anything of component into command.
+			doAddItem: this.cart.doAddItem.bind( this.cart ),
+			createItem: this.cart.createItem.bind( this.cart ),
+		}
+
+		$core.internal.run( 'Components/Cart/Internal/Add', args ).then( () => {
 			if ( components.Cart.openCartOnUpdate ) {
 				this.sidebarToggle( true );
 			}

@@ -6,6 +6,7 @@
 import ControllerBase from 'CORE/controllers/controller';
 import * as commands from "./commands/";
 import * as data from "./data/";
+import * as internal from "./internal/";
 
 /**
  * @memberOf components.cart
@@ -31,6 +32,10 @@ export class Controller extends ControllerBase {
 
 	getData() {
 		return data;
+	}
+
+	getInternal() {
+		return internal;
 	}
 }
 
