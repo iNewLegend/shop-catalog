@@ -54,7 +54,7 @@ export class Element extends Container {
 			case 'onClick': {
 				this.element.addEventListener( 'click', callback );
 			}
-				break;
+			break;
 		}
 	}
 
@@ -111,7 +111,7 @@ export class Element extends Container {
         if ( nodes.length > 0 && context.node.childNodes ) {
             nodes = [nodes, ...context.node.childNodes];
         } else {
-            debugger; // Never happens?
+        	// Support JSX.
             nodes = context.childNodes;
 		}
 

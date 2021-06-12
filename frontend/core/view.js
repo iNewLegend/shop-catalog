@@ -29,7 +29,8 @@ export class View {
 	}
 
 	template() {
-		throw('no template');
+		// TODO Throw force template implementation.
+		throw( 'no template' );
 	}
 
 	render() {

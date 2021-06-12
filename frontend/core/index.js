@@ -3,14 +3,15 @@ export { Core } from './base/core';
 import { default as LoggerModule } from './modules/logger';
 import { Commands } from './commands';
 import { Component } from './component';
-export { Container } from './container';
-export { Context } from './context';
 import Controllers from "./controllers";
 import { Data } from './data';
 import { Internal } from './internal';
 import { Element } from './element';
 import { Factory } from './factory';
 import { Model } from './model';
+import { default as JsxElement } from './jsx-element'
+export { Container } from './container';
+export { Context } from './context';
 export { View } from './view';
 
 if  ( ! global.$core ) {
@@ -18,6 +19,8 @@ if  ( ! global.$core ) {
 		Component,
 
 		Element,
+		JsxElement,
+
 		Factory,
 
 		commands: new Commands(),

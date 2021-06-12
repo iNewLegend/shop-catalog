@@ -30,7 +30,10 @@ module.exports = {
 				        	'@babel/preset-env',
 					        '@babel/preset-typescript'
 				        ],
-				        plugins: ['@babel/plugin-proposal-object-rest-spread']
+				        plugins: [
+				        	[ '@babel/plugin-proposal-object-rest-spread' ],
+					        [ "@babel/plugin-transform-react-jsx", { "pragma": "new $core.JsxElement" } ]
+				        ]
 			        }
 		        }
 	        },

@@ -34,7 +34,13 @@ export class Context {
 	create() {
 		this.beforeCreate();
 
-		this.node = HTML.toNode( this.context );
+		// Support JSX.
+		if ( this.context instanceof $core.Element ) {
+			this.node = this.context.context;
+		} else {
+			this.node = HTML.toNode( this.context );
+		}
+
 
 		this.afterCreate();
 

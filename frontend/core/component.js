@@ -67,6 +67,11 @@ export class Component extends Core {
 		// Alias.
 		this.context = view.element.context;
 
+		// Support JSX.
+		if ( false === this.context.isConnected ) {
+			this.parent.context.append( this.context );
+		}
+
 		this.attachListeners();
 	}
 
