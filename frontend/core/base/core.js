@@ -9,6 +9,14 @@ import { ForceMethodBase } from '../errors/force-method';
  * @memberOf core
  */
 export class Core {
+	static _idCounter = 0;
+
+	constructor() {
+		this.virtualId = Core._idCounter;
+
+		++Core._idCounter;
+	}
+
 	static getNamespace() {
         throw new ForceMethodBase( 'Core/Base/Core', 'getNamespace' );
 	}
