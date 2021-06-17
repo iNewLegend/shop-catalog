@@ -17,20 +17,17 @@
     - Webpack
     - JQuery
 
-## Goals
+## Done Goals
+  - Apply MVC.
+  - `Core.Component` should be replacement for MVC when it not necessary.
+  
+## Current Goals
   - Remove jQuery.
   - Modular
   - Well structured
-  - Apply MVC.
   - No dependencies except babel and webpack. 
 
-## Rules:
-### Code Access
-| Type | Modules | Services | Library
-| ------ | ------ | ------ | ------ |
-| Modules | Yes | No | No
-| Services | Yes | Yes | Yes
-| Library | No | No | Yes
+
 
 # [ Demo ]
 ### preview
@@ -62,7 +59,14 @@ $ npm run frontend:watch:server
     $ npm run backend:php:debug
     ```
     * For creating the database access this url `http://localhost:8081/?cmd=admin/install/<mysql_host>/<mysql_username>/<mysql_password>/<mysql_database_name>` and dont forget replace <> with yours real credentials. this will create the database and create simple mock catalog.
-
+    * ## Rules:
+        ### Code Access
+        | Type | Modules | Services | Library
+        | ------ | ------ | ------ | ------ |
+        | Modules | Yes | No | No
+        | Services | Yes | Yes | Yes
+        | Library | No | No | Yes
+        
 * ```/backend/underyourskin/nestjs``` NestJS backend
     ```shell script
     $ npm run backend:nestjs:debug

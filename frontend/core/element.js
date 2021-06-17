@@ -1,7 +1,7 @@
 /**
  * @file: core/element.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: nope.
+ * @description: WIP.
  * TODO:
  */
 import Container from './container.js';
@@ -133,8 +133,19 @@ export class Element extends Container {
 			let funcContent = property.toString();
 
 			funcContent = funcContent.replace( new RegExp( 'this', 'g' ), 'from' );
-			funcContent = funcContent.split( '{' )[ 1 ].replace( '}', '' );
-			funcContent = funcContent.replace( '()', '( ... arguments)' );
+			funcContent = funcContent.substring( funcContent.indexOf( "{" ) + 1 ); // Get function body.
+			funcContent = funcContent.replace(/}$/,'' ); // Remove the '}' of body.
+			//funcContent = funcContent.replace( '()', '( ... arguments)' );
+
+			/**
+			 * "function onclick(event) {\ncore.Commands.run( 'Components/Cart/Item/Commands/Remove', { component: this } )\n}"
+			 * "\ncore.Commands.run( 'Components/Cart/Item/Commands/Remove', "
+			 */
+
+			/**
+			 *  "function onclick(event) {\nthis.events.onCheckout()\n}"
+			 * "\nfrom.events.onCheckout( ... arguments)\n"
+			 */
 
 			// In other words recreate the callback.
 			property = ( event, from = controller ) => {

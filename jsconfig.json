@@ -13,7 +13,7 @@
             "PAGES": ["frontend/pages/index.js"],
             "SERVICES": ["frontend/services/index.js"],
             "DEV-LIBRARY": ["dev/library/index.js"],
-            "DEV-MODULES": ["dev/modules/index.js"],
+            "DEV-MODULES": ["dev/modules/index.js"]
         }
     },
     "include": [

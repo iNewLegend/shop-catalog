@@ -1,0 +1,10 @@
+.pagination {
+	margin-top: 10px;
+	text-align: center;
+}
+
+.pagination a {
+	color: black;
+	padding: 8px 16px;
+	text-decoration: none;
+}

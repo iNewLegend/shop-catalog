@@ -3,7 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 import * as services from 'SERVICES';
-import * as modules from 'MODULES';
 
 /**
  * @memberOf API
@@ -16,9 +15,7 @@ export class Catalog {
 	 * @param {Http} api
 	 */
 	constructor( http ) {
-		this.logger = new modules.Logger( Catalog.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
-
+		this.logger = new $core.modules.Logger( Catalog.getName(), true );
 		this.logger.startWith( { http } );
 
 		this.http = http;
@@ -69,28 +66,6 @@ export class Catalog {
 				callback( data )
 			} );
 		}
-	}
-
-	/**
-	 * Function getLocalProductById() : Get product from local catalog
-	 *
-	 * @param {number} id
-	 * @return {{}|null}
-	 */
-	getLocalProductById( id ) {
-		this.logger.startWith( { id } );
-
-		for ( let i in this.catalog ) {
-			if ( this.catalog[ i ].id == id ) {
-				let tmp = {};
-				// return copy since this, catalog may be not writeable.
-				Object.assign( tmp, this.catalog[ i ] );
-
-				return tmp;
-			}
-		}
-
-		return null;
 	}
 }
 

@@ -4,10 +4,8 @@
  * @description: Main File
  */
 import "@babel/polyfill"
-
 import * as core from 'CORE'
 import * as api from 'API';
-import * as modules from 'MODULES';
 import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
@@ -19,17 +17,16 @@ class App {
 	constructor() {
 		services.Terminal.initialize();
 
-		this.logger = new modules.Logger( this, true );
+		this.logger = new $core.modules.Logger( this, true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startEmpty();
 
-		const remoteAddress = 'http://localhost:8081/',
-			http = new api.Http( remoteAddress );
+		// TODO: Remove `this.apis` use `$core.data` commands.
+		const http = $core.data.constructor.client;
 
 		this.apis = {
 			catalog: new api.Catalog( http ),
-			cart: new api.Cart( http ),
 		};
 
 		this.elements = {
@@ -94,7 +91,7 @@ class App {
 	}
 
 	/**
-	 * Function onBeforeRender() :.
+	 * Function onPageContainerBeforeRender()
 	 *
 	 * @param {modules.Page} pageModule
 	 */
@@ -102,7 +99,17 @@ class App {
 		this.logger.startWith( { pageModule: pageModule?.constructor.name } );
 
 		if ( pageModule instanceof pages.Catalog ) {
-			this.pages.catalog.on( 'render:after', this.onCatalogAfterRender.bind( this ) );
+			$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+				this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
+
+				this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+				this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+				this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
+				this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+				this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
+
+				this.cart.render();
+			} );
 		}
 	}
 
@@ -186,31 +193,20 @@ class App {
 	}
 
 	/**
-	 * Function onCatalogAfterRender() : Called on catalog initial recv done.
-	 */
-	onCatalogAfterRender() {
-		if ( ! this.catalogRenderOnce ) {
-			this.catalogRenderOnce = true;
-
-			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
-
-			this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-			this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
-			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
-
-			this.cart.render();
-		}
-	}
-
-	/**
 	 * Function onCatalogProductAdd() : Called on catalog item add
 	 */
 	onCatalogProductAdd( product ) {
 		this.logger.startWith( { product } );
 
-		this.cart.itemAdd( product, () => {
+		const args = {
+			product,
+
+			// TODO: Remove - Handle with model - Do not pass anything of component into command.
+			doAddItem: this.cart.doAddItem.bind( this.cart ),
+			createItem: this.cart.createItem.bind( this.cart ),
+		}
+
+		$core.internal.run( 'Components/Cart/Internal/Add', args ).then( () => {
 			if ( components.Cart.openCartOnUpdate ) {
 				this.sidebarToggle( true );
 			}
