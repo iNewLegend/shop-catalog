@@ -5,16 +5,16 @@
  */
 import './product.css';
 import Controller from './controller';
+import Model from './model';
 
 /**
- * @memberOf components.catalog
+ * @memberOf components.catalog.product
  */
 export class Component extends $core.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
 		this.events = {
-			onProductAdd: ( product ) => {},
 			onProductChange: ( product, amount ) => {},
 		};
 	}
@@ -31,29 +31,16 @@ export class Component extends $core.Component {
 		return Controller;
 	}
 
+	static getModelClass() {
+		return Model
+	}
+
 	initialize( options ) {
 		const { id, name, price } = this.options;
 
-		/**
-		 * Item id.
-		 *
-		 * @type {Number}
-		 */
-		this.id = id;
-
-		/**
-		 * Item name.
-		 *
-		 * @type {string}
-		 */
-		this.name = name;
-
-		/**
-		 * Price of current product.
-		 *
-		 * @type {number}
-		 */
-		this.price = price;
+		this.model.id = id;
+		this.model.name = name;
+		this.model.price = price;
 
 		/**
 		 * @type {core.modules.Logger}
@@ -84,7 +71,7 @@ export class Component extends $core.Component {
 	}
 
 	template() {
-		const { id, name, price } = this.options;
+		const { id, name, price } = this.model;
 
 		return (`
 				<div class="product">
@@ -127,16 +114,11 @@ export class Component extends $core.Component {
 	/**
 	 * Function on() : Declare event callback
 	 *
-	 * @param {'product:add'|'product:change'} event
+	 * @param {'product:change'} event
 	 * @param {{function()}} callback
 	 */
 	on( event, callback ) {
 		switch ( event ) {
-			case 'product:add': {
-				this.events.onProductAdd = callback;
-			}
-				break;
-
 			case 'product:change': {
 				this.events.onProductChange = callback;
 			}

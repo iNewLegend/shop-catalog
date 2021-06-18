@@ -9,6 +9,7 @@ import Pagination from './pagination/pagination';
 import Product from './product/component';
 import Spinner from './spinner/spinner';
 import Controller from './controller';
+import Model from './model';
 
 /**
  * @memberOf components.catalog
@@ -17,26 +18,12 @@ export class Comonent extends $core.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
-	/**
-	 * Current page number.
-	 *
-	 * @type {number}
-	 */
-	page = 0;
-
-	/**
-	 * Loaded products to be rendered.
-	 *
-	 * @type {Array.<components.catalog.Product>}
-	 */
-	products = [];
-
 	constructor( parent, options ) {
 		super( parent, options );
 
 		this.events = {
 			onRecvOnce: () => {},
-			onProductAdd: ( product ) => {},
+			//onProductAdd: ( product ) => {},
 		};
 
 		this.components = {
@@ -54,6 +41,10 @@ export class Comonent extends $core.Component {
 
 	static getControllerClass() {
 		return Controller;
+	}
+
+	static getModelClass() {
+		return Model
 	}
 
 	initialize( options ) {
@@ -110,7 +101,7 @@ export class Comonent extends $core.Component {
 		const { spinner } = this.components;
 
 		// Remove all products.
-		this.products.forEach( ( product ) =>
+		this.model.products.forEach( ( product ) =>
 			product.remove()
 		);
 
@@ -122,17 +113,17 @@ export class Comonent extends $core.Component {
 		} );
 	}
 
-	/**
-	 * Function onProductAdd() : Called on "Add to cart button".
-	 *
-	 * @param {Product} product
-	 */
-	onProductAdd( product ) {
-		this.logger.startWith( { product } );
-
-		// Call callback.
-		this.events.onProductAdd( product );
-	}
+	// /**
+	//  * Function onProductAdd() : Called on "Add to cart button".
+	//  *
+	//  * @param {Product} product
+	//  */
+	// onProductAdd( product ) {
+	// 	this.logger.startWith( { product } );
+	//
+	// 	// Call callback.
+	// 	//this.events.onProductAdd( product );
+	// }
 
 	/**
 	 * Function onProductAmountChange() : Called on "Product Amount Change".
@@ -173,7 +164,9 @@ export class Comonent extends $core.Component {
 	 * @returns {components.catalog.Product}
 	 */
 	addProduct( product ) {
-		const productComponent = new Product( this.elements.row, {
+		// Dont do the, $core.reduceComponent( new Product );
+
+		const productComponent =  new Product( this.elements.row, {
 			api: {
 				catalog: this.apis.catalog,
 			},
@@ -183,10 +176,10 @@ export class Comonent extends $core.Component {
             ... product,
         } );
 
-        productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
+        //productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
 		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 
-		this.products.push( productComponent );
+		this.model.products.push( productComponent );
 
 		return productComponent;
 	}
@@ -204,7 +197,7 @@ export class Comonent extends $core.Component {
 
 		$core.data.get( 'Components/Catalog/Data/Index', { page: page } ).then( data => {
 			// Clear old products.
-			this.products = [];
+			this.model.products.clear();
 
 			// Used '1000' ms here to fake loading.
 			spinner.fadeOut( 1000, () => {
@@ -225,7 +218,7 @@ export class Comonent extends $core.Component {
 	 * Function renderProducts() : Render products.
 	 */
 	renderProducts() {
-		this.products.forEach( ( product ) => {
+		this.model.products.forEach( ( product ) => {
 			product.render();
 		} );
 	}
@@ -240,8 +233,8 @@ export class Comonent extends $core.Component {
 		this.logger.startWith( { event, callback } );
 
 		switch ( event ) {
-			case 'product:add':
-				return this.events.onProductAdd = callback;
+			// case 'product:add':
+				// return this.events.onProductAdd = callback;
 
 			case 'recv:once':
 				return this.events.onRecvOnce = callback;

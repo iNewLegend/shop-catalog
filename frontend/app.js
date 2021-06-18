@@ -10,6 +10,7 @@ import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
 
+// TODO Should extend `core.Container` instead of using naked class.
 class App {
 	/**
 	 * Function constructor() : Create App
@@ -33,7 +34,6 @@ class App {
 			header: {
 				logo: core.Factory.createElement( 'header #logo' ),
 				toggle: core.Factory.createElement( 'header #toggle' ),
-
 				cart: core.Factory.createElement( 'header #toggle .cart' ),
 				amount: core.Factory.createElement( 'header #toggle .amount' ),
 				spinner: core.Factory.createElement( 'header #toggle .spinner' )
@@ -73,7 +73,6 @@ class App {
 		const { header, overlay, sidebar } = this.elements;
 
 		this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
-		this.container.on( 'render:after', this.onPageContainerAfterRender.bind( this ) );
 
 		overlay.click( () => this.sidebarToggle( false ) );
 
@@ -85,6 +84,44 @@ class App {
 		} );
 
 		sidebar.closeButton.click( () => this.sidebarToggle( false ) );
+
+		$core.data.onAfter( 'Components/Cart/Data/Index', async( args ) => {
+			if ( ! this.cartRecvOnce ) {
+				this.cartRecvOnce = true;
+
+				const { cart, spinner } = this.elements.header;
+
+				cart.show();
+				spinner.hide();
+			}
+
+			const data = await args.result;
+
+			// Not all the products that are in cart exist locally since we used pages in that system,
+			// Wo we find out what missing and request it from the server.
+			const missingProducts = data.filter( ( item ) => {
+				// We get the price and name from local catalog.
+				// There is many solutions, this is fine for that example.
+				const localProduct = $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
+
+				// Use extra info from local product
+				if ( localProduct ) {
+					item.price = localProduct.price;
+					item.name = localProduct.name;
+
+					return false;
+				}
+
+				return true;
+			} );
+
+			this.apis.catalog.getByIds( ( missing ) => {
+				data.map( ( item ) => {
+					Object.assign( item, missing.find( x => x.id === item.id ) );
+					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
+				} );
+			}, missingProducts.map( x => x.id ) );
+		} );
 
 		this.container.set( this.pages.catalog );
 		this.container.render();
@@ -99,30 +136,31 @@ class App {
 		this.logger.startWith( { pageModule: pageModule?.constructor.name } );
 
 		if ( pageModule instanceof pages.Catalog ) {
-			$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
-				this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
+			if ( ! this.cart ) {
+				$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+					this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-				this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-				this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-				this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
-				this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-				this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
+					this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+					this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+					this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+					this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
 
-				this.cart.render();
-			} );
-		}
-	}
+					this.cart.render();
+				} );
 
-	/**
-	 * Function onAfterRender() :.
-	 *
-	 * @param {modules.Page} pageModule
-	 */
-	onPageContainerAfterRender( pageModule ) {
-		this.logger.startWith( { pageModule: pageModule.constructor.name } );
+				$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
+					const cartAddArgs = {
+						... args.component.model.getModelData(),
+						amount: args.component.elements.amount.value,
+					};
 
-		if ( pageModule instanceof pages.Catalog ) {
-			this.pages.catalog.on( 'product:add', this.onCatalogProductAdd.bind( this ) );
+					$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
+
+					if ( $app.cart.constructor.openCartOnUpdate ) {
+						$app.sidebarToggle( true );
+					}
+				} );
+			}
 		}
 	}
 
@@ -135,18 +173,6 @@ class App {
 		const { spinner } = this.elements.header;
 
 		spinner.show();
-	}
-
-	/**
-	 * Function onCartReceived() : Called after cart received
-	 */
-	onCartReceived() {
-		this.logger.startEmpty();
-
-		const { cart, spinner } = this.elements.header;
-
-		cart.show();
-		spinner.hide();
 	}
 
 	/**
@@ -193,27 +219,6 @@ class App {
 	}
 
 	/**
-	 * Function onCatalogProductAdd() : Called on catalog item add
-	 */
-	onCatalogProductAdd( product ) {
-		this.logger.startWith( { product } );
-
-		const args = {
-			product,
-
-			// TODO: Remove - Handle with model - Do not pass anything of component into command.
-			doAddItem: this.cart.doAddItem.bind( this.cart ),
-			createItem: this.cart.createItem.bind( this.cart ),
-		}
-
-		$core.internal.run( 'Components/Cart/Internal/Add', args ).then( () => {
-			if ( components.Cart.openCartOnUpdate ) {
-				this.sidebarToggle( true );
-			}
-		} );
-	}
-
-	/**
 	 * Function sidebarToggle() : Change the sidebar state
 	 *
 	 * @param {boolean} state
@@ -237,4 +242,5 @@ class App {
 	}
 }
 
-(new App().initialize());
+window.$app = new App();
+$app.initialize();
