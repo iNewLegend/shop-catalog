@@ -51,10 +51,12 @@ export class Model extends Core {
 	}
 
 	initialize() {
-		this.initializeModelChangeDetection();
+
 	}
 
-	initializeModelChangeDetection() {
+	// TODO: ModelChangeDetection should work like a garbage collector, to detect the changes that were missed/too deep/complex.
+
+	initializeModelChangeDetectionLocal() {
 		const interval = setInterval( () => {
 			if ( ! this._alive ) {
 				return clearInterval( interval );
@@ -88,7 +90,7 @@ export class Model extends Core {
 			} );
 		}
 
-		// Local worker.
+		// Local send data worker.
 		const updateDataLoop = () => {
 			// Repeat.
 			if ( Model.worker ) {
@@ -178,8 +180,6 @@ export class Model extends Core {
 	 * @returns {ArrayClass}
 	 */
 	array() {
-		const self = this;
-
 		return new ArrayClass( this );
 	}
 

@@ -28,10 +28,15 @@ export interface CommandArgsInterface {
 interface OnAffectHookInterface {
     [key: string]: Array<String>
 }
-interface OnAfterHookInterface {
+interface OnAfterOnceHookInterface {
     [key: string]: Array<Function>
 }
 
+type onAfterCallback = ( args: Object, options:Object ) => any
+
+interface onAfterHookInterface {
+    [key: string]: Array<onAfterCallback>
+}
 
 /**
  * @memberOf core
@@ -47,6 +52,20 @@ export class Commands extends Core {
     }
 
     private logger: Logger;
+
+    private static runCallbacks( callbacks:Array<Function>, args: CommandArgsInterface, options: Object ) {
+        if ( callbacks ) {
+            for ( let i = 0 ; i != callbacks.length ; ++i ) {
+                const callback = callbacks.pop();
+
+                if ( ! callback ) {
+                    break;
+                }
+
+                callback( args, options );
+            }
+        }
+    }
 
     constructor() {
         super();
@@ -64,7 +83,9 @@ export class Commands extends Core {
     commands: { [args: string]: ( CommandsClass ) } = {};
 
 	onAfterEffectHooks: OnAffectHookInterface = {};
-    onAfterOnceHooks: OnAfterHookInterface = {};
+    onAfterOnceHooks: OnAfterOnceHookInterface = {};
+    onAfterHooks: OnAfterOnceHookInterface = {};
+
 
     public run( command:string|Command, args:CommandArgsInterface = {}, options  = {} ) {
 		if ( typeof command === "string" ) {
@@ -75,7 +96,7 @@ export class Commands extends Core {
 	}
 
 	public register( commands: Array<Command>, controller: Controller ) {
-        const result = [];
+        const result: Command[] = [];
 
 		Object.values( commands ).forEach( ( command ) => {
 			// @ts-ignore
@@ -111,6 +132,14 @@ export class Commands extends Core {
 		this.onAfterEffectHooks[ hookCommand ].push( affectCommand );
 	}
 
+    public onAfter( hookCommand:string, callback: onAfterCallback ) {
+        if ( ! this.onAfterHooks[ hookCommand ] ) {
+            this.onAfterHooks[ hookCommand ] = [];
+        }
+
+        this.onAfterHooks[ hookCommand ].push( callback );
+    }
+
     public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): Command {
         const CommandClass = this.commands[ name ];
 
@@ -121,10 +150,14 @@ export class Commands extends Core {
         return new CommandClass( args, options );
     }
 
+    public getAll() {
+        return this.commands;
+    }
+
     protected runInstance( command: Command, args:CommandArgsInterface = {}, options  = {} ) {
         let result:any = null;
 
-        this.logger.startWith( { command: command.getName(), options } );
+        this.logger.startWith( { command: command.getName(), options, 'CommandArgs': '->' } );
         this.logger.debug( 'CommandArgs:' );
         this.logger.object( args );
 
@@ -132,33 +165,28 @@ export class Commands extends Core {
 
         if ( this.onAfterEffectHooks[ command.getName() ] ) {
             this.onAfterEffectHooks[ command.getName() ].forEach( ( command ) => {
-                // @ts-ignore
-                const Command = this.commands[ command ];
-
                 args.result = result;
 
-                result = new Command( args, options ).run();
+                result = this.run( command.toString(), args, options );
             } );
         }
 
         if ( this.onAfterOnceHooks ) {
             const callbacks = this.onAfterOnceHooks[ command.getName() ];
 
-            if ( callbacks ) {
-                for ( let i = 0 ; i != callbacks.length ; ++i ) {
-                    const callback = callbacks.pop();
+            Commands.runCallbacks( callbacks );
 
-                    if ( ! callback ) {
-                        break;
-                    }
+            delete this.onAfterOnceHooks[ command.getName() ];
+        }
 
-                    callback();
-                }
+        if ( this.onAfterHooks ) {
+            args.result = result;
 
-                delete this.onAfterOnceHooks[ command.getName() ];
-            }
+            Commands.runCallbacks( Object.assign( [], this.onAfterHooks[ command.getName() ] ), args, options );
         }
 
         return result;
     }
+
+
 }

@@ -19,6 +19,19 @@ export class Component extends Core {
 		this.parent = parent;
 		this.options = options;
 
+		let { model } = options;
+
+		if ( ! model ) {
+			const ModelClass = this.constructor.getModelClass(),
+				options = { owner: this };
+
+			model = ModelClass ? new ModelClass( options ) : new core.Model( options );
+		}
+		/**
+		 * @type {core.Model}
+		 */
+		this.model = model;
+
 		this.initialize( this.options );
 	}
 
@@ -39,32 +52,24 @@ export class Component extends Core {
 	}
 
 	initialize( options ) {
-		let { model, view } = options;
-
-		if ( ! model ) {
-			const ModelClass = this.constructor.getModelClass();
-
-			model = ModelClass ? new ModelClass( options ) : new core.Model( options );
-		}
+		let { view } = options;
 
 		if ( ! view ) {
 			const template = this.template() || this.options.template || '<div>_EMPTY_TEMPLATE_</div>';
 			view = new core.View( this.parent, { template } );
 		}
 
-		// TODO: move to class instead in initialize.
-		/**
-		 * @type {core.Model}
-		 */
-		this.model = model;
 		/**
 		 * @type {core.View}
 		 */
 		this.view = view;
 
+		/**
+		 * @type {core.controllers.Controller|modules.Component}
+		 */
 		this.controller = this.getController();
 
-		// Alias.
+		// Link context.
 		this.context = view.element.context;
 
 		// Support JSX.
@@ -120,6 +125,10 @@ export class Component extends Core {
 			parentElement = element.parent.element;
 
 		parentElement.removeChild( element.element );
+
+		if ( this.model ) {
+			this.model.destroy();
+		}
 	}
 
 	/**
@@ -130,7 +139,7 @@ export class Component extends Core {
 
 		if ( ControllerClass ) {
 			return $core.controllers.get( ControllerClass.getName() ) ||
-				$core.controllers.register( new ControllerClass, this.model );
+				$core.controllers.register( new ControllerClass( this ), this.model );
 		}
 
 		return this.options.controller || this;

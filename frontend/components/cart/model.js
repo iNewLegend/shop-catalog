@@ -4,6 +4,8 @@
  * @description: Manges cart items/data.
  */
 
+import CartItemComponent from "COMPONENTS/cart/item/component";
+
 /**
  * @memberOf components.cart
  */
@@ -33,6 +35,16 @@ export default class Model extends ( $core.Model ) {
 	getById( id ) {
 		this.logger.startWith( { id } );
 
-		return this.items.find( ( item ) => item.id === id );
+		return this.items.find( ( item ) => item.model.id === id );
+	}
+
+	getTotal() {
+		let totalPriceOfAllItems = 0;
+
+		this.items.forEach( ( item ) => {
+			totalPriceOfAllItems += item.model.getTotal()
+		} )
+
+		return totalPriceOfAllItems.toFixed( 2 ).toString();
 	}
 }

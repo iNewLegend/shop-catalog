@@ -12,10 +12,11 @@ import * as internal from "./internal/";
  * @memberOf components.cart
  */
 export class Controller extends ControllerBase {
-	constructor() {
-		super();
+	constructor( parent ) {
+		super( parent );
 
-		$core.commands.onAfterAffect( 'Components/Cart/Item/Commands/Remove', 'Components/Cart/Commands/Remove' );
+		// TODO: Add to base.
+		this.setupHooks();
 	}
 
 	static getNamespace() {
@@ -36,6 +37,18 @@ export class Controller extends ControllerBase {
 
 	getInternal() {
 		return internal;
+	}
+
+	setupHooks() {
+		$core.commands.onAfterAffect(
+			'Components/Cart/Item/Commands/Remove',
+			'Components/Cart/Commands/Remove'
+		);
+
+		$core.commands.onAfter( 'Components/Cart/Commands/Remove', ( args ) => {
+			// TODO: The element should automatically know that he has been deleted and remove its own view.
+			args.model._options.owner.remove();
+		} )
 	}
 }
 

@@ -24,16 +24,14 @@ export class Remove extends $core.commands.Command {
 	 * @param {{}} options
 	 */
 	async apply( args, options ) {
-		const { component } = args,
-			{ id } = component,
+		const { virtualId } = args,
+			id = args.model.id,
 			model = this.getController().getModel();
 
 		return $core.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
 			// Remove cart.
-			model.items = model.items.filter( ( filteredItem ) => filteredItem !== component );
 
-			// Remove item from dom.
-			component.remove();
+			model.items = model.items.filter( ( filteredItem ) => filteredItem.model.id !== id );
 		} );
 	}
 }

@@ -5,4 +5,4 @@
  */
 
 export { default as Catalog } from './catalog/comonent.js';
-export { default as Cart } from './cart/component.js';
+export { default as Cart } from './cart/component.jsx';

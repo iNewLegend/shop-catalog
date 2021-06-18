@@ -11,8 +11,13 @@ import Core from "CORE/base/core";
 export class Controller extends Core {
 	static model;
 
-	constructor() {
+	/**
+	 * @param {core.Component} component
+	 */
+	constructor( component ) {
 		super();
+
+		this.component = component;
 
 		this.initialize();
 	}
@@ -48,6 +53,10 @@ export class Controller extends Core {
 
 	getModel() {
 		return this.constructor.model;
+	}
+
+	getComponent() {
+		return this.component;
 	}
 }
 

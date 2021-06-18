@@ -4,6 +4,7 @@
  * @description: Manages one item unit.
  */
 import Controller from "COMPONENTS/cart/item/controller";
+import Model from './model';
 
 /**
  * @memberOf components.cart.item
@@ -21,6 +22,10 @@ export class Component extends $core.Component {
 		return Controller;
 	}
 
+	static getModelClass() {
+		return Model;
+	}
+
 	/**
 	 * @param {Object} options
 	 * @param {number} options.id
@@ -31,12 +36,10 @@ export class Component extends $core.Component {
 	initialize( options ) {
 		const { id, name, price, amount } = options;
 
-		// TODO: Those should be at CLASS Level and not create in 'initialize' and they will work state like using model that hold them and who trigger the change of the state will be the controller.
-		// How model will know about the change of them? easy 'the will start with '$' name and using proxy you will find out.
-		this.id = id;
-		this.name = name;
-		this.price = price;
-		this.amount = amount;
+		this.model.id = id;
+		this.model.name = name;
+		this.model.price = price;
+		this.model.amount = amount;
 
 		this.logger = options.logger;
 
@@ -53,7 +56,7 @@ export class Component extends $core.Component {
 	}
 
 	template() {
-		const { id, name, amount, price } = this,
+		const { id, name, amount, price } = this.model,
 			sum = (amount * price).toFixed( 2 );
 
 		return (`
@@ -61,7 +64,7 @@ export class Component extends $core.Component {
 	                <div class="thumbnail"><img alt="item" src="img/product-${id}.jpg" /></div>
 	                <div class="info">
 	                    <h2>${name}</h2>
-	                    <button class="color-primary close" onclick="$core.commands.run( 'Components/Cart/Item/Commands/Remove', { component: this } )">&times;</button>
+	                    <button class="color-primary close" onclick="$core.commands.run( 'Components/Cart/Item/Commands/Remove', { virtualId: this.virtualId, model: this.model } )">&times;</button>
 	                    <div class="amount-price">
 	                        <span class="amount">${amount}</span> x <strong>${price}</strong>
 	                        <p class="sum">$<span class="value">${sum}</span></p>
@@ -82,13 +85,13 @@ export class Component extends $core.Component {
 	updateAmount( amountOfItems ) {
 		// This method should not exist, model should handle it.
 		// The model will act like a state.
-		this.amount += amountOfItems;
+		this.model.amount += amountOfItems;
 
 		const { amount, sum } = this.elements;
 
 		// TODO: Change via model.
-		amount.innerHTML = this.amount;
-		sum.innerHTML = (parseFloat( this.getTotal().toString() ).toFixed( 2 ));
+		amount.innerHTML = this.model.amount;
+		sum.innerHTML = (parseFloat( this.model.getTotal().toString() ).toFixed( 2 ));
 	}
 
 	/**
@@ -99,10 +102,6 @@ export class Component extends $core.Component {
 		// this.logger.startWith( { domItem } );
 
 		this.view.element.element.style = 'animation: highlight 3s';
-	}
-
-	getTotal() {
-		return this.amount * this.price;
 	}
 }
 
