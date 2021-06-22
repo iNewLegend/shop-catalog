@@ -6,9 +6,6 @@
  */
 import * as core from 'CORE';
 import Core from "CORE/base/core";
-import Controllers from "CORE/controllers";
-import ForceMethod from "CORE/errors/force-method";
-
 /**
  * @memberOf core
  */
@@ -80,21 +77,14 @@ export class Component extends Core {
 		this.attachListeners();
 	}
 
-	/**
-	 * TODO: Currently its binds the element events only to component, which is wrong.
-	 */
 	attachListeners() {
-		this.view.element.attachListeners = () => {
-			return core.Element.prototype.attachListeners.call( this.view.element, /* this.getController() */ this );
+		if ( this.context.isConnected ) {
+			core.Element.prototype.attachListenersFromContext.call( this.view.element, this.context, this );
 		}
 
-		// Hook default Listeners from element.
-		// Attach listeners of view.element to the controller/view ?.
 		this.view.element.afterRender = () => {
 			core.Element.prototype.afterRender.call( this.view.element, false );
-			core.Element.prototype.attachListenersFromHTMLElement.call( this.view.element, this.view.element.element, /* this.getController() */ this );
-
-			this.view.element.attachListeners();
+			core.Element.prototype.attachListenersFromContext.call( this.view.element, this.context, this );
 		};
 	}
 

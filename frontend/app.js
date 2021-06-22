@@ -23,6 +23,8 @@ class App {
 
 		this.logger.startEmpty();
 
+		this.sidebar = new components.Sidebar( window.document.querySelector( '#sidebar' ).parentElement );
+
 		// TODO: Remove `this.apis` use `$core.data` commands.
 		const http = $core.data.constructor.client;
 
@@ -70,21 +72,34 @@ class App {
 	initialize() {
 		this.logger.startEmpty();
 
-		const { header, overlay, sidebar } = this.elements;
+		const { header, overlay } = this.elements;
 
 		this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
 
-		overlay.click( () => this.sidebarToggle( false ) );
-
-		header.toggle.click( () => this.sidebarToggle( true ) );
+		overlay.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } ) );
+		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
 		header.logo.click( () => {
 			this.container.set( this.pages.catalog );
 			this.container.render();
 		} );
 
-		sidebar.closeButton.click( () => this.sidebarToggle( false ) );
+		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
+			if ( args.state ) {
+				// overlay should be part of sidebar.
+				overlay.fadeIn();
 
+				// Side effect.
+				this.cart.open();
+			} else {
+				setTimeout( () => overlay.fadeOut(), 400 );
+
+				// Side effect.
+				this.cart.close();
+			}
+		} );
+
+		// Move to Data hook.
 		$core.data.onAfter( 'Components/Cart/Data/Index', async( args ) => {
 			if ( ! this.cartRecvOnce ) {
 				this.cartRecvOnce = true;
@@ -157,7 +172,7 @@ class App {
 					$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
 
 					if ( $app.cart.constructor.openCartOnUpdate ) {
-						$app.sidebarToggle( true );
+						$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } );
 					}
 				} );
 			}
@@ -207,7 +222,7 @@ class App {
 	onCartCheckout() {
 		this.logger.startEmpty();
 
-		this.sidebarToggle( false );
+		$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
 
 		this.container.set( this.pages.checkout );
 
@@ -217,30 +232,17 @@ class App {
 
 		this.container.render();
 	}
-
-	/**
-	 * Function sidebarToggle() : Change the sidebar state
-	 *
-	 * @param {boolean} state
-	 */
-	sidebarToggle( state ) {
-		this.logger.startWith( { state } );
-
-		const { sidebar, overlay } = this.elements;
-
-		if ( state ) {
-			overlay.fadeIn();
-			sidebar.self.addClass( 'show' );
-
-			this.cart.open();
-		} else {
-			overlay.fadeOut();
-			sidebar.self.removeClass( 'show' );
-
-			this.cart.close();
-		}
-	}
 }
 
-window.$app = new App();
-$app.initialize();
+document.addEventListener( 'readystatechange', () => {
+	if ( window.initOnce  ) {
+		return ;
+	}
+
+	window.$app = new App();
+
+	$app.initialize();
+
+	window.initOnce = true;
+} );
+

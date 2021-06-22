@@ -4,7 +4,6 @@
  * @description: nope.
  * TODO:
  */
-import objectHash from "object-hash";
 import Model from "CORE/model";
 
 /**

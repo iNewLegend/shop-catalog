@@ -13,7 +13,7 @@ import ArrayClass from "./model/array-class";
  * @memberOf core
  */
 export class Model extends Core {
-	static LOCAL_WORKER_INTERVAL_TIMEOUT = 300;
+	static LOCAL_WORKER_INTERVAL_TIMEOUT = 100;
 
 	get logger() {
 		return this._logger;
@@ -51,7 +51,8 @@ export class Model extends Core {
 	}
 
 	initialize() {
-
+		this.initializeModelChangeDetectionWorker()
+		// setTimeout ( () => this.initializeModelChangeDetectionLocal() );
 	}
 
 	// TODO: ModelChangeDetection should work like a garbage collector, to detect the changes that were missed/too deep/complex.
@@ -65,12 +66,12 @@ export class Model extends Core {
 			const snapshot = objectHash( this.getModelData() );
 
 			if ( this._currentSnapshot && snapshot !== this._currentSnapshot ) {
-				this._events.onChange.forEach( ( event ) => event() );
+				setTimeout( () => this._events.onChange.forEach( ( event ) => event() ) );
 			}
 
 			this._currentSnapshot = snapshot;
 		},
-		500
+		200
 		);
 
 		this._currentSnapshot = objectHash( this.getModelData() );
@@ -126,7 +127,6 @@ export class Model extends Core {
 						delete: currentModelData,
 					} );
 
-					// Tell the worker to delete model.
 					return clearInterval( this.localWorkerInternval );
 				}
 			}
@@ -146,27 +146,19 @@ export class Model extends Core {
 
 			const prop = this[ property ];
 
-			// TODO: The method is leaking a big part of the logic.
-			if ( prop._isModel ) {
-				const model = prop;
-
-				if ( model instanceof ArrayClass ) {
-				}
-			} else {
-				if ( prop instanceof ArrayClass ) {
-					// If its array of components.
-					if ( prop.some( ( instance ) => instance instanceof $core.Component ) ) {
-						result[ property ] = prop.map( ( prop ) => prop.model.getModelData() );
-						return;
-					}
-
-					if ( ! prop.length ) {
-						return;
-					}
+			if ( prop instanceof ArrayClass ) {
+				// If its array of components.
+				if ( prop.some( ( instance ) => instance instanceof $core.Component ) ) {
+					result[ property ] = prop.map( ( prop ) => prop.model.getModelData() );
+					return;
 				}
 
-				result[ property ] = prop;
+				if ( ! prop.length ) {
+					return;
+				}
 			}
+
+			result[ property ] = prop;
 		} );
 
 		return result;
@@ -187,26 +179,21 @@ export class Model extends Core {
 	 * @returns String
 	 */
 	string() {
-		return new class extends String {
-			constructor() {
-				super();
-
-				this._isItemModel = true;
-			}
-		}
+		return String();
 	}
 
 	/**
 	 * @returns Number
 	 */
 	number() {
-		return new class extends Number {
-			constructor() {
-				super();
+		return Number()
+	}
 
-				this._isItemModel = true;
-			}
-		}
+	/**
+	 * @returns boolean
+	 */
+	boolean() {
+		return Boolean();
 	}
 
 	/**

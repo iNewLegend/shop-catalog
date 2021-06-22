@@ -6,3 +6,4 @@
 
 export { default as Catalog } from './catalog/comonent.js';
 export { default as Cart } from './cart/component.jsx';
+export { default as Sidebar } from './sidebar/component.js';

@@ -33,20 +33,23 @@ export class Terminal {
 
 			this.localStorage = window.localStorage;
 
-			this.elements = {
-				body: $( 'body' ),
+			window.document.onreadystatechange = () => {
+				this.elements = {
+					body: $( 'body' ),
 
-				terminal: {
-					self: $( '#terminal' ),
+					terminal: {
+						self: $( '#terminal' ),
 
-					buttons: {
-						resize: $( '#terminal button.resize' ),
-						close: $( '#terminal button.close' ),
-					},
-				}
-			};
+						buttons: {
+							resize: $( '#terminal button.resize' ),
+							close: $( '#terminal button.close' ),
+						},
+					}
+				};
 
-			this._initialize();
+				this._initialize();
+
+			}
 
 			Terminal.instance = this;
 		}
@@ -265,7 +268,7 @@ Terminal.onOutput = function( output ) {
 	const _this = Terminal.instance;
 
 	// TODO: Terminal cannot log anything. debug it to find out the issue.
-	if ( ! _this ) {
+	if ( ! _this || ! _this.elements ) {
 		return console.log.apply( this, arguments );
 	}
 

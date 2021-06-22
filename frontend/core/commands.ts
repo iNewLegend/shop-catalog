@@ -82,7 +82,9 @@ export class Commands extends Core {
 
     commands: { [args: string]: ( CommandsClass ) } = {};
 
-	onAfterEffectHooks: OnAffectHookInterface = {};
+    onBeforeHooks: OnAfterOnceHookInterface = {};
+
+    onAfterEffectHooks: OnAffectHookInterface = {};
     onAfterOnceHooks: OnAfterOnceHookInterface = {};
     onAfterHooks: OnAfterOnceHookInterface = {};
 
@@ -115,6 +117,14 @@ export class Commands extends Core {
 
 		return result;
 	}
+
+    public onBefore( hookCommand:string, callback: onAfterCallback ) {
+        if ( ! this.onBeforeHooks[ hookCommand ] ) {
+            this.onBeforeHooks[ hookCommand ] = [];
+        }
+
+        this.onBeforeHooks[ hookCommand ].push( callback );
+    }
 
     public onAfterOnce( command: string, callback: () => void ) {
         if ( ! this.onAfterOnceHooks[ command ] ) {
@@ -160,6 +170,12 @@ export class Commands extends Core {
         this.logger.startWith( { command: command.getName(), options, 'CommandArgs': '->' } );
         this.logger.debug( 'CommandArgs:' );
         this.logger.object( args );
+        console.trace();
+
+        if ( this.onBeforeHooks[ command.getName() ] ) {
+            const callbacks = this.onBeforeHooks[ command.getName() ];
+            callbacks.forEach( ( callback ) => callback( args ) );
+        }
 
         result = command.run();
 

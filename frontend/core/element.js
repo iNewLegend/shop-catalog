@@ -23,10 +23,6 @@ export class Element extends Container {
 
 		super.initialize();
 
-		// if ( this.context instanceof HTMLElement ) {
-		//     this.attachListenersFromHTMLElement( this.context );
-		// }
-
 		this.children = [];
 
 		this.afterInit();
@@ -42,10 +38,6 @@ export class Element extends Container {
 		super.afterRender();
 
 		this.parseChildren();
-
-		if ( attachListeners ) {
-			this.attachListeners();
-		}
 	}
 
 	attachListener( method, callback ) {
@@ -56,21 +48,6 @@ export class Element extends Container {
 			}
 			break;
 		}
-	}
-
-	/**
-	 * @param {Element} targetElement
-	 */
-	attachListeners( targetElement = this ) {
-		// Handle all parent properties if startsWith 'on' then attach it listener.
-		// Allow you extend components with custom callbacks.
-		Object.getOwnPropertyNames( targetElement ).forEach( ( method ) => {
-			if ( method.startsWith( 'on' ) ) {
-				this.attachListener( method, targetElement[ 'onClick' ] );
-			}
-		} );
-
-		this.attachListenersFromContext( targetElement.context );
 	}
 
 	attachListenersFromHTMLElement( element, controller = this ) {
@@ -100,7 +77,7 @@ export class Element extends Container {
 	/**
 	 * @param {Context} context
 	 */
-	attachListenersFromContext( context ) {
+	attachListenersFromContext( context, controller ) {
 		// Attach All `context` element events, to `target` component.
         let nodes = [];
 
@@ -115,37 +92,34 @@ export class Element extends Container {
             nodes = context.childNodes;
 		}
 
-		nodes.forEach( ( node ) => {
-			for ( let i in node ) {
-				if ( node[ 0 ] instanceof HTMLElement ) {
-					this.attachListenersFromHTMLElement( node[ 0 ] );
-				}
+        const handleNode = ( node ) => {
+	        for ( let i in node ) {
+		        if ( node[ i ] instanceof HTMLElement ) {
+			        this.attachListenersFromHTMLElement( node[ i ], controller );
+		        }
 
-				if ( i.startsWith( 'on' ) && node[ i ] ) {
-					this.evalHandlers( node[ i ] );
-				}
-			}
+		        if ( i.startsWith( 'on' ) && node[ i ] ) {
+			        this.evalHandlers( node[ i ], controller );
+		        }
+	        }
+        }
+
+		nodes.forEach( ( node ) => {
+			handleNode( node );
 		} );
 	}
 
 	evalHandlers( property, controller ) {
+		if ( ! controller ) {
+			return;
+		}
+
 		if ( property && property.toString().includes( 'this' ) ) {
 			let funcContent = property.toString();
 
 			funcContent = funcContent.replace( new RegExp( 'this', 'g' ), 'from' );
 			funcContent = funcContent.substring( funcContent.indexOf( "{" ) + 1 ); // Get function body.
 			funcContent = funcContent.replace(/}$/,'' ); // Remove the '}' of body.
-			//funcContent = funcContent.replace( '()', '( ... arguments)' );
-
-			/**
-			 * "function onclick(event) {\ncore.Commands.run( 'Components/Cart/Item/Commands/Remove', { component: this } )\n}"
-			 * "\ncore.Commands.run( 'Components/Cart/Item/Commands/Remove', "
-			 */
-
-			/**
-			 *  "function onclick(event) {\nthis.events.onCheckout()\n}"
-			 * "\nfrom.events.onCheckout( ... arguments)\n"
-			 */
 
 			// In other words recreate the callback.
 			property = ( event, from = controller ) => {

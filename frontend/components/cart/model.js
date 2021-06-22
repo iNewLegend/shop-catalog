@@ -4,8 +4,6 @@
  * @description: Manges cart items/data.
  */
 
-import CartItemComponent from "COMPONENTS/cart/item/component";
-
 /**
  * @memberOf components.cart
  */

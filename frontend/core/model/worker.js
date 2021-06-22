@@ -10,7 +10,7 @@ import ObjectHash from "object-hash";
  * @memberOf core.model
  */
 class Worker {
-	static WORK_UPDATE_LOOP_INTERVAL = 500;
+	static WORK_UPDATE_LOOP_INTERVAL = 100;
 
 	isLocked = false;
 
