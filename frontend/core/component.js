@@ -6,10 +6,13 @@
  */
 import * as core from 'CORE';
 import Core from "CORE/base/core";
+
 /**
  * @memberOf core
  */
 export class Component extends Core {
+	static DEATH_MONITOR_INTERVAL = 1000;
+
 	constructor( parent, options = {} ) {
 		super();
 
@@ -24,6 +27,7 @@ export class Component extends Core {
 
 			model = ModelClass ? new ModelClass( options ) : new core.Model( options );
 		}
+
 		/**
 		 * @type {core.Model}
 		 */
@@ -93,6 +97,16 @@ export class Component extends Core {
 	template() {}
 
 	render() {
+		if ( ! this.deathMonitor ) {
+			this.deathMonitor = setInterval( () => {
+				if ( ! this.view.element.element.isConnected && this.model._alive ) {
+					this.model.destroy();
+
+					clearInterval( this.deathMonitor );
+				}
+			}, Component.DEATH_MONITOR_INTERVAL );
+		}
+
 		this.beforeRender();
 
 		this.view.render();
@@ -111,10 +125,9 @@ export class Component extends Core {
 	}
 
 	remove() {
-		const element = this.view.element,
-			parentElement = element.parent.element;
-
-		parentElement.removeChild( element.element );
+		if ( this.view ) {
+			this.view.destroy();
+		}
 
 		if ( this.model ) {
 			this.model.destroy();

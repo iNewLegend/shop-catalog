@@ -36,6 +36,14 @@ export class View {
 	render() {
 		this.element.render();
 	}
+
+	destroy() {
+		const element = this.element.element;
+
+		if ( element.isConnected ) {
+			element.remove();
+		}
+	}
 }
 
 export default View;

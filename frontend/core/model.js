@@ -95,6 +95,22 @@ export class Model extends Core {
 		const updateDataLoop = () => {
 			// Repeat.
 			if ( Model.worker ) {
+				if ( ! this._alive ) {
+					const model = Model.models[ this.virtualId ];
+
+					delete Model.models[ this.virtualId ];
+
+					if ( model ) {
+						// Tell the worker to delete model.
+						Model.worker.postMessage( {
+							delete: this.virtualId,
+						} );
+
+					}
+
+					return clearInterval( this.localWorkerInternval );
+				}
+
 				const currentModelData = this.getModelData();
 
 				if ( ! Object.keys( currentModelData ).length ) {
@@ -124,7 +140,7 @@ export class Model extends Core {
 
 					// Tell the worker to delete model.
 					Model.worker.postMessage( {
-						delete: currentModelData,
+						delete: currentModelData.virtualId,
 					} );
 
 					return clearInterval( this.localWorkerInternval );
@@ -165,6 +181,14 @@ export class Model extends Core {
 	}
 
 	destroy() {
+		Object.getOwnPropertyNames( this ).forEach( ( key ) => {
+			if ( this[ key ]?._isCollectionModel ) {
+				this[ key ].forEach( ( item ) => {
+					item.model.destroy();
+				} );
+			}
+		} )
+
 		this._alive = false;
 	}
 

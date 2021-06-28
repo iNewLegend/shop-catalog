@@ -3,8 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: component for pagination.
  */
-import * as services from 'SERVICES';
-
 import './pagination.css';
 
 /**
@@ -23,7 +21,7 @@ export class Pagination extends $core.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		this.logger = new $core.modules.Logger( Pagination.getName(), true );
+		this.logger = new $core.modules.Logger( Pagination.getName(), true, { sameColor: true } );
 
 		this.logger.startWith( { options } );
 
@@ -136,7 +134,7 @@ export class Pagination extends $core.Component {
 			case 'page:change': {
 				this.events.onPageChange = callback;
 			}
-				break;
+			break;
 
 			default: {
 				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );

@@ -44,7 +44,6 @@ class Worker {
 
 		if ( this.snapshots[ modelId ] !== currentSnapshot ) {
 			// Update changed.
-			console.log( { modelOnChange: modelId }  );
 			self.postMessage( { modelOnChange: modelId } );
 		}
 
@@ -70,7 +69,7 @@ class Worker {
 			this.handleSnapshot( data.set );
 
 		} else if ( data.delete ) {
-			delete this.models[ data.delete.virtualId ];
+			delete this.models[ data.delete ];
 		}
 
 		this.unlock();

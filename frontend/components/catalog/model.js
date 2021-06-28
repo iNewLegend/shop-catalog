@@ -19,7 +19,7 @@ export default class Model extends ( $core.Model ) {
 	/**
 	 * Loaded items to be rendered.
 	 *
-	 * @type {ArrayClass.<components.catalog.product>}
+	 * @type {ArrayClass.<components.catalog.product.Component>}
 	 */
 	products = this.array();
 

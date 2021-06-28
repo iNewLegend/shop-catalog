@@ -6,7 +6,7 @@
 import * as components from "COMPONENTS/index";
 
 /**
- * @memberOf components.catalog.product.commands
+ * @memberOf components.catalog.product.Component.commands
  */
 export class Add extends $core.commands.Command {
 	static getNamespace() {

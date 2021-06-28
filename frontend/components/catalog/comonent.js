@@ -3,8 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages catalog
  */
-import * as services from 'SERVICES';
-
 import Pagination from './pagination/pagination';
 import Product from './product/component';
 import Spinner from './spinner/spinner';
@@ -17,19 +15,6 @@ import Model from './model';
 export class Comonent extends $core.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
-
-	constructor( parent, options ) {
-		super( parent, options );
-
-		this.events = {
-			onRecvOnce: () => {},
-			//onProductAdd: ( product ) => {},
-		};
-
-		this.components = {
-			pagination: new Pagination( this.view.element ),
-		};
-	}
 
 	static getNamespace() {
 		return 'Components/Catalog'
@@ -48,7 +33,7 @@ export class Comonent extends $core.Component {
 	}
 
 	initialize( options ) {
-		this.logger = new $core.modules.Logger( Comonent.getName(), true );
+		this.logger = new $core.modules.Logger( Comonent.getName(), true, { sameColor: true } );
 		this.logger.startWith( { options } );
 
 		this.apis = {
@@ -67,17 +52,6 @@ export class Comonent extends $core.Component {
         `);
 	}
 
-	render() {
-		super.render();
-
-		const { pagination, spinner } = this.components;
-
-		spinner.render();
-
-		pagination.render();
-		pagination.on( 'page:change', this.onPageChange.bind( this ) );
-	}
-
 	afterRender() {
 		super.afterRender();
 
@@ -85,52 +59,49 @@ export class Comonent extends $core.Component {
 			row: this.view.element.children[ 0 ],
 		};
 
-		this.components.spinner = new Spinner( this.elements.row );
+		this.components = {
+			pagination: new Pagination( this.view.element ),
+			spinner: new Spinner( this.elements.row ),
+		};
 
-		this.getProducts( 0, this.onRecvOnce.bind( this ) );
+		const { pagination, spinner } = this.components;
+
+		spinner.render();
+
+		pagination.render();
+
+		pagination.on( 'page:change', ( page ) => {
+			$core.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
+				.then( this.onCatalogReceived.bind( this ) );
+		});
+
+		$core.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
+			.then( this.onCatalogReceived.bind( this ) );
 	}
 
-	/**
-	 * Function onPageChange() : Called on page change.
-	 *
-	 * @param {number} page
-	 */
-	onPageChange( page ) {
-		this.logger.startWith( { page } );
+	onCatalogReceived( data ) {
+		this.model.products.clear();
 
-		const { spinner } = this.components;
+		const { spinner, pagination } = this.components;
 
-		// Remove all products.
-		this.model.products.forEach( ( product ) =>
-			product.remove()
-		);
+		// Used '1000' ms here to fake loading.
+		spinner.fadeOut( 1000, () => {
+			pagination.set( data.pagination );
 
-		// Show spinner.
-		spinner.show();
+			data.result.forEach( ( product ) =>
+				this.addProduct( product )
+			);
 
-		this.getProducts( page - 1, () => {
 			this.renderProducts();
 		} );
 	}
-
-	// /**
-	//  * Function onProductAdd() : Called on "Add to cart button".
-	//  *
-	//  * @param {Product} product
-	//  */
-	// onProductAdd( product ) {
-	// 	this.logger.startWith( { product } );
-	//
-	// 	// Call callback.
-	// 	//this.events.onProductAdd( product );
-	// }
 
 	/**
 	 * Function onProductAmountChange() : Called on "Product Amount Change".
 	 *
 	 * Function override amount ( Used as filter ).
 	 *
-	 * @param {components.catalog.Product} product
+	 * @param {components.catalog.product.Component.Component} product
 	 * @param {number} amount
 	 */
 	onProductAmountChange( product, amount ) {
@@ -146,26 +117,15 @@ export class Comonent extends $core.Component {
 	}
 
 	/**
-	 * Function onRecvOnce() : Called on success of initial getCatalog request.
-	 */
-	onRecvOnce() {
-		this.renderProducts();
-
-		this.events.onRecvOnce();
-	}
-
-	/**
 	 * Function addProduct() : Add's a product.
 	 *
 	 * Function Create product component and push it `this.products`.
 	 *
-	 * @param {components.catalog.Product} product
+	 * @param {components.catalog.product.Component} product
 	 *
-	 * @returns {components.catalog.Product}
+	 * @returns {components.catalog.product.Component}
 	 */
 	addProduct( product ) {
-		// Dont do the, $core.reduceComponent( new Product );
-
 		const productComponent =  new Product( this.elements.row, {
 			api: {
 				catalog: this.apis.catalog,
@@ -176,7 +136,6 @@ export class Comonent extends $core.Component {
             ... product,
         } );
 
-        //productComponent.on( 'product:add', this.onProductAdd.bind( this ) );
 		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 
 		this.model.products.push( productComponent );
@@ -184,35 +143,6 @@ export class Comonent extends $core.Component {
 		return productComponent;
 	}
 
-	/**
-	 * Function getProducts() : Get products from catalog endpoint.
-	 *
-	 * @param {number} page
-	 * @param {{function()}} onSuccess
-	 */
-	getProducts( page, onSuccess ) {
-		this.logger.startWith( { page, onSuccess } );
-
-		const { spinner } = this.components;
-
-		$core.data.get( 'Components/Catalog/Data/Index', { page: page } ).then( data => {
-			// Clear old products.
-			this.model.products.clear();
-
-			// Used '1000' ms here to fake loading.
-			spinner.fadeOut( 1000, () => {
-				if ( ! data.error ) {
-					this.components.pagination.set( data.pagination );
-
-					data.result.forEach( ( product ) =>
-						this.addProduct( product )
-					);
-
-					if ( onSuccess ) onSuccess();
-				}
-			} );
-		}, page );
-	}
 
 	/**
 	 * Function renderProducts() : Render products.
@@ -221,27 +151,6 @@ export class Comonent extends $core.Component {
 		this.model.products.forEach( ( product ) => {
 			product.render();
 		} );
-	}
-
-	/**
-	 * Function on() : Declare event callback.
-	 *
-	 * @param {'product:add','recv:once'|} event
-	 * @param {{function()}} callback
-	 */
-	on( event, callback ) {
-		this.logger.startWith( { event, callback } );
-
-		switch ( event ) {
-			// case 'product:add':
-				// return this.events.onProductAdd = callback;
-
-			case 'recv:once':
-				return this.events.onRecvOnce = callback;
-		}
-
-		// Handle situations when there is require to call parent 'on' because this method is already the callback.
-		return false;
 	}
 }
 

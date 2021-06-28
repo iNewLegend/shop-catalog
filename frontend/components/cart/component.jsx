@@ -27,7 +27,6 @@ export class Component extends $core.Component {
 
 		this.events = {
 			onCartRequest: () => {},
-			onCartReceived: () => {},
 			onAmountChange: ( amount ) => {},
 			onStateEmpty: ( state ) => {},
 			onCheckout: () => {}
@@ -121,7 +120,7 @@ export class Component extends $core.Component {
 
 		this.events.onCartRequest();
 
-		// Clear toggle amount
+		// Clear toggle amount.
 		this.events.onAmountChange( 0 );
 
 		// Clear visual cart.
@@ -181,7 +180,7 @@ export class Component extends $core.Component {
 	/**
 	 * Function on() : Declare event callback
 	 *
-	 * @param {'ui:checkout'|'cart:request'|'cart:received'|'amount:change'|'state:empty'} event
+	 * @param {'ui:checkout'|'cart:request'|'amount:change'|'state:empty'} event
 	 * @param {{function()}} callback
 	 */
 	on( event, callback ) {

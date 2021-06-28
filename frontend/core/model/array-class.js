@@ -5,6 +5,7 @@
  * TODO:
  */
 import Model from "CORE/model";
+import { Component } from "CORE/index";
 
 /**
  * @memberOf core.model
@@ -24,7 +25,7 @@ export default class ArrayClass extends Array {
 		Model._idCounter++;
 
 		this._virtualId = Model._idCounter;
-		this._isItemModel = true;
+		this._isCollectionModel = true;
 
 		if ( parent instanceof $core.Model ) {
 			this._parent = parent;
@@ -59,6 +60,14 @@ export default class ArrayClass extends Array {
 	}
 
 	clear() {
+		if ( this.length ) {
+			Object.values( this ).forEach( ( prop ) => {
+				if ( prop instanceof Component ) {
+					prop.remove();
+				}
+			} );
+		}
+
 		this.length = 0;
 	}
 }

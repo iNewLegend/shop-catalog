@@ -8,7 +8,7 @@ import Controller from './controller';
 import Model from './model';
 
 /**
- * @memberOf components.catalog.product
+ * @memberOf components.catalog.product.Component
  */
 export class Component extends $core.Component {
 	constructor( parent, options ) {
