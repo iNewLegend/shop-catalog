@@ -17,15 +17,33 @@ export default class Component extends ( $core.Component ) {
 	initialize( options ) {
 		super.initialize( options );
 
+		this.elements = {
+			overlay: $core.Factory.createElement( '#overlay' ),
+		}
+
+		this.elements.overlay.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } ) );
+
 		this.model.on( 'change', () => {
 			const state = this.model.state;
 				state ?
-				this.view.element.addClass( 'show' ) :
-				this.view.element.removeClass( 'show' );
+				this.onShow() :
+				this.onHide();
 		} );
 	}
 
 	template() {
 		return this.parent.querySelector( '#sidebar' );
+	}
+
+	onShow() {
+		this.view.element.addClass( 'show' )
+
+		this.elements.overlay.fadeIn();
+	}
+
+	onHide() {
+		this.view.element.removeClass( 'show' )
+
+		setTimeout( () => this.elements.overlay.fadeOut(), 400 );
 	}
 }

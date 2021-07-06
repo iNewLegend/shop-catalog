@@ -46,8 +46,6 @@ class App {
 				closeButton: core.Factory.createElement( '#sidebar #close' ),
 			},
 
-			overlay: core.Factory.createElement( '#overlay' ),
-
 			sections: {
 				main: core.Factory.createElement( "section.main" )
 			}
@@ -76,7 +74,6 @@ class App {
 
 		this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
 
-		overlay.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } ) );
 		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
 		header.logo.click( () => {
@@ -85,18 +82,10 @@ class App {
 		} );
 
 		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
-			if ( args.state ) {
-				// overlay should be part of sidebar.
-				overlay.fadeIn();
-
-				// Side effect.
-				this.cart.open();
-			} else {
-				setTimeout( () => overlay.fadeOut(), 400 );
-
-				// Side effect.
+			// Side effect.
+			args.state ?
+				this.cart.open() :
 				this.cart.close();
-			}
 		} );
 
 		// Move to Data hook.
