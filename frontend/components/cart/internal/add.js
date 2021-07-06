@@ -21,7 +21,8 @@ export class Add extends $core.internal.Command {
 		const id = parseInt( args.id ),
 			amount = parseInt( args.amount );
 
-		let product = $core.data.get( 'Components/Catalog/Data/Index', { id }, { local: true } );
+		let product = options.manual ? args :
+			$core.data.get( 'Components/Catalog/Data/Index', { id }, { local: true } );
 
 		// Assign `id` and `amount`.
 		product = Object.assign( {}, product, { id, amount } );

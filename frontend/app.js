@@ -133,7 +133,7 @@ class App {
 			this.apis.catalog.getByIds( ( missing ) => {
 				data.map( ( item ) => {
 					Object.assign( item, missing.find( x => x.id === item.id ) );
-					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
+					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
 				} );
 			}, missingProducts.map( x => x.id ) );
 		} );
