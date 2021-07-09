@@ -15,12 +15,6 @@ import Model from './model';
 export class Component extends $core.Component {
 	static openCartOnUpdate = true;
 
-	/**
-	 * @inheritDoc
-	 *
-	 * @param {API.Cart} options.cart
-	 * @param {API.Catalog} options.catalog
-	 */
 	constructor( parent, options ) {
 		super( parent, options );
 
@@ -28,7 +22,6 @@ export class Component extends $core.Component {
 			onCartRequest: () => {},
 			onAmountChange: ( amount ) => {},
 			onStateEmpty: ( state ) => {},
-			onCheckout: () => {}
 		};
 	}
 
@@ -67,7 +60,7 @@ export class Component extends $core.Component {
 					</li>
 				</ul>
 
-				<button class="checkout bg-info" onclick="this.events.onCheckout()">CHECKOUT</button>
+				<button class="checkout bg-info" onclick="$core.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button>
 			</div>
 		`);
 	}
@@ -208,16 +201,13 @@ export class Component extends $core.Component {
 	/**
 	 * Function on() : Declare event callback
 	 *
-	 * @param {'ui:checkout'|'cart:request'|'amount:change'|'state:empty'} event
+	 * @param {'cart:request'|'amount:change'|'state:empty'} event
 	 * @param {{function()}} callback
 	 */
 	on( event, callback ) {
 		this.logger.startWith( { event, callback } );
 
 		switch ( event ) {
-			case 'ui:checkout':
-				return this.events.onCheckout = callback;
-
 			case 'cart:request':
 				return this.events.onCartRequest = callback;
 

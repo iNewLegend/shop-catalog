@@ -30,7 +30,6 @@ export class Remove extends $core.commands.Command {
 
 		return $core.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
 			// Remove cart.
-
 			model.items = model.items.filter( ( filteredItem ) => filteredItem.model.id !== id );
 		} );
 	}

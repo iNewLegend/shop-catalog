@@ -104,7 +104,6 @@ class App {
 		$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
 			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-			this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
 			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
 			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
 			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
@@ -113,6 +112,8 @@ class App {
 				this.cart.render()
 			} );
 		} );
+
+		$core.commands.onAfter( 'Components/Cart/Commands/Checkout', this.onCartCheckout.bind( this ) );
 
 		// Move to Data hook.
 		$core.data.onAfter( 'Components/Cart/Data/Index', async( args ) => {
