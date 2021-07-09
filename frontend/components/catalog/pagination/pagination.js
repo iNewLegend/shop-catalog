@@ -93,9 +93,19 @@ export class Pagination extends $core.Component {
 
 		const { placeHolder, next, prev, self } = this.elements;
 
+		if ( this.anchors ) {
+			this.anchors.forEach( ( anchor ) => {
+				anchor.element.remove();
+			} );
+		}
+
+		this.anchors = [];
+
 		// Create pages.
 		for ( let i = 0; i < paginationData.pages; ++i ) {
 			const anchor = new $core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
+
+			this.anchors.push( anchor );
 
 			anchor.render();
 			anchor.click( () => this.onPageChange( i + 1 ) );

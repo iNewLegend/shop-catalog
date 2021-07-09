@@ -84,7 +84,7 @@ export class Comonent extends $core.Component {
 
 		const { spinner, pagination } = this.components;
 
-		spinner.fadeOut( () => {} );
+		spinner.fadeOut();
 
 		pagination.set( data.pagination );
 

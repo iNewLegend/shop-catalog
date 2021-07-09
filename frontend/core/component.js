@@ -78,10 +78,10 @@ export class Component extends Core {
 			this.parent.context.append( this.context );
 		}
 
-		this.attachListeners();
+		this.hookAttachListeners();
 	}
 
-	attachListeners() {
+	hookAttachListeners() {
 		if ( this.context.isConnected ) {
 			core.Element.prototype.attachListenersFromContext.call( this.view.element, this.context, this );
 		}
@@ -99,7 +99,7 @@ export class Component extends Core {
 	render() {
 		if ( ! this.deathMonitor ) {
 			this.deathMonitor = setInterval( () => {
-				if ( ! this.view.element.element.isConnected && this.model._alive ) {
+				if ( ! this.view.element.element.isConnected ) {
 					this.model.destroy();
 
 					clearInterval( this.deathMonitor );
