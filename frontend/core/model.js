@@ -85,7 +85,7 @@ export class Model extends Core {
 					const model = Model.models[ e.data.modelOnChange ];
 
 					if ( model ) {
-						model._events?.onChange.forEach( ( event ) => event() );
+						model._events?.onChange.forEach( ( event ) => event( e.data ) );
 					}
 				}
 			} );
@@ -108,7 +108,7 @@ export class Model extends Core {
 
 					}
 
-					return clearInterval( this.localWorkerInternval );
+					return clearInterval( this._localWorkerInternval );
 				}
 
 				const currentModelData = this.getModelData();
@@ -143,12 +143,12 @@ export class Model extends Core {
 						delete: currentModelData.virtualId,
 					} );
 
-					return clearInterval( this.localWorkerInternval );
+					return clearInterval( this._localWorkerInternval );
 				}
 			}
 		}
 
-		this.localWorkerInternval = setInterval( updateDataLoop.bind( this ), Model.LOCAL_WORKER_INTERVAL_TIMEOUT );
+		this._localWorkerInternval = setInterval( updateDataLoop.bind( this ), Model.LOCAL_WORKER_INTERVAL_TIMEOUT );
 	}
 
 	getModelData() {

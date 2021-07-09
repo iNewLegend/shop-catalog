@@ -25,7 +25,7 @@ export class Spinner extends $core.Component {
 		setTimeout( () => {
 			this.view.element.hide();
 
-			callback();
+			if( callback ) callback();
 		}, ms );
 	}
 }

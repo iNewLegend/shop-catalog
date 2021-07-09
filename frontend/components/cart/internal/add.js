@@ -17,12 +17,12 @@ export class Add extends $core.internal.Command {
 		return 'Components/Cart/Internal/Add';
 	}
 
-	apply( args, options ) {
+	async apply( args, options ) {
 		const id = parseInt( args.id ),
 			amount = parseInt( args.amount );
 
 		let product = options.manual ? args :
-			$core.data.get( 'Components/Catalog/Data/Index', { id }, { local: true } );
+			await $core.data.get( 'Components/Catalog/Data/Index', { id }, { local: true } );
 
 		// Assign `id` and `amount`.
 		product = Object.assign( {}, product, { id, amount } );
@@ -51,9 +51,7 @@ export class Add extends $core.internal.Command {
 		// Hook item insert.
 		this.logger.startWith( { item } );
 
-		// TODO: Add collection notify change, clear worker, add silent: options.silent.
-
-		this.getController().getModel().items.push( item );
+		this.getController().getModel().items.pushSilent( item );
 
 		item.render();
 	}
@@ -72,7 +70,7 @@ export class Add extends $core.internal.Command {
 		const existItem = this.getController().getModel().getById( itemId )
 
 		existItem ?
-			existItem.updateAmount( item.model.amount ) :
+			existItem.model.amount += item.model.amount :
 			this.doInsertItem( item );
 
 		if ( highlight ) {

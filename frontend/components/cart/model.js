@@ -17,6 +17,12 @@ export default class Model extends ( $core.Model ) {
 	}
 
 	/**
+	 * State of the cart, open/closed.
+	 *
+	 */
+	state = this.boolean();
+
+	/**
 	 * Loaded items to be rendered.
 	 *
 	 * @type {ArrayClass.<components.cart.item.Component>}

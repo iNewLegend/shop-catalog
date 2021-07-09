@@ -51,7 +51,7 @@ export class Data extends Commands {
         return super.run( command, args, options );
     }
 
-    protected runInstance( command: Command, args: CommandArgsInterface = {}, options: {} = {} ) {
+    protected async runInstance( command: Command, args: CommandArgsInterface = {}, options: {} = {} ) {
         if ( ! this.type ) {
             throw new Error( 'Cannot run directly' );
         }
@@ -65,14 +65,13 @@ export class Data extends Commands {
             command.args.data = args;
         }
 
-        args.result = super.runInstance( command, args, options )
+        args.result = await super.runInstance( command, args, options )
 
         // Clear type.
         this.type = '';
 
         return args.result;
     }
-
 }
 
 export default Data;

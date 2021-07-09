@@ -14,7 +14,6 @@ import Model from './model';
  */
 export class Component extends $core.Component {
 	static openCartOnUpdate = true;
-	static reloadCartEachOpen = false; // Highlight of new cart item, while this option set to true, will not work.
 
 	/**
 	 * @inheritDoc
@@ -52,30 +51,25 @@ export class Component extends $core.Component {
 	initialize( options ) {
 		this.logger = new $core.modules.Logger( Component.getName(), true );
 
-		this.apiCatalog = options.catalog;
-
 		options.logger = this.logger;
 
 		return super.initialize( options );
 	}
 
 	template() {
-		const isCartEmpty = !! this.model.items.length,
-			totalToggleClass = isCartEmpty ? 'open' : '';
-
-		return (
+		return (`
 			<div class="cart">
-				{ isCartEmpty || ( <h1 id="empty" style="text-align: center">Your cart is empty.</h1> ) }
+				<h1 id="empty"  style="text-align: center">Your cart is empty.</h1>
 				<ul class="items">
-					<li class={`total ${ totalToggleClass }`}>
+					<li class="total open">
 						<h2>TOTAL</h2>
-						<h3>$<span class="price">{ this.model.getTotal() }</span></h3>
+						<h3>$<span class="price">${ this.model.getTotal() }</span></h3>
 					</li>
 				</ul>
 
 				<button class="checkout bg-info" onclick="this.events.onCheckout()">CHECKOUT</button>
 			</div>
-		);
+		`);
 	}
 
 	afterRender() {
@@ -93,23 +87,78 @@ export class Component extends $core.Component {
 		};
 
 		this.model.on( 'change', this.onChange.bind( this ) );
-
-		this.request();
 	}
 
 	/**
-	 * Function onChange() : Called when cart changed
+	 * Function onChange() : Called when cart model changed.
 	 */
-	onChange() {
+	onChange( statesSnapshot ) {
+		this.logger.startEmpty();
+		this.logger.object( statesSnapshot );
+
+		const { prevModel } = statesSnapshot;
+
+		if ( ! prevModel ) {
+			this.onEmptyStateChange( this.model.items.length );
+
+			return;
+		}
+
+		if ( prevModel.state !== this.model.state ) {
+			this.onStateChange( this.model.state );
+		}
+
+		if ( statesSnapshot.currentModel.items?.__currentSnapshot !== prevModel.items?.__currentSnapshot ) {
+			this.onItemsChange();
+		}
+	}
+
+	onStateChange( state ) {
+		state ? this.open() : this.close();
+	}
+
+	/**
+	 * Function onItemsChange() : Update when cart items changed.
+	 */
+	onItemsChange() {
 		this.logger.startEmpty();
 
-		const price = this.context.querySelector( '.price' )
-
-		price.innerText = this.model.getTotal();
-
-		this.efficientEmptyState( Boolean( this.model.items.length ) );
-
 		this.events.onAmountChange( this.model.items.length );
+
+		let cartEfficientEmptyState = null;
+
+		// Guess when the cart become empty or become full.
+		if ( "undefined" === typeof this.itemEmptyState ) {
+			cartEfficientEmptyState = !! this.model.items.length;
+		} else if ( this.itemEmptyState !== !! this.model.items.length ) {
+			cartEfficientEmptyState = !! this.model.items.length;
+		}
+
+		if ( null !== cartEfficientEmptyState ) {
+			this.onEmptyStateChange( cartEfficientEmptyState )
+		}
+
+		this.itemEmptyState = cartEfficientEmptyState;
+
+		this.setTotal();
+	}
+
+	onEmptyStateChange( state ) {
+		const { empty, checkout, itemsTotal } = this.elements;
+
+		if ( state ) {
+			empty.hide();
+
+			checkout.addClass( 'open' );
+			itemsTotal.addClass( 'open' );
+		} else {
+			empty.show();
+
+			checkout.removeClass( 'open' );
+			itemsTotal.removeClass( 'open' );
+		}
+
+		this.events.onStateEmpty( state );
 	}
 
 	/**
@@ -126,7 +175,7 @@ export class Component extends $core.Component {
 		// Clear visual cart.
 		this.model.items.clear();
 
-		$core.data.get( 'Components/Cart/Data/Index' );
+		return $core.data.get( 'Components/Cart/Data/Index' );
 	}
 
 	/**
@@ -134,10 +183,6 @@ export class Component extends $core.Component {
 	 */
 	open() {
 		this.logger.startEmpty();
-
-		if ( Component.reloadCartEachOpen ) {
-			this.request();
-		}
 	}
 
 	/**
@@ -146,35 +191,18 @@ export class Component extends $core.Component {
 	close() {
 		this.logger.startEmpty();
 
+		this.clearHighlight();
+	}
+
+	setTotal() {
+		this.elements.totalPrice.element.innerText = this.model.getTotal();
+	}
+
+	clearHighlight() {
 		// Clear highlight.
 		this.model.items.forEach( ( item ) => {
 			item.view.element.element.style = 'animation: none';
 		} );
-	}
-
-	/**
-	 * Function efficientEmptyState() : Update when cart have items or not.
-	 *
-	 * @param {boolean} state
-	 */
-	efficientEmptyState( state ) {
-		this.logger.startWith( { state } );
-
-		const { empty, checkout, itemsTotal } = this.elements;
-
-		if ( state ) {
-			empty.hide();
-
-			checkout.addClass( 'open' );
-			itemsTotal.addClass( 'open' );
-		} else {
-			empty.show();
-
-			checkout.removeClass( 'open' );
-			itemsTotal.removeClass( 'open' );
-		}
-
-		this.events.onStateEmpty( state );
 	}
 
 	/**

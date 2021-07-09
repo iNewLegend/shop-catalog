@@ -16,6 +16,7 @@ class Worker {
 
 	snapshots = {};
 	models = {};
+	prevModels = {};
 
 	constructor() {
 		setInterval( this.updateLoop.bind( this, Worker.WORK_UPDATE_LOOP_INTERVAL ) );
@@ -42,14 +43,42 @@ class Worker {
 
 		const currentSnapshot = this.takeSnapshot( model );
 
-		if ( this.snapshots[ modelId ] !== currentSnapshot ) {
-			// Update changed.
-			self.postMessage( { modelOnChange: modelId } );
+		// Save current snapshot.
+		const isDifference = this.snapshots[ modelId ] !== currentSnapshot;
+
+		this.snapshots[ modelId ] = currentSnapshot;
+
+		if ( model instanceof Object ) {
+			Object.entries( model ).forEach( ( [ key, value ] ) => {
+				if ( Array.isArray( value ) ) {
+					value.__currentSnapshot = this.takeSnapshot( value );
+					model[ key ] = value;
+				}
+			} );
 		}
 
-		// Save current snapshot.
-		this.snapshots[ modelId ] = currentSnapshot;
+		if ( this.models[ modelId ] ) {
+			this.prevModels[ modelId ] = this.models[ modelId ];
+		}
+
 		this.models[ modelId ] = model;
+
+		if ( isDifference ) {
+			// Update changed.
+			let prevModel = null,
+				currentModel = null;
+
+			if ( this.prevModels[ modelId ] ) {
+				prevModel = this.prevModels[ modelId ];
+			}
+
+			if ( this.models[ modelId ] ) {
+				currentModel = this.models[ modelId ];
+			}
+
+			console.log({ modelOnChange: modelId, prevModel, currentModel })
+			self.postMessage( { modelOnChange: modelId, prevModel, currentModel } );
+		}
 	}
 
 	updateLoop() {
@@ -69,7 +98,11 @@ class Worker {
 			this.handleSnapshot( data.set );
 
 		} else if ( data.delete ) {
-			delete this.models[ data.delete ];
+			const id = data.delete;
+
+			delete this.models[ id ];
+			delete this.snapshots[ id ]
+			delete this.prevModels[ id ];
 		}
 
 		this.unlock();

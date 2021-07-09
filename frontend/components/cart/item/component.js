@@ -80,17 +80,24 @@ export class Component extends $core.Component {
 			amount: this.view.element.element.querySelector( '.amount' ),
 			sum: this.view.element.element.querySelector( '.sum .value' ),
 		}
+
+		this.model.on( 'change', this.onChange.bind( this ) );
 	}
 
-	updateAmount( amountOfItems ) {
-		// This method should not exist, model should handle it.
-		// The model will act like a state.
-		this.model.amount += amountOfItems;
+	onChange( states ) {
+		if ( ! states.prevModel ) {
+			return;
+		}
 
+		if ( states.currentModel.amount !== states.prevModel.amount ) {
+			this.updateAmount( states.currentModel.amount );
+		}
+	}
+
+	updateAmount( amountSet ) {
 		const { amount, sum } = this.elements;
 
-		// TODO: Change via model.
-		amount.innerHTML = this.model.amount;
+		amount.innerHTML = amountSet;
 		sum.innerHTML = (parseFloat( this.model.getTotal().toString() ).toFixed( 2 ));
 	}
 
@@ -99,8 +106,6 @@ export class Component extends $core.Component {
 	 *
 	 */
 	highlightItem() {
-		// this.logger.startWith( { domItem } );
-
 		this.view.element.element.style = 'animation: highlight 3s';
 	}
 }

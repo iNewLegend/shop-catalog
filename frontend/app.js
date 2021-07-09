@@ -72,7 +72,7 @@ class App {
 
 		const { header, overlay } = this.elements;
 
-		this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
+		this.container.on( 'render:after', this.onPageContainerBeforeRender.bind( this ) );
 
 		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
@@ -84,8 +84,34 @@ class App {
 		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
 			// Side effect.
 			args.state ?
-				this.cart.open() :
-				this.cart.close();
+				this.cart.model.state = true :
+				this.cart.model.state = false
+		} );
+
+		$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
+			const cartAddArgs = {
+				... args.component.model.getModelData(),
+				amount: args.component.elements.amount.value,
+			};
+
+			$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
+
+			if ( $app.cart.constructor.openCartOnUpdate ) {
+				$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } );
+			}
+		} );
+
+		$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
+
+			this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
+			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
+			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
+			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
+
+			this.cart.request().then( () => {
+				this.cart.render()
+			} );
 		} );
 
 		// Move to Data hook.
@@ -99,25 +125,38 @@ class App {
 				spinner.hide();
 			}
 
-			const data = await args.result;
+			const data = args.result;
+
+			if ( ! data ) {
+				throw new Error();
+			}
 
 			// Not all the products that are in cart exist locally since we used pages in that system,
 			// Wo we find out what missing and request it from the server.
-			const missingProducts = data.filter( ( item ) => {
+			const asyncFilter = async (arr, predicate) => Promise.all(arr.map(predicate))
+				.then((results) => arr.filter((_v, index) => results[index]));
+
+			const missingProducts = await asyncFilter( data, async ( item ) => {
 				// We get the price and name from local catalog.
 				// There is many solutions, this is fine for that example.
-				const localProduct = $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
+				const localProduct = await $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
 
 				// Use extra info from local product
 				if ( localProduct ) {
 					item.price = localProduct.price;
 					item.name = localProduct.name;
 
+					await $core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+
 					return false;
 				}
 
 				return true;
 			} );
+
+			if ( ! missingProducts.length ) {
+				return;
+			}
 
 			this.apis.catalog.getByIds( ( missing ) => {
 				data.map( ( item ) => {
@@ -141,29 +180,7 @@ class App {
 
 		if ( pageModule instanceof pages.Catalog ) {
 			if ( ! this.cart ) {
-				$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
-					this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-					this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-					this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-					this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-					this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
-
-					this.cart.render();
-				} );
-
-				$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
-					const cartAddArgs = {
-						... args.component.model.getModelData(),
-						amount: args.component.elements.amount.value,
-					};
-
-					$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
-
-					if ( $app.cart.constructor.openCartOnUpdate ) {
-						$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } );
-					}
-				} );
 			}
 		}
 	}

@@ -39,7 +39,7 @@ export default class ArrayClass extends Array {
 			afterLen = result.length;
 
 		setTimeout( () => {
-			const onChangeCallbacks = () => this._parent._events.onChange.forEach( ( event ) => event() );
+			const onChangeCallbacks = () => this._parent._events.onChange.forEach( ( event ) => event( {} ) );
 
 			if ( beforeLen !== afterLen ) {
 				onChangeCallbacks();
@@ -54,9 +54,14 @@ export default class ArrayClass extends Array {
 		const result = super.push( ... items );
 
 		// onchange:array:insert
-		this._parent._events.onChange.forEach( ( event ) => event() );
+		this._parent._events.onChange.forEach( ( event ) => event( {} ) );
 
 		return result;
+	}
+
+	pushSilent( item ) {
+		item._silent = true;
+		return super.push( item );
 	}
 
 	clear() {

@@ -84,16 +84,15 @@ export class Comonent extends $core.Component {
 
 		const { spinner, pagination } = this.components;
 
-		// Used '1000' ms here to fake loading.
-		spinner.fadeOut( 1000, () => {
-			pagination.set( data.pagination );
+		spinner.fadeOut( () => {} );
 
-			data.result.forEach( ( product ) =>
-				this.addProduct( product )
-			);
+		pagination.set( data.pagination );
 
-			this.renderProducts();
-		} );
+		data.result.forEach( ( product ) =>
+			this.addProduct( product )
+		);
+
+		this.renderProducts();
 	}
 
 	/**
@@ -142,7 +141,6 @@ export class Comonent extends $core.Component {
 
 		return productComponent;
 	}
-
 
 	/**
 	 * Function renderProducts() : Render products.

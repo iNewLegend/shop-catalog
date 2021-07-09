@@ -170,7 +170,6 @@ export class Commands extends Core {
         this.logger.startWith( { command: command.getName(), options, 'CommandArgs': '->' } );
         this.logger.debug( 'CommandArgs:' );
         this.logger.object( args );
-        console.trace();
 
         if ( this.onBeforeHooks[ command.getName() ] ) {
             const callbacks = this.onBeforeHooks[ command.getName() ];
@@ -179,12 +178,28 @@ export class Commands extends Core {
 
         result = command.run();
 
+        if ( result instanceof Promise ) {
+            result.then( ( _result ) =>  this.onAfterRun( command, args, options, _result ) )
+        } else {
+            this.onAfterRun( command, args, options, result );
+        }
+
+        return result;
+    }
+
+    protected onAfterRun( command, args, options, result ) {
         if ( this.onAfterEffectHooks[ command.getName() ] ) {
             this.onAfterEffectHooks[ command.getName() ].forEach( ( command ) => {
                 args.result = result;
 
                 result = this.run( command.toString(), args, options );
             } );
+        }
+
+        if ( this.onAfterHooks ) {
+            args.result = result;
+
+            Commands.runCallbacks( Object.assign( [], this.onAfterHooks[ command.getName() ] ), args, options );
         }
 
         if ( this.onAfterOnceHooks ) {
@@ -195,14 +210,6 @@ export class Commands extends Core {
             delete this.onAfterOnceHooks[ command.getName() ];
         }
 
-        if ( this.onAfterHooks ) {
-            args.result = result;
-
-            Commands.runCallbacks( Object.assign( [], this.onAfterHooks[ command.getName() ] ), args, options );
-        }
-
         return result;
     }
-
-
 }
