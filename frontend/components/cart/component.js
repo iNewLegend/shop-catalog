@@ -15,16 +15,6 @@ import Model from './model';
 export class Component extends $core.Component {
 	static openCartOnUpdate = true;
 
-	constructor( parent, options ) {
-		super( parent, options );
-
-		this.events = {
-			onCartRequest: () => {},
-			onAmountChange: ( amount ) => {},
-			onStateEmpty: ( state ) => {},
-		};
-	}
-
 	static getNamespace() {
 		return 'Components/Cart'
 	}
@@ -86,15 +76,13 @@ export class Component extends $core.Component {
 	 * Function onChange() : Called when cart model changed.
 	 */
 	onChange( statesSnapshot ) {
-		this.logger.startEmpty();
-		this.logger.object( statesSnapshot );
-
 		const { prevModel } = statesSnapshot;
 
 		if ( ! prevModel ) {
-			this.onEmptyStateChange( this.model.items.length );
-
-			return;
+			// In cases the cart empty from the beginning.
+			return $core.internal.run( 'Components/Cart/Internal/ToggleEmptyState', {
+				state: !! this.model.items.length
+			} );
 		}
 
 		if ( prevModel.state !== this.model.state ) {
@@ -116,11 +104,9 @@ export class Component extends $core.Component {
 	onItemsChange() {
 		this.logger.startEmpty();
 
-		this.events.onAmountChange( this.model.items.length );
-
 		let cartEfficientEmptyState = null;
 
-		// Guess when the cart become empty or become full.
+		// Guess when the cart become empty or become full or not changed = null.
 		if ( "undefined" === typeof this.itemEmptyState ) {
 			cartEfficientEmptyState = !! this.model.items.length;
 		} else if ( this.itemEmptyState !== !! this.model.items.length ) {
@@ -128,30 +114,14 @@ export class Component extends $core.Component {
 		}
 
 		if ( null !== cartEfficientEmptyState ) {
-			this.onEmptyStateChange( cartEfficientEmptyState )
+			$core.internal.run( 'Components/Cart/Internal/ToggleEmptyState', {
+				state: cartEfficientEmptyState
+			} );
 		}
 
 		this.itemEmptyState = cartEfficientEmptyState;
 
-		this.setTotal();
-	}
-
-	onEmptyStateChange( state ) {
-		const { empty, checkout, itemsTotal } = this.elements;
-
-		if ( state ) {
-			empty.hide();
-
-			checkout.addClass( 'open' );
-			itemsTotal.addClass( 'open' );
-		} else {
-			empty.show();
-
-			checkout.removeClass( 'open' );
-			itemsTotal.removeClass( 'open' );
-		}
-
-		this.events.onStateEmpty( state );
+		$core.internal.run( 'Components/Cart/Internal/UpdateTotal' );
 	}
 
 	/**
@@ -159,11 +129,6 @@ export class Component extends $core.Component {
 	 */
 	request() {
 		this.logger.startEmpty();
-
-		this.events.onCartRequest();
-
-		// Clear toggle amount.
-		this.events.onAmountChange( 0 );
 
 		// Clear visual cart.
 		this.model.items.clear();
@@ -187,38 +152,11 @@ export class Component extends $core.Component {
 		this.clearHighlight();
 	}
 
-	setTotal() {
-		this.elements.totalPrice.element.innerText = this.model.getTotal();
-	}
-
 	clearHighlight() {
 		// Clear highlight.
 		this.model.items.forEach( ( item ) => {
 			item.view.element.element.style = 'animation: none';
 		} );
-	}
-
-	/**
-	 * Function on() : Declare event callback
-	 *
-	 * @param {'cart:request'|'amount:change'|'state:empty'} event
-	 * @param {{function()}} callback
-	 */
-	on( event, callback ) {
-		this.logger.startWith( { event, callback } );
-
-		switch ( event ) {
-			case 'cart:request':
-				return this.events.onCartRequest = callback;
-
-			case 'amount:change':
-				return this.events.onAmountChange = callback;
-
-			case 'state:empty':
-				return this.events.onStateEmpty = callback;
-		}
-
-		return super.on( event, callback );
 	}
 }
 

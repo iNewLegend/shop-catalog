@@ -70,9 +70,7 @@ class App {
 	initialize() {
 		this.logger.startEmpty();
 
-		const { header, overlay } = this.elements;
-
-		this.container.on( 'render:after', this.onPageContainerBeforeRender.bind( this ) );
+		const { header } = this.elements;
 
 		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
@@ -82,7 +80,7 @@ class App {
 		} );
 
 		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
-			// Side effect.
+			// Toggle virtual cart state.
 			args.state ?
 				this.cart.model.state = true :
 				this.cart.model.state = false
@@ -104,110 +102,86 @@ class App {
 		$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
 			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
-
 			this.cart.request().then( () => {
 				this.cart.render()
 			} );
 		} );
 
+		$core.data.onAfter( 'Components/Cart/Data/Index', this.onCartReceived.bind( this ) );
+		$core.internal.onAfter( 'Components/Cart/Internal/ToggleEmptyState', this.onCartStateEmpty.bind( this ) );
+		$core.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', this.onCartSetTotal.bind( this ) );
 		$core.commands.onAfter( 'Components/Cart/Commands/Checkout', this.onCartCheckout.bind( this ) );
-
-		// Move to Data hook.
-		$core.data.onAfter( 'Components/Cart/Data/Index', async( args ) => {
-			if ( ! this.cartRecvOnce ) {
-				this.cartRecvOnce = true;
-
-				const { cart, spinner } = this.elements.header;
-
-				cart.show();
-				spinner.hide();
-			}
-
-			const data = args.result;
-
-			if ( ! data ) {
-				throw new Error();
-			}
-
-			// Not all the products that are in cart exist locally since we used pages in that system,
-			// Wo we find out what missing and request it from the server.
-			const asyncFilter = async (arr, predicate) => Promise.all(arr.map(predicate))
-				.then((results) => arr.filter((_v, index) => results[index]));
-
-			const missingProducts = await asyncFilter( data, async ( item ) => {
-				// We get the price and name from local catalog.
-				// There is many solutions, this is fine for that example.
-				const localProduct = await $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
-
-				// Use extra info from local product
-				if ( localProduct ) {
-					item.price = localProduct.price;
-					item.name = localProduct.name;
-
-					await $core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
-
-					return false;
-				}
-
-				return true;
-			} );
-
-			if ( ! missingProducts.length ) {
-				return;
-			}
-
-			this.apis.catalog.getByIds( ( missing ) => {
-				data.map( ( item ) => {
-					Object.assign( item, missing.find( x => x.id === item.id ) );
-					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
-				} );
-			}, missingProducts.map( x => x.id ) );
-		} );
 
 		this.container.set( this.pages.catalog );
 		this.container.render();
 	}
 
-	/**
-	 * Function onPageContainerBeforeRender()
-	 *
-	 * @param {modules.Page} pageModule
-	 */
-	onPageContainerBeforeRender( pageModule ) {
-		this.logger.startWith( { pageModule: pageModule?.constructor.name } );
+	async onCartReceived( args ) {
+		if ( ! this.cartRecvOnce ) {
+			this.cartRecvOnce = true;
 
-		if ( pageModule instanceof pages.Catalog ) {
-			if ( ! this.cart ) {
+			const { cart, spinner } = this.elements.header;
 
-			}
+			cart.show();
+			spinner.hide();
 		}
+
+		const data = args.result;
+
+		if ( ! data ) {
+			throw new Error();
+		}
+
+		// Not all the products that are in cart exist locally since we used pages in that system,
+		// Wo we find out what missing and request it from the server.
+		const asyncFilter = async ( arr, predicate ) => Promise.all( arr.map( predicate ) )
+			.then( ( results ) => arr.filter( ( _v, index ) => results[ index ] ) );
+
+		const missingProducts = await asyncFilter( data, async ( item ) => {
+			// We get the price and name from local catalog.
+			// There is many solutions, this is fine for that example.
+			const localProduct = await $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
+
+			// Use extra info from local product
+			if ( localProduct ) {
+				item.price = localProduct.price;
+				item.name = localProduct.name;
+
+				await $core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+
+				return false;
+			}
+
+			return true;
+		} );
+
+		if ( ! missingProducts.length ) {
+			return;
+		}
+
+		this.apis.catalog.getByIds( ( missing ) => {
+			data.map( ( item ) => {
+				Object.assign( item, missing.find( x => x.id === item.id ) );
+				$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+			} );
+		}, missingProducts.map( x => x.id ) );
 	}
 
 	/**
-	 * Function onCartRequest() : Called on request cart from the server
+	 * Function onCartSetTotal() : Called on cart set total.
 	 */
-	onCartRequest() {
+	onCartSetTotal() {
 		this.logger.startEmpty();
 
-		const { spinner } = this.elements.header;
+		let totalItemsInCartCount = 0;
 
-		spinner.show();
-	}
-
-	/**
-	 * Function onCartAmountChange() : Called on cart amount change.
-	 *
-	 * @param {Number} count
-	 */
-	onCartAmountChange( count ) {
-		this.logger.startWith( { count } );
+		this.cart.model.items.forEach( ( item ) => {
+			totalItemsInCartCount += item.model.amount
+		} );
 
 		const { amount } = this.elements.header;
 
-		amount.html( count );
+		amount.html( totalItemsInCartCount );
 	}
 
 	/**
@@ -215,7 +189,7 @@ class App {
 	 *
 	 * @param {Boolean} state
 	 */
-	onCartStateEmpty( state ) {
+	onCartStateEmpty( { state } ) {
 		this.logger.startWith( { state } );
 
 		const { amount } = this.elements.header;
@@ -224,7 +198,7 @@ class App {
 	}
 
 	/**
-	 * Function onCartCheckout() : Called on cart checkout
+	 * Function onCartCheckout() : Called on cart checkout.
 	 */
 	onCartCheckout() {
 		this.logger.startEmpty();
