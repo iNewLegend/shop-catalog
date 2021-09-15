@@ -12,7 +12,6 @@ import * as commands from './commands/';
  * @memberOf components.cart
  */
 export class Controller extends ControllerBase {
-
 	static getName() {
 		return 'Components/Catalog/Controller';
 	}

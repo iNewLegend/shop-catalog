@@ -8,7 +8,6 @@
  * @memberOf components.cart.commands
  */
 export class Checkout extends $core.commands.Command {
-
 	static getName() {
 		return 'Components/Cart/Commands/Checkout';
 	}

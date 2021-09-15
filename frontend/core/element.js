@@ -10,7 +10,6 @@ import Container from './container.js';
  * @memberOf core
  */
 export class Element extends Container {
-
 	static getName() {
 		return 'Core/Element';
 	}

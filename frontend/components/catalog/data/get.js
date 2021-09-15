@@ -8,7 +8,6 @@
  * @memberOf components.catalog.data
  */
 export class Get extends $core.data.Command {
-
 	static getName() {
 		return 'Components/Catalog/Data/Get';
 	}

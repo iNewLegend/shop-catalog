@@ -1,5 +1,4 @@
 export default class HTML {
-
 	static getName() {
 		return 'Library/HTML';
 	}

@@ -11,7 +11,6 @@ import { Component } from "CORE/index";
  * @memberOf core.model
  */
 export default class ArrayClass extends Array {
-
 	/**
 	 * @param {Model} parent
 	 */

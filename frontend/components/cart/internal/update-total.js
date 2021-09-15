@@ -8,7 +8,6 @@
  * @memberOf components.cart.internal
  */
 export class UpdateTotal extends $core.internal.Command {
-
 	static getName() {
 		return 'Components/Cart/Internal/UpdateTotal';
 	}

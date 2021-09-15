@@ -10,7 +10,6 @@ import Model from './model';
  * @memberOf components.cart.item
  */
 export class Component extends $core.Component {
-
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}

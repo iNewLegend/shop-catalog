@@ -8,7 +8,6 @@
  * @memberOf components.catalog.commands
  */
 export class Add extends $core.commands.Command {
-
 	static getName() {
 		return 'Components/Catalog/Commands/Add';
 	}

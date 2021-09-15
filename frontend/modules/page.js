@@ -10,7 +10,6 @@ import * as services from 'SERVICES';
  * @memberOf modules
  */
 export class Page extends Container {
-
 	static getName() {
 		return 'Modules/Page';
 	}

@@ -9,7 +9,6 @@ import { Page } from 'MODULES';
  * @memberOf pages
  */
 export class Checkout extends Page {
-
 	static getName() {
 		return 'Pages/Checkout';
 	}

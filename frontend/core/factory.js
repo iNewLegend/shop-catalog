@@ -10,7 +10,6 @@ import * as modules from './index.js'
  * @memberOf core
  */
 export class Factory {
-
 	static getName() {
 		return 'Core/Factory';
 	}

@@ -8,7 +8,6 @@
  * @memberOf components.cart.item.commands
  */
 export class Remove extends $core.commands.Command {
-
 	static getName() {
 		return 'Components/Cart/Item/Commands/Remove';
 	}
