@@ -11,11 +11,11 @@ import './pagination.css';
  * @property {number} total total amount of items.
  * @property {number} pages amount of pages.
  * @property {number} perPage amount of pages per page.
- * @memberOf components
+ * @memberOf components.catalog
  */
 
 /**
- * @memberOf components
+ * @memberOf components.catalog
  */
 export class Pagination extends $core.Component {
 	constructor( parent, options ) {

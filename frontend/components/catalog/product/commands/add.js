@@ -3,10 +3,10 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Add an item to catalog.
  */
-import * as components from "COMPONENTS/index";
+import * as components from "COMPONENTS";
 
 /**
- * @memberOf components.catalog.product.Component.commands
+ * @memberOf components.catalog.product.commands
  */
 export class Add extends $core.commands.Command {
 	static getName() {

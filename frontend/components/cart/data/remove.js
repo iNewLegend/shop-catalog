@@ -1,7 +1,7 @@
 /**
  * @file: components/cart/data/remove.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Request remove from backend.
+ * @description: Request remove cart item from backend.
  */
 
 /**

@@ -13,11 +13,6 @@ import Controller from "../controllers/controller";
 export class Command extends CommandBase {
     public static controller: Controller
 
-    getNamespace() {
-        // @ts-ignore
-        return super.getNamespace();
-    }
-
     getName() {
         // @ts-ignore
         return super.getName();

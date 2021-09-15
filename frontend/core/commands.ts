@@ -7,35 +7,26 @@ import Core from "./base/core";
 import Command from "./commands/command";
 import Controller from "./controllers/controller";
 import CommandAlreadyRegistered from "./commands/errors/command-already-registered";
-import { Logger } from "./modules/";
 import CommandNotFound from "./commands/errors/command-not-found";
-import * as services from "../services";
-
-/**
- * TODO: Try avoid - Remove.
- */
-interface CommandsClass {
-    new (args: {}, options: {}): Command;
-
-    getName: () => string,
-    getNamespace:() => string,
-}
+import { Logger } from "./modules/";
+import { Terminal } from "../services";
 
 export interface CommandArgsInterface {
-    [key: string]: any
+    [ key: string ]: any
 }
 
 interface OnAffectHookInterface {
-    [key: string]: Array<String>
-}
-interface OnAfterOnceHookInterface {
-    [key: string]: Array<Function>
+    [ key: string ]: Array<String>
 }
 
-type onAfterCallback = ( args: Object, options:Object ) => any
+interface OnAfterOnceHookInterface {
+    [ key: string ]: Array<Function>
+}
+
+type onAfterCallback = ( args: Object, options: Object ) => any
 
 interface onAfterHookInterface {
-    [key: string]: Array<onAfterCallback>
+    [ key: string ]: Array<onAfterCallback>
 }
 
 /**
@@ -49,12 +40,12 @@ export class Commands extends Core {
 
     private logger: Logger;
 
-    private static runCallbacks( callbacks:Array<Function>, args: CommandArgsInterface, options: Object ) {
+    private static runCallbacks( callbacks: Array<Function>, args: CommandArgsInterface = {}, options: Object = {} ) {
         if ( callbacks ) {
-            for ( let i = 0 ; i != callbacks.length ; ++i ) {
+            for ( let i = 0; i != callbacks.length; ++i ) {
                 const callback = callbacks.pop();
 
-                if ( ! callback ) {
+                if ( !callback ) {
                     break;
                 }
 
@@ -67,7 +58,7 @@ export class Commands extends Core {
         super();
 
         this.logger = new Logger( this.getName(), true );
-        this.logger.setOutputHandler( services.Terminal.onOutput );
+        this.logger.setOutputHandler( Terminal.onOutput );
 
         this.logger.startEmpty();
     }
@@ -76,46 +67,45 @@ export class Commands extends Core {
         return Command;
     }
 
-    commands: { [args: string]: ( CommandsClass ) } = {};
+    commands: { [ args: string ]: ( typeof Command ) } = {};
 
     onBeforeHooks: OnAfterOnceHookInterface = {};
 
     onAfterEffectHooks: OnAffectHookInterface = {};
     onAfterOnceHooks: OnAfterOnceHookInterface = {};
-    onAfterHooks: OnAfterOnceHookInterface = {};
+    onAfterHooks: onAfterHookInterface = {};
 
-
-    public run( command:string|Command, args:CommandArgsInterface = {}, options  = {} ) {
-		if ( typeof command === "string" ) {
-		    command = this.getCommandInstance( command, args, options );
+    public run( command: string | Command, args: CommandArgsInterface = {}, options = {} ) {
+        if ( typeof command === "string" ) {
+            command = this.getCommandInstance( command, args, options );
         }
 
-		return this.runInstance( command, args, options );
-	}
+        return this.runInstance( command, args, options );
+    }
 
-	public register( commands: Array<Command>, controller: Controller ) {
-        const result: Command[] = [];
+    public register( commands: Array<typeof Command>, controller: Controller ) {
+        const result: typeof Command[] = [];
 
-		Object.values( commands ).forEach( ( command ) => {
-			// @ts-ignore
-            if ( this.commands[ command.getName() ] ) {
-				throw new CommandAlreadyRegistered( command );
-			}
+        Object.values( commands ).forEach( ( command ) => {
+            // @ts-ignore
+            const commandName = command.getName();
 
-			// @ts-ignore
+            if ( this.commands[ commandName ] ) {
+                throw new CommandAlreadyRegistered( command );
+            }
+
             command.controller = controller;
 
-			// @ts-ignore
-            this.commands[ command.getName() ] = command;
+            this.commands[ commandName ] = command;
 
             result.push( command );
-		} );
+        } );
 
-		return result;
-	}
+        return result;
+    }
 
-    public onBefore( hookCommand:string, callback: onAfterCallback ) {
-        if ( ! this.onBeforeHooks[ hookCommand ] ) {
+    public onBefore( hookCommand: string, callback: onAfterCallback ) {
+        if ( !this.onBeforeHooks[ hookCommand ] ) {
             this.onBeforeHooks[ hookCommand ] = [];
         }
 
@@ -123,23 +113,23 @@ export class Commands extends Core {
     }
 
     public onAfterOnce( command: string, callback: () => void ) {
-        if ( ! this.onAfterOnceHooks[ command ] ) {
+        if ( !this.onAfterOnceHooks[ command ] ) {
             this.onAfterOnceHooks[ command ] = [];
         }
 
         this.onAfterOnceHooks[ command ].push( callback );
     }
 
-	public onAfterAffect( hookCommand:string, affectCommand:string ) {
-		if ( ! this.onAfterEffectHooks[ hookCommand ] ) {
-			this.onAfterEffectHooks[ hookCommand ] = [];
-		}
+    public onAfterAffect( hookCommand: string, affectCommand: string ) {
+        if ( !this.onAfterEffectHooks[ hookCommand ] ) {
+            this.onAfterEffectHooks[ hookCommand ] = [];
+        }
 
-		this.onAfterEffectHooks[ hookCommand ].push( affectCommand );
-	}
+        this.onAfterEffectHooks[ hookCommand ].push( affectCommand );
+    }
 
-    public onAfter( hookCommand:string, callback: onAfterCallback ) {
-        if ( ! this.onAfterHooks[ hookCommand ] ) {
+    public onAfter( hookCommand: string, callback: onAfterCallback ) {
+        if ( !this.onAfterHooks[ hookCommand ] ) {
             this.onAfterHooks[ hookCommand ] = [];
         }
 
@@ -149,7 +139,7 @@ export class Commands extends Core {
     public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): Command {
         const CommandClass = this.commands[ name ];
 
-        if ( ! CommandClass ) {
+        if ( !CommandClass ) {
             throw new CommandNotFound( name );
         }
 
@@ -160,8 +150,8 @@ export class Commands extends Core {
         return this.commands;
     }
 
-    protected runInstance( command: Command, args:CommandArgsInterface = {}, options  = {} ) {
-        let result:any = null;
+    protected runInstance( command: Command, args: CommandArgsInterface = {}, options = {} ) {
+        let result: any = null;
 
         this.logger.startWith( { command: command.getName(), options, 'CommandArgs': '->' } );
         this.logger.debug( 'CommandArgs:' );
@@ -175,7 +165,7 @@ export class Commands extends Core {
         result = command.run();
 
         if ( result instanceof Promise ) {
-            result.then( ( _result ) =>  this.onAfterRun( command, args, options, _result ) )
+            result.then( ( _result ) => this.onAfterRun( command, args, options, _result ) )
         } else {
             this.onAfterRun( command, args, options, result );
         }
@@ -183,7 +173,7 @@ export class Commands extends Core {
         return result;
     }
 
-    protected onAfterRun( command, args, options, result ) {
+    protected onAfterRun( command: Command, args: CommandArgsInterface, options: Object, result : any ) {
         if ( this.onAfterEffectHooks[ command.getName() ] ) {
             this.onAfterEffectHooks[ command.getName() ].forEach( ( command ) => {
                 args.result = result;

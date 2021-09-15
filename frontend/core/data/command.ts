@@ -12,25 +12,24 @@ import ForceMethod from "../errors/force-method";
  */
 export abstract class Command extends CommandBase {
 
-	static getName() {
-		return 'Core/Data/Command';
-	}
+    static getName() {
+        return 'Core/Data/Command';
+    }
 
-	getEndpoint(): string {
-		throw new ForceMethod( this, 'getEndpoint' );
-	}
+    getEndpoint(): string {
+        throw new ForceMethod( this, 'getEndpoint' );
+    }
 
-	apply( args = this.args, options = this.options ) {
-	    const endpoint = this.applyEndpointFormat( this.getEndpoint(), args.query );
+    apply( args = this.args, options = this.options ) {
+        const endpoint = this.applyEndpointFormat( this.getEndpoint(), args.query );
 
         return Data.client._fetch( endpoint, args.type, args.data || null );
     }
 
-    private applyEndpointFormat( endpoint: string, data = {} ): string {
-	    if ( endpoint.includes( '{') ) {
+    private applyEndpointFormat( endpoint: string, data: any = {} ): string {
+        if ( endpoint.includes( '{' ) ) {
             endpoint = endpoint.split( '/' ).map( ( endpointPart ) => {
-                // @ts-ignore
-                const match = endpointPart.match( '\\{(.*?)\\}');
+                const match = endpointPart.match( '\\{(.*?)\\}' );
 
                 if ( match?.length ) {
                     if ( undefined !== typeof data[ match[ 1 ] ] ) {
@@ -41,6 +40,6 @@ export abstract class Command extends CommandBase {
             } ).join( '/' );
         }
 
-	    return endpoint;
-	}
+        return endpoint;
+    }
 }

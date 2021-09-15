@@ -14,17 +14,17 @@ import Logger from "CORE/modules/logger";
  * @memberOf core.commands
  */
 export default class CommandBase extends Core {
-	static _logger;
+	static logger;
 
 	constructor( args = {}, options = {} ) {
 		super();
 
-		if ( ! this.constructor._logger ) {
-			this.constructor._logger = new Logger( this.constructor.getName() );
-			this.constructor._logger.setOutputHandler( services.Terminal.onOutput );
+		if ( ! this.constructor.logger ) {
+			this.constructor.logger = new Logger( this.constructor.getName() );
+			this.constructor.logger.setOutputHandler( services.Terminal.onOutput );
 		}
 
-		this.logger = this.constructor._logger
+		this.logger = this.constructor.logger
 		this.logger.startWith( { args, options } );
 
 		this.initialize( args, options );
@@ -32,7 +32,7 @@ export default class CommandBase extends Core {
 
 	initialize( args, options ) {
 		this.args = args;
-		this.options =  options;
+		this.options = options;
 	}
 
 	apply( args = this.args, options = this.options ) {

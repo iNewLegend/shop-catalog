@@ -121,15 +121,15 @@ export class Comonent extends $core.Component {
 	 * @returns {components.catalog.product.Component}
 	 */
 	addProduct( product ) {
-		const productComponent =  new Product( this.elements.row, {
+		const productComponent = new Product( this.elements.row, {
 			api: {
 				catalog: this.apis.catalog,
 			},
 
-            logger: this.logger,
+			logger: this.logger,
 
-            ... product,
-        } );
+			...product,
+		} );
 
 		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 

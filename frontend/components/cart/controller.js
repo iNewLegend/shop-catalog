@@ -3,7 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages cart commands.
  */
-import ControllerBase from 'CORE/controllers/controller';
 import * as commands from "./commands/";
 import * as data from "./data/";
 import * as internal from "./internal/";
@@ -11,7 +10,7 @@ import * as internal from "./internal/";
 /**
  * @memberOf components.cart
  */
-export class Controller extends ControllerBase {
+export class Controller extends ( $core.controllers.Controller ) {
 	static getName() {
 		return 'Components/Cart/Controller';
 	}

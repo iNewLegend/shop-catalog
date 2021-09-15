@@ -3,7 +3,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging data commands.
  */
-
 import { CommandArgsInterface, Commands } from "./commands";
 import { Command } from "./data/command";
 import Http from "./data/clients/http";
@@ -16,19 +15,18 @@ export class Data extends Commands {
 
     private type: string;
 
-    // @ts-ignore
     private client: Http;
 
     // @ts-ignore
     get Command() {
-	    return Command;
+        return Command;
     }
 
-	static getName() {
-		return 'Core/Data';
-	}
+    static getName() {
+        return 'Core/Data';
+    }
 
-	constructor() {
+    constructor() {
         super();
 
         // @ts-ignore

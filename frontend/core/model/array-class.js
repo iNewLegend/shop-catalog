@@ -21,9 +21,9 @@ export default class ArrayClass extends Array {
 			Array.prototype.push.apply( this, value );
 		}
 
-		Model._idCounter++;
+		Model.idCounter++;
 
-		this._virtualId = Model._idCounter;
+		this._virtualId = Model.idCounter;
 		this._isCollectionModel = true;
 
 		if ( parent instanceof $core.Model ) {

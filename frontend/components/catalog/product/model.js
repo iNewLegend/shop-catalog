@@ -5,7 +5,7 @@
  */
 
 /**
- * @memberOf components.catalog
+ * @memberOf components.catalog.product
  */
 export default class Model extends ( $core.Model ) {
 	static getName() {

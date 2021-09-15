@@ -5,13 +5,9 @@
 import './spinner.css';
 
 /**
- * @memberOf components
+ * @memberOf components.catalog
  */
 export class Spinner extends $core.Component {
-	static getNamespace() {
-		return 'Components/Catalog'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Spinner';
 	}

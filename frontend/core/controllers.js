@@ -5,22 +5,18 @@
  */
 import Core from "CORE/base/core";
 import ControllerAlreadyRegistered from "CORE/controllers/errors/controller-already-registered";
-import Controller from "CORE/controllers/controller";
+import ControllerBase from "CORE/controllers/controller";
 
 /**
  * @memberOf core
  */
 export default class Controllers extends Core {
-	Controller = Controller;
+	Controller = ControllerBase;
 
 	/**
 	 * @type {Object.<core.controllers.Controller>}
 	 */
 	controllers = {};
-
-	static getNamespace() {
-		return 'Core';
-	}
 
 	static getName() {
 		return 'Core/Controllers';
