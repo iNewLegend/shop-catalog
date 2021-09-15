@@ -1,5 +1,7 @@
+import "@babel/polyfill"
 
-export { Core } from './base/core';
+// TODO Fix & sort by abc.
+import Container from "CORE/container";
 import { default as LoggerModule } from './modules/logger';
 import { Commands } from './commands';
 import { Component } from './component';
@@ -10,13 +12,15 @@ import { Element } from './element';
 import { Factory } from './factory';
 import { Model } from './model';
 import { default as JsxElement } from './jsx-element'
-export { Container } from './container';
+
+export { Core } from './base/core';
 export { Context } from './context';
 export { View } from './view';
 
-if  ( ! global.$core ) {
+if ( ! global.$core ) {
 	global.$core = {
 		Component,
+		Container,
 
 		Element,
 		JsxElement,
@@ -32,9 +36,9 @@ if  ( ! global.$core ) {
 
 		modules: {
 			Logger: LoggerModule,
+		}
 	}
-}
 }
 
 // TODO: sort by abc.
-export { Commands, Component, Element, Factory, Model};
+export { Commands, Component, Container, Element, Factory, Model };

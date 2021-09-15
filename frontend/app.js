@@ -3,8 +3,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
-import "@babel/polyfill"
-import * as core from 'CORE'
+import 'CORE';
+
 import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
@@ -26,24 +26,24 @@ class App {
 
 		this.elements = {
 			header: {
-				logo: core.Factory.createElement( 'header #logo' ),
-				toggle: core.Factory.createElement( 'header #toggle' ),
-				cart: core.Factory.createElement( 'header #toggle .cart' ),
-				amount: core.Factory.createElement( 'header #toggle .amount' ),
-				spinner: core.Factory.createElement( 'header #toggle .spinner' )
+				logo: $core.Factory.createElement( 'header #logo' ),
+				toggle: $core.Factory.createElement( 'header #toggle' ),
+				cart: $core.Factory.createElement( 'header #toggle .cart' ),
+				amount: $core.Factory.createElement( 'header #toggle .amount' ),
+				spinner: $core.Factory.createElement( 'header #toggle .spinner' )
 			},
 
 			sidebar: {
-				self: core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
-				closeButton: core.Factory.createElement( '#sidebar #close' ),
+				self: $core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
+				closeButton: $core.Factory.createElement( '#sidebar #close' ),
 			},
 
 			sections: {
-				main: core.Factory.createElement( "section.main" )
+				main: $core.Factory.createElement( "section.main" )
 			}
 		};
 
-		this.container = new core.Container( this.elements.sections.main, '<div class="page container"></div>' );
+		this.container = new $core.Container( this.elements.sections.main, '<div class="page container"></div>' );
 
 		this.pages = {
 			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>' ),
