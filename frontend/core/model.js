@@ -40,6 +40,7 @@ export class Model extends Core {
 
 		this._logger = new Logger( this.getName(), true, { sameColor: true } );
 		this._logger.startWith( { options } );
+		this._owner = options.owner;
 
 		this._events = {
 			onChange: [],

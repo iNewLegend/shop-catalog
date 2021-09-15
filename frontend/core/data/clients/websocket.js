@@ -31,11 +31,11 @@ export class Websocket {
 	}
 
 	static getNamespace() {
-		return 'API'
+		return 'Data'
 	}
 
 	static getName() {
-		return 'API/Websocket';
+		return 'Data/WebSocket';
 	}
 
 	initialize() {

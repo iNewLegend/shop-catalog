@@ -59,6 +59,7 @@ export default class ArrayClass extends Array {
 		return result;
 	}
 
+	// TODO: Remove
 	pushSilent( item ) {
 		item._silent = true;
 		return super.push( item );

@@ -66,17 +66,18 @@ export class Add extends $core.internal.Command {
 	doAddItem( item, notifyCartChanged = true, highlight = false ) {
 		this.logger.startWith( { item, notifyCartChanged, highlight } );
 
-		const itemId = item.model.id;
-		const existItem = this.getController().getModel().getById( itemId )
+		const itemId = item.model.id,
+			existItem = this.getController().getModel().getById( itemId )
 
 		existItem ?
 			existItem.model.amount += item.model.amount :
 			this.doInsertItem( item );
 
-		if ( highlight ) {
-			// TODO: UI HOOK.
-			( existItem || item ).highlightItem();
+		if ( ! highlight ) {
+			return;
 		}
+
+		( existItem || item ).highlightItem();
 	}
 
 	/**

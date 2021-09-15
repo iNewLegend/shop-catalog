@@ -24,8 +24,7 @@ export class Remove extends $core.commands.Command {
 	 * @param {{}} options
 	 */
 	async apply( args, options ) {
-		const { virtualId } = args,
-			id = args.model.id,
+		const id = args.model.id,
 			model = this.getController().getModel();
 
 		return $core.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
