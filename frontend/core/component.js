@@ -36,10 +36,6 @@ export class Component extends Core {
 		this.initialize( this.options );
 	}
 
-	static getNamespace() {
-		return 'Core'
-	}
-
 	static getName() {
 		return 'Core/Component';
 	}

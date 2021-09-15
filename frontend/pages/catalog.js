@@ -10,9 +10,6 @@ import * as components from 'COMPONENTS';
  * @memberOf pages
  */
 export class Catalog extends Page {
-	static getNamespace() {
-		return 'Pages'
-	}
 
 	static getName() {
 		return 'Pages/Catalog';

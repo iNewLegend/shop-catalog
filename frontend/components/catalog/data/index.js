@@ -10,10 +10,6 @@
 export class Index extends $core.data.Command {
 	static localCatalog = [];
 
-	static getNamespace() {
-		return 'Components/Catalog/Data'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Data/Index';
 	}

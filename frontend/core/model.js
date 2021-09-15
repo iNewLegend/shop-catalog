@@ -23,10 +23,6 @@ export class Model extends Core {
 		this._logger = value;
 	}
 
-	static getNamespace() {
-		return 'Core';
-	}
-
 	static getName() {
 		return 'Core/Model';
 	}

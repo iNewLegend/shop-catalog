@@ -8,9 +8,6 @@
  * @memberOf components.cart.item
  */
 export default class Model extends ( $core.Model ) {
-	static getNamespace() {
-		return 'Components/Cart/Item'
-	}
 
 	static getName() {
 		return 'Components/Cart/Item/Model';

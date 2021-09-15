@@ -27,10 +27,6 @@ export class Http extends Core {
 		this.apiBaseUrl = apiBaseUrl + '/';
 	}
 
-	static getNamespace() {
-		return 'Data'
-	}
-
 	static getName() {
 		return 'Data/Http';
 	}

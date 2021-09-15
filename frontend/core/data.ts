@@ -24,10 +24,6 @@ export class Data extends Commands {
 	    return Command;
     }
 
-	static getNamespace() {
-		return 'Core';
-	}
-
 	static getName() {
 		return 'Core/Data';
 	}

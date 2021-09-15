@@ -19,10 +19,6 @@ export class Component extends $core.Component {
 		};
 	}
 
-	static getNamespace() {
-		return 'Components/Catalog/Product'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Product/Component';
 	}

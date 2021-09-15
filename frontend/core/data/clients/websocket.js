@@ -30,10 +30,6 @@ export class Websocket {
 		if ( autoInit ) this.initialize();
 	}
 
-	static getNamespace() {
-		return 'Data'
-	}
-
 	static getName() {
 		return 'Data/WebSocket';
 	}

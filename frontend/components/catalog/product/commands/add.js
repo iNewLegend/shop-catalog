@@ -9,9 +9,6 @@ import * as components from "COMPONENTS/index";
  * @memberOf components.catalog.product.Component.commands
  */
 export class Add extends $core.commands.Command {
-	static getNamespace() {
-		return 'Components/Catalog/Product/Commands'
-	}
 
 	static getName() {
 		return 'Components/Catalog/Product/Commands/Add';

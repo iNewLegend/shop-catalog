@@ -8,9 +8,6 @@
  * @memberOf components.cart.data
  */
 export class Index extends $core.data.Command {
-	static getNamespace() {
-		return 'Components/Cart/Data'
-	}
 
 	static getName() {
 		return 'Components/Cart/Data/Index';

@@ -43,10 +43,6 @@ interface onAfterHookInterface {
  */
 export class Commands extends Core {
 
-    static getNamespace() {
-        return 'Core'
-    }
-
     static getName() {
         return 'Core/Commands';
     }

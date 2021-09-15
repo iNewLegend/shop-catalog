@@ -56,10 +56,6 @@ export class Base extends Core {
 		this.afterInit();
 	}
 
-	static getNamespace() {
-		return 'Core/Element'
-	}
-
 	static getName() {
 		return 'Core/Element/Base';
 	}

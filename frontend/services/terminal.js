@@ -57,10 +57,6 @@ export class Terminal {
 		return Terminal.instance;
 	}
 
-	static getNamespace() {
-		return 'Services'
-	}
-
 	static getName() {
 		return 'Services/Terminal';
 	}

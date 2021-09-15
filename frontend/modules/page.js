@@ -10,9 +10,6 @@ import * as services from 'SERVICES';
  * @memberOf modules
  */
 export class Page extends Container {
-	static getNamespace() {
-		return 'Modules'
-	}
 
 	static getName() {
 		return 'Modules/Page';

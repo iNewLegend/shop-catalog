@@ -18,10 +18,6 @@ export class Internal extends Commands {
 		return Command;
 	}
 
-	static getNamespace() {
-		return 'Core';
-	}
-
 	static getName() {
 		return 'Core/Internal';
 	}

@@ -9,9 +9,6 @@ import CommandPublic from '../commands/command';
  * @memberOf core.internal
  */
 export class Command extends CommandPublic {
-    static getNamespace() {
-        return 'Core/Internal'
-    }
 
     static getName() {
         return 'Core/Internal/Command';

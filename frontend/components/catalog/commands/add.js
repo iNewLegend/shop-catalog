@@ -8,9 +8,6 @@
  * @memberOf components.catalog.commands
  */
 export class Add extends $core.commands.Command {
-	static getNamespace() {
-		return 'Components/Catalog/Commands'
-	}
 
 	static getName() {
 		return 'Components/Catalog/Commands/Add';

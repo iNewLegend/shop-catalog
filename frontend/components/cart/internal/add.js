@@ -9,9 +9,6 @@ import CartItemComponent from 'COMPONENTS/cart/item/component';
  * @memberOf components.cart.internal
  */
 export class Add extends $core.internal.Command {
-	static getNamespace() {
-		return 'Components/Cart/Internal'
-	}
 
 	static getName() {
 		return 'Components/Cart/Internal/Add';

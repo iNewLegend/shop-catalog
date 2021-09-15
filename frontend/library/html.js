@@ -1,7 +1,4 @@
 export default class HTML {
-	static getNamespace() {
-		return 'Library'
-	}
 
 	static getName() {
 		return 'Library/HTML';

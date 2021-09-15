@@ -15,10 +15,6 @@ import Model from './model';
 export class Component extends $core.Component {
 	static openCartOnUpdate = true;
 
-	static getNamespace() {
-		return 'Components/Cart'
-	}
-
 	static getName() {
 		return 'Components/Cart/Component';
 	}

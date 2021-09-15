@@ -9,10 +9,6 @@
  */
 export class Get extends $core.data.Command {
 
-	static getNamespace() {
-		return 'Components/Catalog/Data'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Data/Get';
 	}

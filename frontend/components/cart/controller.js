@@ -12,9 +12,6 @@ import * as internal from "./internal/";
  * @memberOf components.cart
  */
 export class Controller extends ControllerBase {
-	static getNamespace() {
-		return 'Components/Cart'
-	}
 
 	static getName() {
 		return 'Components/Cart/Controller';

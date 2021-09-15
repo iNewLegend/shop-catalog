@@ -16,10 +16,6 @@ export class Comonent extends $core.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
-	static getNamespace() {
-		return 'Components/Catalog'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Component';
 	}

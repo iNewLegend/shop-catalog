@@ -32,10 +32,6 @@ export class Pagination extends $core.Component {
         };
     }
 
-	static getNamespace() {
-		return 'Components/Catalog'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Pagination';
 	}

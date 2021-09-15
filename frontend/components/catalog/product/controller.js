@@ -16,10 +16,6 @@ export class Controller extends ControllerBase {
 		$core.commands.onAfterAffect( 'Components/Catalog/Product/Commands/Add', 'Components/Catalog/Commands/Add' );
 	}
 
-	static getNamespace() {
-		return 'Components/Catalog/Product'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Product/Controller';
 	}

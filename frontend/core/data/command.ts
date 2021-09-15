@@ -11,9 +11,6 @@ import ForceMethod from "../errors/force-method";
  * @memberOf core.data
  */
 export abstract class Command extends CommandBase {
-	static getNamespace() {
-		return 'Core/Data'
-	}
 
 	static getName() {
 		return 'Core/Data/Command';

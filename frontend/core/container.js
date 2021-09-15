@@ -12,10 +12,6 @@ import ElementBase from './element/base.js';
 export class Container extends ElementBase {
 	static RENDER_WITHOUT_CHILD = 'RENDER_WITHOUT_CHILD';
 
-	static getNamespace() {
-		return 'Core'
-	}
-
 	static getName() {
 		return 'Core/Container';
 	}

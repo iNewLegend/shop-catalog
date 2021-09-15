@@ -8,9 +8,6 @@
  * @memberOf components.cart.commands
  */
 export class Remove extends $core.commands.Command {
-	static getNamespace() {
-		return 'Components/Cart/Commands'
-	}
 
 	static getName() {
 		return 'Components/Cart/Commands/Remove';

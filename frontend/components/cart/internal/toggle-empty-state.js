@@ -8,9 +8,6 @@
  * @memberOf components.cart.internal
  */
 export class ToggleEmptyState extends $core.internal.Command {
-	static getNamespace() {
-		return 'Components/Cart/Internal'
-	}
 
 	static getName() {
 		return 'Components/Cart/Internal/ToggleEmptyState';

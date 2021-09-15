@@ -8,9 +8,6 @@
  * @memberOf components.catalog
  */
 export default class Model extends ( $core.Model ) {
-	static getNamespace() {
-		return 'Components/Catalog/Product'
-	}
 
 	static getName() {
 		return 'Components/Catalog/Product/Model';

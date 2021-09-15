@@ -17,10 +17,6 @@ export class Core {
 		++Core._idCounter;
 	}
 
-	static getNamespace() {
-        throw new ForceMethodBase( 'Core/Base/Core', 'getNamespace' );
-	}
-
 	static getName() {
 		throw new ForceMethodBase( 'Core/Base/Core', 'getName' );
 	}
