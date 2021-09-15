@@ -24,7 +24,10 @@ export class Controller extends Core {
 
 	initialize() {
 		this.register();
+		this.setupHooks();
 	}
+
+	setupHooks() {}
 
 	register() {
 		/**

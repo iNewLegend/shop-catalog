@@ -12,13 +12,6 @@ import * as internal from "./internal/";
  * @memberOf components.cart
  */
 export class Controller extends ControllerBase {
-	constructor( parent ) {
-		super( parent );
-
-		// TODO: Add to base.
-		this.setupHooks();
-	}
-
 	static getNamespace() {
 		return 'Components/Cart'
 	}
