@@ -5,7 +5,6 @@
         "checkJs": false,
         "baseUrl": "./",
         "paths": {
-            "API": ["frontend/api/index.js"],
             "COMPONENTS": ["frontend/components/index.js"],
             "CORE": ["frontend/core/index.js"],
             "LIBRARY": ["frontend/library/index.js"],

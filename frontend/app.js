@@ -5,7 +5,6 @@
  */
 import "@babel/polyfill"
 import * as core from 'CORE'
-import * as api from 'API';
 import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
@@ -24,13 +23,6 @@ class App {
 		this.logger.startEmpty();
 
 		this.sidebar = new components.Sidebar( window.document.querySelector( '#sidebar' ).parentElement );
-
-		// TODO: Remove `this.apis` use `$core.data` commands.
-		const http = $core.data.constructor.client;
-
-		this.apis = {
-			catalog: new api.Catalog( http ),
-		};
 
 		this.elements = {
 			header: {
@@ -54,9 +46,7 @@ class App {
 		this.container = new core.Container( this.elements.sections.main, '<div class="page container"></div>' );
 
 		this.pages = {
-			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>', {
-				api: this.apis.catalog,
-			} ),
+			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>' ),
 			checkout: new pages.Checkout( this.container, '<div class="pages checkout">' +
 				'   <h1>Check OUT.</h1>' +
 				'</div>'
@@ -159,12 +149,12 @@ class App {
 			return;
 		}
 
-		this.apis.catalog.getByIds( ( missing ) => {
+		$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts.map( x => x.id ) } ).then( ( missing ) => {
 			data.map( ( item ) => {
 				Object.assign( item, missing.find( x => x.id === item.id ) );
 				$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
 			} );
-		}, missingProducts.map( x => x.id ) );
+		} );
 	}
 
 	/**

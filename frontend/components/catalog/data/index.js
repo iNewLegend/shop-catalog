@@ -44,3 +44,5 @@ export class Index extends $core.data.Command {
 		return result;
 	}
 }
+
+export { Get } from './get';
