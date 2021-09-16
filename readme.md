@@ -19,7 +19,6 @@
 
 ## Done Goals
   - Apply MVC.
-  - `Core.Component` should be replacement for MVC when it not necessary.
   
 ## Current Goals
   - Remove jQuery.

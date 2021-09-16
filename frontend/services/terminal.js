@@ -1,6 +1,7 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: A live console that you can open by tilda key.
+ * TODO: Remove JQuery.
  */
 import JQuery from '../library/jquery.js';
 const CircularJSON = require( 'circular-json' );
@@ -262,7 +263,7 @@ export class Terminal {
 Terminal.onOutput = function( output ) {
 	const _this = Terminal.instance;
 
-	// TODO: Terminal cannot log anything. debug it to find out the issue.
+	// TODO: Find better solution.
 	if ( ! _this || ! _this.elements ) {
 		return console.log.apply( this, arguments );
 	}

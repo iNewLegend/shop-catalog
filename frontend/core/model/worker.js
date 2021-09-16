@@ -1,7 +1,6 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: nope.
- * TODO:
+ * @description: A model worker, used to determine changes in the model.
  */
 import ObjectHash from "object-hash";
 
@@ -75,7 +74,6 @@ class Worker {
 				currentModel = this.models[ modelId ];
 			}
 
-			console.log({ modelOnChange: modelId, prevModel, currentModel })
 			self.postMessage( { modelOnChange: modelId, prevModel, currentModel } );
 		}
 	}
