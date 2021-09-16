@@ -1,7 +1,14 @@
+/**
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: Manages sidebar.
+ */
 import Controller from './controller';
 import Model from './model.js';
 
-export default class Component extends ( $core.Component ) {
+/**
+ * @memberOf components.sidebar
+ */
+export default class Component extends $core.Component {
 	static getName() {
 		return 'Components/Sidebar/Component';
 	}
