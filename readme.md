@@ -1,33 +1,34 @@
 # Shop-Catalog
 
+###Is  for:
+  - Just 4 fun project, for a study and practice.
+  - Trying different things and approaches, new ideas.
+  - Trying to figure out new way at looking at things.
+  - Be creative, anyway its has to be for fun.
+  - Be strict but with a cool way.
+  - Give any ideas chance to live.
+
 ## Backend(s)
   - Core PHP
   - NestJS.
   
 ## Frontend
-  - Simple API
-  - Core: Set of modules to communicate with DOM.
-  - Modules: Component, Logger, Page
-  - Components: Cart, Catalog
-  - Pages: Catalog, Checkout 
-  - Services: Terminal
+  - Core: Set of modules to communicate with DOM & Appling MVC.
 
-    ### Build-With
-    - Babel
-    - Webpack
-    - JQuery
+### Build-With
+- Babel
+- Webpack
+- JQuery
+
+## Current Goals
+- Remove jQuery.
+- Modular
+- Well structured
+- No dependencies except babel and webpack. 
 
 ## Done Goals
-  - Apply MVC.
+- Apply MVC.
   
-## Current Goals
-  - Remove jQuery.
-  - Modular
-  - Well structured
-  - No dependencies except babel and webpack. 
-
-
-
 # [ Demo ]
 ### preview
 ![alt text](https://i.ibb.co/JFQ9Wm1/1.png)
