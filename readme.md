@@ -1,6 +1,6 @@
 # Shop-Catalog
 
-###Is  for:
+### Is  for:
   - Just 4 fun project, for a study and practice.
   - Trying different things and approaches, new ideas.
   - Trying to figure out new way at looking at things.
