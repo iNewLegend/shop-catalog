@@ -1,8 +1,6 @@
 /**
- * @file: core/context.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
- * TODO:
  */
 import HTML from '../library/html.js';
 
@@ -19,10 +17,6 @@ export class Context {
 		this.context = context;
 	}
 
-	static getNamespace() {
-		return 'Core'
-	}
-
 	static getName() {
 		return 'Core/Context';
 	}
@@ -34,7 +28,13 @@ export class Context {
 	create() {
 		this.beforeCreate();
 
-		this.node = HTML.toNode( this.context );
+		// Support JSX.
+		if ( this.context instanceof $core.Element ) {
+			this.node = this.context.context;
+		} else {
+			this.node = HTML.toNode( this.context );
+		}
+
 
 		this.afterCreate();
 

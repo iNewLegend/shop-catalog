@@ -1,21 +1,27 @@
 /**
- * @file: core/view.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
- * TODO:
  */
 import Element from './element.js';
+import Core from "CORE/base/core";
+import ForceMethod from "CORE/errors/force-method";
 
 /**
  * @memberOf core
  */
-export class View {
+export class View extends Core {
 	/**
 	 * @type {core.Element}
 	 */
 	element;
 
+	static getName() {
+		return 'Core/View';
+	}
+
 	constructor( parent, options = {} ) {
+		super();
+
 		this.element = new Element(
 			parent,
 			options.template || this.template(),
@@ -29,11 +35,19 @@ export class View {
 	}
 
 	template() {
-		throw('no template');
+		throw new ForceMethod( this, 'template' );
 	}
 
 	render() {
 		this.element.render();
+	}
+
+	destroy() {
+		const element = this.element.element;
+
+		if ( element.isConnected ) {
+			element.remove();
+		}
 	}
 }
 

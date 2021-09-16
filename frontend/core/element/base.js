@@ -1,16 +1,15 @@
 /**
- * @file: core/element/base.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  * TODO:
  */
 import Context from '../context.js';
+import Core from "CORE/base/core";
 
 /**
- * @memberOf core;
- * @name ElementBase
+ * @memberOf core.element
  */
-export class Base {
+export class Base extends Core {
 	/**
 	 * @type {HTMLElement}
 	 */
@@ -29,6 +28,8 @@ export class Base {
      * @param {{}} [options={}]
      */
     constructor( parent, context, options = {} ) {
+    	super();
+
         if ( !parent ) {
             throw Error( 'parent is required.' );
         }
@@ -52,10 +53,6 @@ export class Base {
 		this.initialize( options );
 
 		this.afterInit();
-	}
-
-	static getNamespace() {
-		return 'Core/Element'
 	}
 
 	static getName() {

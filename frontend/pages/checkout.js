@@ -1,5 +1,4 @@
 /**
- * @file: pages/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Catalog page.
  */
@@ -9,10 +8,6 @@ import { Page } from 'MODULES';
  * @memberOf pages
  */
 export class Checkout extends Page {
-	static getNamespace() {
-		return 'Pages'
-	}
-
 	static getName() {
 		return 'Pages/Checkout';
 	}

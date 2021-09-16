@@ -1,5 +1,4 @@
 /**
- * @file: pages/index.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: pages Namespace O__o
  */

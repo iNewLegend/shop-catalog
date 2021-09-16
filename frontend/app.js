@@ -1,17 +1,14 @@
 /**
- * @file: app.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
-import "@babel/polyfill"
+import 'CORE';
 
-import * as core from 'CORE'
-import * as api from 'API';
-import * as modules from 'MODULES';
 import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
 
+// TODO Should extend `core.Container` instead of using naked class.
 class App {
 	/**
 	 * Function constructor() : Create App
@@ -19,47 +16,36 @@ class App {
 	constructor() {
 		services.Terminal.initialize();
 
-		this.logger = new modules.Logger( this, true );
+		this.logger = new $core.modules.Logger( this, true );
 		this.logger.setOutputHandler( services.Terminal.onOutput );
 
 		this.logger.startEmpty();
 
-		const remoteAddress = 'http://localhost:8081/',
-			http = new api.Http( remoteAddress );
-
-		this.apis = {
-			catalog: new api.Catalog( http ),
-			cart: new api.Cart( http ),
-		};
+		this.sidebar = new components.Sidebar( window.document.querySelector( '#sidebar' ).parentElement );
 
 		this.elements = {
 			header: {
-				logo: core.Factory.createElement( 'header #logo' ),
-				toggle: core.Factory.createElement( 'header #toggle' ),
-
-				cart: core.Factory.createElement( 'header #toggle .cart' ),
-				amount: core.Factory.createElement( 'header #toggle .amount' ),
-				spinner: core.Factory.createElement( 'header #toggle .spinner' )
+				logo: $core.Factory.createElement( 'header #logo' ),
+				toggle: $core.Factory.createElement( 'header #toggle' ),
+				cart: $core.Factory.createElement( 'header #toggle .cart' ),
+				amount: $core.Factory.createElement( 'header #toggle .amount' ),
+				spinner: $core.Factory.createElement( 'header #toggle .spinner' )
 			},
 
 			sidebar: {
-				self: core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
-				closeButton: core.Factory.createElement( '#sidebar #close' ),
+				self: $core.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
+				closeButton: $core.Factory.createElement( '#sidebar #close' ),
 			},
 
-			overlay: core.Factory.createElement( '#overlay' ),
-
 			sections: {
-				main: core.Factory.createElement( "section.main" )
+				main: $core.Factory.createElement( "section.main" )
 			}
 		};
 
-		this.container = new core.Container( this.elements.sections.main, '<div class="page container"></div>' );
+		this.container = new $core.Container( this.elements.sections.main, '<div class="page container"></div>' );
 
 		this.pages = {
-			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>', {
-				api: this.apis.catalog,
-			} ),
+			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>' ),
 			checkout: new pages.Checkout( this.container, '<div class="pages checkout">' +
 				'   <h1>Check OUT.</h1>' +
 				'</div>'
@@ -73,86 +59,118 @@ class App {
 	initialize() {
 		this.logger.startEmpty();
 
-		const { header, overlay, sidebar } = this.elements;
+		const { header } = this.elements;
 
-		this.container.on( 'render:before', this.onPageContainerBeforeRender.bind( this ) );
-		this.container.on( 'render:after', this.onPageContainerAfterRender.bind( this ) );
-
-		overlay.click( () => this.sidebarToggle( false ) );
-
-		header.toggle.click( () => this.sidebarToggle( true ) );
+		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
 		header.logo.click( () => {
 			this.container.set( this.pages.catalog );
 			this.container.render();
 		} );
 
-		sidebar.closeButton.click( () => this.sidebarToggle( false ) );
+		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
+			// Toggle virtual cart state.
+			args.state ?
+				this.cart.model.state = true :
+				this.cart.model.state = false
+		} );
+
+		$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
+			const cartAddArgs = {
+				... args.component.model.getModelData(),
+				amount: args.component.elements.amount.value,
+			};
+
+			$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
+
+			if ( $app.cart.constructor.openCartOnUpdate ) {
+				$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } );
+			}
+		} );
+
+		$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
+
+			this.cart.request().then( () => {
+				this.cart.render()
+			} );
+		} );
+
+		$core.data.onAfter( 'Components/Cart/Data/Index', this.onCartReceived.bind( this ) );
+		$core.internal.onAfter( 'Components/Cart/Internal/ToggleEmptyState', this.onCartStateEmpty.bind( this ) );
+		$core.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', this.onCartSetTotal.bind( this ) );
+		$core.commands.onAfter( 'Components/Cart/Commands/Checkout', this.onCartCheckout.bind( this ) );
 
 		this.container.set( this.pages.catalog );
 		this.container.render();
 	}
 
-	/**
-	 * Function onBeforeRender() :.
-	 *
-	 * @param {modules.Page} pageModule
-	 */
-	onPageContainerBeforeRender( pageModule ) {
-		this.logger.startWith( { pageModule: pageModule?.constructor.name } );
+	async onCartReceived( args ) {
+		if ( ! this.cartRecvOnce ) {
+			this.cartRecvOnce = true;
 
-		if ( pageModule instanceof pages.Catalog ) {
-			this.pages.catalog.on( 'render:after', this.onCatalogAfterRender.bind( this ) );
+			const { cart, spinner } = this.elements.header;
+
+			cart.show();
+			spinner.hide();
 		}
+
+		const data = args.result;
+
+		if ( ! data ) {
+			throw new Error();
+		}
+
+		// Not all the products that are in cart exist locally since we used pages in that system,
+		// Wo we find out what missing and request it from the server.
+		const asyncFilter = async ( arr, predicate ) => Promise.all( arr.map( predicate ) )
+			.then( ( results ) => arr.filter( ( _v, index ) => results[ index ] ) );
+
+		const missingProducts = await asyncFilter( data, async ( item ) => {
+			// We get the price and name from local catalog.
+			// There is many solutions, this is fine for that example.
+			const localProduct = await $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
+
+			// Use extra info from local product
+			if ( localProduct ) {
+				item.price = localProduct.price;
+				item.name = localProduct.name;
+
+				await $core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+
+				return false;
+			}
+
+			return true;
+		} );
+
+		if ( ! missingProducts.length ) {
+			return;
+		}
+
+		$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts.map( x => x.id ) } ).then( ( missing ) => {
+			data.map( ( item ) => {
+				Object.assign( item, missing.find( x => x.id === item.id ) );
+				$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+			} );
+		} );
 	}
 
 	/**
-	 * Function onAfterRender() :.
-	 *
-	 * @param {modules.Page} pageModule
+	 * Function onCartSetTotal() : Called on cart set total.
 	 */
-	onPageContainerAfterRender( pageModule ) {
-		this.logger.startWith( { pageModule: pageModule.constructor.name } );
-
-		if ( pageModule instanceof pages.Catalog ) {
-			this.pages.catalog.on( 'product:add', this.onCatalogProductAdd.bind( this ) );
-		}
-	}
-
-	/**
-	 * Function onCartRequest() : Called on request cart from the server
-	 */
-	onCartRequest() {
+	onCartSetTotal() {
 		this.logger.startEmpty();
 
-		const { spinner } = this.elements.header;
+		let totalItemsInCartCount = 0;
 
-		spinner.show();
-	}
-
-	/**
-	 * Function onCartReceived() : Called after cart received
-	 */
-	onCartReceived() {
-		this.logger.startEmpty();
-
-		const { cart, spinner } = this.elements.header;
-
-		cart.show();
-		spinner.hide();
-	}
-
-	/**
-	 * Function onCartAmountChange() : Called on cart amount change.
-	 *
-	 * @param {Number} count
-	 */
-	onCartAmountChange( count ) {
-		this.logger.startWith( { count } );
+		this.cart.model.items.forEach( ( item ) => {
+			totalItemsInCartCount += item.model.amount
+		} );
 
 		const { amount } = this.elements.header;
 
-		amount.html( count );
+		amount.html( totalItemsInCartCount );
 	}
 
 	/**
@@ -160,7 +178,7 @@ class App {
 	 *
 	 * @param {Boolean} state
 	 */
-	onCartStateEmpty( state ) {
+	onCartStateEmpty( { state } ) {
 		this.logger.startWith( { state } );
 
 		const { amount } = this.elements.header;
@@ -169,12 +187,12 @@ class App {
 	}
 
 	/**
-	 * Function onCartCheckout() : Called on cart checkout
+	 * Function onCartCheckout() : Called on cart checkout.
 	 */
 	onCartCheckout() {
 		this.logger.startEmpty();
 
-		this.sidebarToggle( false );
+		$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
 
 		this.container.set( this.pages.checkout );
 
@@ -184,61 +202,17 @@ class App {
 
 		this.container.render();
 	}
-
-	/**
-	 * Function onCatalogAfterRender() : Called on catalog initial recv done.
-	 */
-	onCatalogAfterRender() {
-		if ( ! this.catalogRenderOnce ) {
-			this.catalogRenderOnce = true;
-
-			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
-
-			this.cart.on( 'ui:checkout', this.onCartCheckout.bind( this ) );
-			this.cart.on( 'cart:request', this.onCartRequest.bind( this ) );
-			this.cart.on( 'cart:received', this.onCartReceived.bind( this ) );
-			this.cart.on( 'amount:change', this.onCartAmountChange.bind( this ) );
-			this.cart.on( 'state:empty', this.onCartStateEmpty.bind( this ) );
-
-			this.cart.render();
-		}
-	}
-
-	/**
-	 * Function onCatalogProductAdd() : Called on catalog item add
-	 */
-	onCatalogProductAdd( product ) {
-		this.logger.startWith( { product } );
-
-		this.cart.itemAdd( product, () => {
-			if ( components.Cart.openCartOnUpdate ) {
-				this.sidebarToggle( true );
-			}
-		} );
-	}
-
-	/**
-	 * Function sidebarToggle() : Change the sidebar state
-	 *
-	 * @param {boolean} state
-	 */
-	sidebarToggle( state ) {
-		this.logger.startWith( { state } );
-
-		const { sidebar, overlay } = this.elements;
-
-		if ( state ) {
-			overlay.fadeIn();
-			sidebar.self.addClass( 'show' );
-
-			this.cart.open();
-		} else {
-			overlay.fadeOut();
-			sidebar.self.removeClass( 'show' );
-
-			this.cart.close();
-		}
-	}
 }
 
-(new App().initialize());
+document.addEventListener( 'readystatechange', () => {
+	if ( window.initOnce  ) {
+		return ;
+	}
+
+	window.$app = new App();
+
+	$app.initialize();
+
+	window.initOnce = true;
+} );
+

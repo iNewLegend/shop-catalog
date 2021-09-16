@@ -1,8 +1,6 @@
 /**
- * @file: core/container.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
- * TODO:
  */
 import ElementBase from './element/base.js';
 
@@ -11,10 +9,6 @@ import ElementBase from './element/base.js';
  */
 export class Container extends ElementBase {
 	static RENDER_WITHOUT_CHILD = 'RENDER_WITHOUT_CHILD';
-
-	static getNamespace() {
-		return 'Core'
-	}
 
 	static getName() {
 		return 'Core/Container';
@@ -90,7 +84,7 @@ export class Container extends ElementBase {
                return !! ( this.events.onAfterRender = callback );
 
             default:
-                alert( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
+                throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
 		}
 	}
 }
