@@ -1,5 +1,4 @@
 /**
- * @file: core/controllers/errors/controller-already-registered.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description:
  */

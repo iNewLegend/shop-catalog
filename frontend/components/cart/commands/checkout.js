@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/commands/checkout.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Tells the cart request checkout.
  */

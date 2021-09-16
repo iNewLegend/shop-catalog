@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/item/model.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart item unit.
  */

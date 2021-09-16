@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/item/controller.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages cart.
  */

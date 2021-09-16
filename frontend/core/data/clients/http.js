@@ -1,5 +1,4 @@
 /**
- * @file: core/data/clients/http.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Used to communicate with backend.
  */

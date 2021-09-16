@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/item.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one item unit.
  */

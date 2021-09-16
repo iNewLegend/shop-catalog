@@ -1,5 +1,4 @@
 /**
- * @file: components/spinner/spinner.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 import './spinner.css';

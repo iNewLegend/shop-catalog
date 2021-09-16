@@ -1,8 +1,6 @@
 /**
- * @file: core/component.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
- * TODO:
  */
 import * as core from 'CORE';
 import Core from "CORE/base/core";

@@ -1,5 +1,4 @@
 /**
- * @file: core/data.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging data commands.
  */

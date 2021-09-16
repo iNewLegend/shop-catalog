@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/data/add.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Request add cart item from backend.
  */

@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/model.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart items/data.
  */

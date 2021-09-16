@@ -1,5 +1,4 @@
 /**
- * @file: core/commands/errors/command-not-found.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description:
  */

@@ -1,5 +1,4 @@
 /**
- * @file: components/index.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Components Namespace O__o
  */

@@ -1,5 +1,4 @@
 /**
- * @file: core/controllers.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging controllers, Part of MVC.
  */

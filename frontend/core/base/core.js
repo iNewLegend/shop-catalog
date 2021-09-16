@@ -1,5 +1,4 @@
 /**
- * @file: core/base/core.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: is base class/object for all instances, responsible for: 'getName', implementation.
  */

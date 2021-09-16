@@ -1,8 +1,6 @@
 /**
- * @file: core/view.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
- * TODO:
  */
 import Element from './element.js';
 

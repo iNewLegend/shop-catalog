@@ -1,5 +1,4 @@
 /**
- * @file: core/model/array-class.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  * TODO:

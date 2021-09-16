@@ -1,5 +1,4 @@
 /**
- * @file: core/commands.ts
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging commands, Part of MVC.
  */

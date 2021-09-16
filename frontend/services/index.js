@@ -1,5 +1,4 @@
 /**
- * @file: services/index.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Services Namespace O__o
  */

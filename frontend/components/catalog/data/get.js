@@ -1,5 +1,4 @@
 /**
- * @file: components/catalog/data/get.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Get specific items from catalog.
  */

@@ -1,5 +1,4 @@
 /**
- * @file: components/catalog/pagination.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: component for pagination.
  */

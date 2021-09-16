@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/internal/add.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Internal command for adding items to cart.
  */

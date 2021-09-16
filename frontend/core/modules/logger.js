@@ -1,5 +1,4 @@
 /**
- * @file: modules/logger.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Module for logging instances.
  * TODO: on constructor add prefix for owner

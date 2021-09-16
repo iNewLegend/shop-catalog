@@ -1,5 +1,4 @@
 /**
- * @file: core/controllers/controller.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Controller is part of MVC concept, responsible for actions.
  */

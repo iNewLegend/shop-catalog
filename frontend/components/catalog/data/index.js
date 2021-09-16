@@ -1,5 +1,4 @@
 /**
- * @file: components/catalog/data/index.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Get the catalog from the server and cache it.
  */

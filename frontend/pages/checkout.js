@@ -1,5 +1,4 @@
 /**
- * @file: pages/catalog.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Catalog page.
  */

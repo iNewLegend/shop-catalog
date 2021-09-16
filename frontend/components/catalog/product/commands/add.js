@@ -1,5 +1,4 @@
 /**
- * @file: components/catalog/product/commands/add.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Add an item to catalog.
  */

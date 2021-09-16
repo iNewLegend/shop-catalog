@@ -1,5 +1,4 @@
 /**
- * @file: services/terminal.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: A live console that you can open by tilda key.
  */

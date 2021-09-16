@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/internal/toggle-empty-state.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Internal command for telling the cart its empty or not.
  */

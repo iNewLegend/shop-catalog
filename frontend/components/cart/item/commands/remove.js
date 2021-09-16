@@ -1,5 +1,4 @@
 /**
- * @file: components/cart/item/commands/remove.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Tells the cart to remove item.
  */

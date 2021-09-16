@@ -1,5 +1,4 @@
 /**
- * @file: app.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */

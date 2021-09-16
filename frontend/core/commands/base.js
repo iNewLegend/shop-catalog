@@ -1,5 +1,4 @@
 /**
- * @file: core/commands/base.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: is base class for all commands instances, part of MVC, responsible for commands, and managed by Controller.
  */
