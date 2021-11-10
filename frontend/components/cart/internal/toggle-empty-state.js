@@ -6,7 +6,7 @@
 /**
  * @memberOf components.cart.internal
  */
-export class ToggleEmptyState extends $core.internal.Command {
+export class ToggleEmptyState extends ( $core.internal.Command ) {
 	static getName() {
 		return 'Components/Cart/Internal/ToggleEmptyState';
 	}

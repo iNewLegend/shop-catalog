@@ -11,7 +11,7 @@ import Model from './model';
 /**
  * @memberOf components.catalog
  */
-export class Comonent extends $core.Component {
+export class Comonent extends ( $core.Component ) {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 

@@ -6,7 +6,7 @@
 /**
  * @memberOf components.catalog.data
  */
-export class Index extends $core.data.Command {
+export class Index extends ( $core.data.Command ) {
 	static localCatalog = [];
 
 	static getName() {

@@ -6,7 +6,7 @@
 /**
  * @memberOf components.cart.data
  */
-export class Add extends $core.data.Command {
+export class Add extends ( $core.data.Command ) {
 	static getName() {
 		return 'Components/Cart/Data/Add';
 	}

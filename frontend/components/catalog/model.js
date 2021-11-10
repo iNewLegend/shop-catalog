@@ -8,10 +8,6 @@
  * @memberOf components.catalog
  */
 export default class Model extends ( $core.Model ) {
-	static getNamespace() {
-		return 'Components/Catalog'
-	}
-
 	static getName() {
 		return 'Components/Catalog/Model';
 	}
@@ -19,7 +15,7 @@ export default class Model extends ( $core.Model ) {
 	/**
 	 * Loaded items to be rendered.
 	 *
-	 * @type {ArrayClass.<components.catalog.product.Component>}
+	 * @type {components.catalog.product.Component[]}
 	 */
 	products = this.array();
 

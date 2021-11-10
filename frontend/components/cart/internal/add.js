@@ -7,7 +7,7 @@ import CartItemComponent from 'COMPONENTS/cart/item/component';
 /**
  * @memberOf components.cart.internal
  */
-export class Add extends $core.internal.Command {
+export class Add extends ( $core.internal.Command ) {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}

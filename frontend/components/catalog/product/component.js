@@ -8,8 +8,9 @@ import Model from './model';
 
 /**
  * @memberOf components.catalog.product
+ * @property {Model} model
  */
-export class Component extends $core.Component {
+export class Component extends ( $core.Component ) {
 	constructor( parent, options ) {
 		super( parent, options );
 

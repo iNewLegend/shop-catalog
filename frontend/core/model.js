@@ -189,7 +189,7 @@ export class Model extends Core {
 	}
 
 	/**
-	 * @returns {ArrayClass}
+	 * @returns {[]}
 	 */
 	array() {
 		return new ArrayClass( this );

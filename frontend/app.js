@@ -149,6 +149,7 @@ class App {
 
 		// On receiving cart data from server.
 		$core.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
+			// If its first time.
 			if ( ! this.cartRecvOnce ) {
 				this.cartRecvOnce = true;
 

@@ -11,7 +11,7 @@ import Model from './model';
  * @memberOf components.cart
  * @property {components.cart.Model} model
  */
-export class Component extends $core.Component {
+export class Component extends ( $core.Component ) {
 	static openCartOnUpdate = true;
 
 	static getName() {

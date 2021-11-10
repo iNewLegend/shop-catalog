@@ -8,7 +8,7 @@ import Model from './model.js';
 /**
  * @memberOf components.sidebar
  */
-export default class Component extends $core.Component {
+export default class Component extends ( $core.Component ) {
 	static getName() {
 		return 'Components/Sidebar/Component';
 	}

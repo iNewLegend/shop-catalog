@@ -6,7 +6,7 @@
 /**
  * @memberOf components.sidebar.commands
  */
-export class Toggle extends $core.commands.Command {
+export class Toggle extends ( $core.commands.Command ) {
 	static getName() {
 		return 'Components/Sidebar/Commands/Toggle';
 	}
