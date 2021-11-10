@@ -7,8 +7,9 @@ import Model from './model';
 
 /**
  * @memberOf components.cart.item
+ * @property {Model} model
  */
-export class Component extends $core.Component {
+export class Component extends ( $core.Component ) {
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}

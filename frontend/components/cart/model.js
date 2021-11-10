@@ -20,7 +20,7 @@ export default class Model extends ( $core.Model ) {
 	/**
 	 * Loaded items to be rendered.
 	 *
-	 * @type {ArrayClass.<components.cart.item.Component>}
+	 * @type {components.cart.item.Component[]}
 	 */
 	items = this.array();
 

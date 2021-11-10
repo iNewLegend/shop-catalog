@@ -59,14 +59,23 @@ class App {
 	initialize() {
 		this.logger.startEmpty();
 
-		const { header } = this.elements;
+		this.hookSidebar();
+		this.hookCatalog();
+		this.hookCart();
 
-		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
+		this.container.set( this.pages.catalog );
+		this.container.render();
+	}
+
+	hookSidebar() {
+		const { header } = this.elements;
 
 		header.logo.click( () => {
 			this.container.set( this.pages.catalog );
 			this.container.render();
 		} );
+
+		header.toggle.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
 		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
 			// Toggle virtual cart state.
@@ -74,10 +83,12 @@ class App {
 				this.cart.model.state = true :
 				this.cart.model.state = false
 		} );
+	}
 
+	hookCatalog() {
 		$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
 			const cartAddArgs = {
-				... args.component.model.getModelData(),
+				...args.component.model.getModelData(),
 				amount: args.component.elements.amount.value,
 			};
 
@@ -95,118 +106,100 @@ class App {
 				this.cart.render()
 			} );
 		} );
-
-		$core.data.onAfter( 'Components/Cart/Data/Index', this.onCartReceived.bind( this ) );
-		$core.internal.onAfter( 'Components/Cart/Internal/ToggleEmptyState', this.onCartStateEmpty.bind( this ) );
-		$core.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', this.onCartSetTotal.bind( this ) );
-		$core.commands.onAfter( 'Components/Cart/Commands/Checkout', this.onCartCheckout.bind( this ) );
-
-		this.container.set( this.pages.catalog );
-		this.container.render();
 	}
 
-	async onCartReceived( args ) {
-		if ( ! this.cartRecvOnce ) {
-			this.cartRecvOnce = true;
+	hookCart() {
+		// On cart update it state empty or not.
+		$core.internal.onAfter( 'Components/Cart/Internal/ToggleEmptyState', ( { state } ) => {
+			this.logger.startWith( { state } );
 
-			const { cart, spinner } = this.elements.header;
+			const { amount } = this.elements.header;
 
-			cart.show();
-			spinner.hide();
-		}
+			state ? amount.show() : amount.hide();
+		} );
 
-		const data = args.result;
+		// On cart update total.
+		$core.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', () => {
+			this.logger.startEmpty();
 
-		if ( ! data ) {
-			throw new Error();
-		}
+			let totalItemsInCartCount = 0;
 
-		// Not all the products that are in cart exist locally since we used pages in that system,
-		// Wo we find out what missing and request it from the server.
-		const asyncFilter = async ( arr, predicate ) => Promise.all( arr.map( predicate ) )
-			.then( ( results ) => arr.filter( ( _v, index ) => results[ index ] ) );
+			// Get total from all products in cart.
+			this.cart.model.items.forEach( ( item ) => {
+				totalItemsInCartCount += item.model.amount
+			} );
 
-		const missingProducts = await asyncFilter( data, async ( item ) => {
-			// We get the price and name from local catalog.
-			// There is many solutions, this is fine for that example.
-			const localProduct = await $core.data.get( 'Components/Catalog/Data/Index', { id: item.id }, { local: true } );
+			// Update total amount in DOM.
+			const { amount } = this.elements.header;
 
-			// Use extra info from local product
-			if ( localProduct ) {
-				item.price = localProduct.price;
-				item.name = localProduct.name;
+			amount.html( totalItemsInCartCount );
+		} );
 
-				await $core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+		// On cart checkout button click.
+		$core.commands.onAfter( 'Components/Cart/Commands/Checkout', () => {
+			this.logger.startEmpty();
 
-				return false;
+			// Toggle the sidebar off.
+			$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
+
+			// Select checkout page.
+			this.container.set( this.pages.checkout );
+			this.container.render();
+		} );
+
+		// On receiving cart data from server.
+		$core.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
+			if ( ! this.cartRecvOnce ) {
+				this.cartRecvOnce = true;
+
+				const { cart, spinner } = this.elements.header;
+
+				// Hide the spinner and show cart.
+				cart.show();
+				spinner.hide();
 			}
 
-			return true;
-		} );
+			// Not all the products that are in cart exist locally, since the catalog loaded by request and get the data per page.
+			// Find out missing product and request it from the server.
+			const cartItems = args.result,
+				// Get local items from the catalog.
+				localCatalogItems = await $core.data.get( 'Components/Catalog/Data/Index', {}, { local: true } ),
+				missingProducts = [];
 
-		if ( ! missingProducts.length ) {
-			return;
-		}
+			// Find out missing products.
+			cartItems.forEach( ( cartItem ) => {
+				const localItem = localCatalogItems.find( ( localItem ) => localItem.id === cartItem.id );
 
-		$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts.map( x => x.id ) } ).then( ( missing ) => {
-			data.map( ( item ) => {
-				Object.assign( item, missing.find( x => x.id === item.id ) );
-				$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+				if ( ! localItem ) {
+					missingProducts.push( cartItem.id );
+				}
+			} );
+
+			// Request missing products.
+			$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts } ).then( ( missing ) => {
+				// On receiving missing products, add cart items to catalog.
+				cartItems.map( ( item ) => {
+					// If that item is the missing item, assign his values to current item.
+					const missedItem = missing.find( ( missingItem ) => missingItem.id === item.id );
+
+					// If item find as missing, merge his values to current item.
+					// else get item from the catalog.
+					if ( missedItem ) {
+						item = Object.assign( item, missedItem );
+					} else {
+						item = Object.assign( item, localCatalogItems.find( ( localItem ) => localItem.id === item.id ) );
+					}
+					// Add missing product to the cart.
+					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
+				} );
 			} );
 		} );
-	}
-
-	/**
-	 * Function onCartSetTotal() : Called on cart set total.
-	 */
-	onCartSetTotal() {
-		this.logger.startEmpty();
-
-		let totalItemsInCartCount = 0;
-
-		this.cart.model.items.forEach( ( item ) => {
-			totalItemsInCartCount += item.model.amount
-		} );
-
-		const { amount } = this.elements.header;
-
-		amount.html( totalItemsInCartCount );
-	}
-
-	/**
-	 * Function onCartStateEmpty() : Called on cart empty state change (cart have items|cart does have items)
-	 *
-	 * @param {Boolean} state
-	 */
-	onCartStateEmpty( { state } ) {
-		this.logger.startWith( { state } );
-
-		const { amount } = this.elements.header;
-
-		state ? amount.show() : amount.hide();
-	}
-
-	/**
-	 * Function onCartCheckout() : Called on cart checkout.
-	 */
-	onCartCheckout() {
-		this.logger.startEmpty();
-
-		$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
-
-		this.container.set( this.pages.checkout );
-
-		this.pages.checkout.on( 'render:after', () => {
-			console.log( 'onCartCheckout this.page.checkout rendered' );
-		} );
-
-		this.container.render();
 	}
 }
 
 document.addEventListener( 'readystatechange', () => {
-	if ( window.initOnce  ) {
-		return ;
+	if ( window.initOnce ) {
+		return;
 	}
 
 	window.$app = new App();
