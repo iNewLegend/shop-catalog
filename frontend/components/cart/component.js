@@ -120,18 +120,6 @@ export class Component extends ( $core.Component ) {
 	}
 
 	/**
-	 * Function request() : Request cart from server
-	 */
-	request() {
-		this.logger.startEmpty();
-
-		// Clear visual cart.
-		this.model.items.clear();
-
-		return $core.data.get( 'Components/Cart/Data/Index' );
-	}
-
-	/**
 	 * Function open() :  Open the cart
 	 */
 	open() {

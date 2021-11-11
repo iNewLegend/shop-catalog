@@ -1,7 +1,7 @@
 /**
  * @file: components/catalog/model.js
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Manges cart items/data.
+ * @description: Manges catalog model.
  */
 
 /**

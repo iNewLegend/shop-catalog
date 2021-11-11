@@ -7,28 +7,22 @@ import CartItemComponent from 'COMPONENTS/cart/item/component';
 /**
  * @memberOf components.cart.internal
  */
-export class Add extends ( $core.internal.Command ) {
+export class Add extends ($core.internal.Command) {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}
 
 	async apply( args, options ) {
 		const id = parseInt( args.id ),
-			amount = parseInt( args.amount );
-
-		let product = options.manual ? args :
-			await $core.data.get( 'Components/Catalog/Data/Index', { id }, { local: true } );
-
-		// Assign `id` and `amount`.
-		product = Object.assign( {}, product, { id, amount } );
-
-		const addItem = ( product ) => {
-			this.doAddItem(
-				this.createItem( product ),
-				true,
-				! options.local
-			);
-		}
+			amount = parseInt( args.amount ),
+			product = Object.assign( {}, args, { id, amount } ),
+			addItem = ( product ) => {
+				this.doAddItem(
+					this.createItem( product ),
+					true,
+					! options.local
+				);
+			}
 
 		if ( options.local ) {
 			return addItem( product );
@@ -72,7 +66,7 @@ export class Add extends ( $core.internal.Command ) {
 			return;
 		}
 
-		( existItem || item ).highlightItem();
+		(existItem || item).highlightItem();
 	}
 
 	/**
@@ -93,7 +87,7 @@ export class Add extends ( $core.internal.Command ) {
 
 		return new CartItemComponent( parent, {
 			logger,
-			... data,
+			...data,
 		} );
 	}
 }

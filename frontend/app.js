@@ -102,17 +102,15 @@ class App {
 		$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
 			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-			this.cart.request().then( () => {
-				this.cart.render()
-			} );
+			this.cart.model.items.clear();
+
+			$core.data.get( 'Components/Cart/Data/Index' ).then( () => this.cart.render() );
 		} );
 	}
 
 	hookCart() {
 		// On cart update it state empty or not.
 		$core.internal.onAfter( 'Components/Cart/Internal/ToggleEmptyState', ( { state } ) => {
-			this.logger.startWith( { state } );
-
 			const { amount } = this.elements.header;
 
 			state ? amount.show() : amount.hide();
@@ -120,8 +118,6 @@ class App {
 
 		// On cart update total.
 		$core.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', () => {
-			this.logger.startEmpty();
-
 			let totalItemsInCartCount = 0;
 
 			// Get total from all products in cart.
@@ -137,8 +133,6 @@ class App {
 
 		// On cart checkout button click.
 		$core.commands.onAfter( 'Components/Cart/Commands/Checkout', () => {
-			this.logger.startEmpty();
-
 			// Toggle the sidebar off.
 			$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
 
@@ -149,6 +143,7 @@ class App {
 
 		// On receiving cart data from server.
 		$core.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
+
 			// If its first time.
 			if ( ! this.cartRecvOnce ) {
 				this.cartRecvOnce = true;
@@ -176,24 +171,31 @@ class App {
 				}
 			} );
 
-			// Request missing products.
-			$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts } ).then( ( missing ) => {
-				// On receiving missing products, add cart items to catalog.
-				cartItems.map( ( item ) => {
-					// If that item is the missing item, assign his values to current item.
-					const missedItem = missing.find( ( missingItem ) => missingItem.id === item.id );
+			const addCartItems = ( items, missing = [] ) => {
+					items.forEach( ( item ) => {
+						// If that item is the missing item, assign his values to current item.
+						const missedItem = missing.find( ( missingItem ) => missingItem.id === item.id );
 
-					// If item find as missing, merge his values to current item.
-					// else get item from the catalog.
-					if ( missedItem ) {
-						item = Object.assign( item, missedItem );
-					} else {
-						item = Object.assign( item, localCatalogItems.find( ( localItem ) => localItem.id === item.id ) );
-					}
-					// Add missing product to the cart.
-					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true, manual: true } )
-				} );
-			} );
+						// If item find as missing, merge his values to current item.
+						// else get item from the catalog.
+						if ( missedItem ) {
+							item = Object.assign( item, missedItem );
+						} else {
+							item = Object.assign( item, localCatalogItems.find( ( localItem ) => localItem.id === item.id ) );
+						}
+
+						// Add missing product to the cart.
+						$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
+					} );
+				}
+
+			if ( ! missingProducts.length && cartItems.length ) {
+				return addCartItems( cartItems );
+			}
+
+			// Request missing products,  On receiving missing products, add cart items to catalog.
+			$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts } )
+				.then( ( missing ) => addCartItems( cartItems, missing ) );
 		} );
 	}
 }

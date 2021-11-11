@@ -1,6 +1,6 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Manges cart one product unit.
+ * @description: Manges one product unit.
  */
 
 /**
