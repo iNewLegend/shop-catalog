@@ -4,13 +4,11 @@
  */
 import * as core from 'CORE';
 import Core from "CORE/base/core";
-import Context from "./context";
 
 /**
  * @memberOf core
  */
 export class Component extends Core {
-	static DEATH_MONITOR_INTERVAL = 1000;
 
 	constructor( parent, options = {} ) {
 		super();
@@ -90,16 +88,6 @@ export class Component extends Core {
 	template() {}
 
 	render() {
-		if ( ! this.deathMonitor ) {
-			this.deathMonitor = setInterval( () => {
-				if ( ! this.view.element.element.isConnected ) {
-					this.model.destroy();
-
-					clearInterval( this.deathMonitor );
-				}
-			}, Component.DEATH_MONITOR_INTERVAL );
-		}
-
 		this.beforeRender();
 
 		this.view.render();
