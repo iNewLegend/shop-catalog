@@ -1,19 +1,47 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: nope.
- * TODO:
+ * @description: Model, which contains all data for each component, it should automatically detects changes within the model.
  */
-import objectHash from "object-hash";
 import Core from 'CORE/base/core';
 import Logger from './modules/logger';
 import ArrayClass from "./model/array-class";
+import ObjectHash from "object-hash";
+
+/**
+ * Function refresh().
+ *
+ * Get current model state, and compare it with the previous state.
+ * If changes detected, then tell the model about it own changes.
+ *
+ * @param {Model} model
+ */
+export const refresh = ( model ) => {
+	const data = model.getModelData();
+
+	if ( ! data ) {
+		return;
+	}
+
+	const dataHash = ObjectHash( data );
+
+	if ( dataHash === model._prevModelHash ) {
+		return;
+	}
+
+	model._events?.onChange.forEach( ( event ) => event( {
+		modelOnChange: data.virtualId,
+		prevModel: model._prevModel,
+		currentModel: data,
+	} ) );
+
+	model._prevModel = data;
+	model._prevModelHash = dataHash;
+}
 
 /**
  * @memberOf core
  */
 export class Model extends Core {
-	static LOCAL_WORKER_INTERVAL_TIMEOUT = 100;
-
 	get logger() {
 		return this._logger;
 	}
@@ -26,7 +54,14 @@ export class Model extends Core {
 		return 'Core/Model';
 	}
 
-	static models = {};
+	_cache = {};
+	_cacheHash = {};
+	_prevModel = {};
+	_prevModelHash = {};
+
+	_events = {
+        onChange: [],
+    };
 
 	constructor( options = {} ) {
 		super();
@@ -34,117 +69,51 @@ export class Model extends Core {
 		this._options = options;
 
 		this._logger = new Logger( this.getName(), true, { sameColor: true } );
-		this._logger.startWith( { options } );
-		this._owner = options.owner;
-
-		this._events = {
-			onChange: [],
-		}
-
-		this._alive = true;
+		this._logger.startWith( { options } );``
 
 		this.initialize();
+
+		const self = this;
+
+		let timeout;
+
+		return new Proxy( this, {
+			set: function( target, key, value ) {
+				target[ key ] = value;
+
+				if ( ! key.startsWith( '_' ) ) {
+					if ( timeout ) {
+						clearTimeout( timeout );
+					}
+
+					const cacheExist = self._cache[ key ];
+
+					self._cache[ key ] = value;
+
+					if ( value instanceof Object ) {
+						let dataHash;
+
+						try {
+							self._cacheHash[ key ] = ObjectHash( value );
+						} catch ( e ) {
+						}
+
+						setTimeout( () => refresh( self ) );
+						return true;
+					} else if ( value !== -1 && value !== '-1'&& cacheExist !== undefined && cacheExist !== value ) {
+						timeout = setTimeout( () => refresh( self ) );
+
+						return true;
+					}
+				}
+
+				return true;
+			}
+		} );
 	}
 
 	initialize() {
-		this.initializeModelChangeDetectionWorker()
-		// setTimeout ( () => this.initializeModelChangeDetectionLocal() );
-	}
-
-	// TODO: ModelChangeDetection should work like a garbage collector, to detect the changes that were missed/too deep/complex.
-
-	initializeModelChangeDetectionLocal() {
-		const interval = setInterval( () => {
-			if ( ! this._alive ) {
-				return clearInterval( interval );
-			}
-
-			const snapshot = objectHash( this.getModelData() );
-
-			if ( this._currentSnapshot && snapshot !== this._currentSnapshot ) {
-				setTimeout( () => this._events.onChange.forEach( ( event ) => event() ) );
-			}
-
-			this._currentSnapshot = snapshot;
-		},
-		200
-		);
-
-		this._currentSnapshot = objectHash( this.getModelData() );
-	}
-
-	initializeModelChangeDetectionWorker() {
-		if ( ! Model.worker ) {
-			Model.worker = new Worker( new URL( './model/worker', import.meta.url ) );
-			Model.worker.addEventListener( "message", ( e ) => {
-				if ( e.data.modelOnChange ) {
-					const model = Model.models[ e.data.modelOnChange ];
-
-					if ( model ) {
-						model._events?.onChange.forEach( ( event ) => event( e.data ) );
-					}
-				}
-			} );
-		}
-
-		// Local send data worker.
-		const updateDataLoop = () => {
-			// Repeat.
-			if ( Model.worker ) {
-				if ( ! this._alive ) {
-					const model = Model.models[ this.virtualId ];
-
-					delete Model.models[ this.virtualId ];
-
-					if ( model ) {
-						// Tell the worker to delete model.
-						Model.worker.postMessage( {
-							delete: this.virtualId,
-						} );
-
-					}
-
-					return clearInterval( this._localWorkerInternval );
-				}
-
-				const currentModelData = this.getModelData();
-
-				if ( ! Object.keys( currentModelData ).length ) {
-					return;
-				}
-
-				// Update global models with current changes.
-				Model.models[ this.virtualId ] = this;
-
-				if ( ! currentModelData.virtualId ) {
-					throw new Error( 'virtualId is required' );
-				}
-
-				if ( 1 === Object.keys( currentModelData ).length ) {
-					// Only virtual id.
-					return;
-				}
-
-				// Tell the worker to set model.
-				Model.worker.postMessage( {
-					set: currentModelData,
-				} );
-
-				// Repeat till alive.
-				if ( ! this._alive ) {
-					delete Model.models[ currentModelData.virtualId ];
-
-					// Tell the worker to delete model.
-					Model.worker.postMessage( {
-						delete: currentModelData.virtualId,
-					} );
-
-					return clearInterval( this._localWorkerInternval );
-				}
-			}
-		}
-
-		this._localWorkerInternval = setInterval( updateDataLoop.bind( this ), Model.LOCAL_WORKER_INTERVAL_TIMEOUT );
+		refresh( this );
 	}
 
 	getModelData() {
@@ -184,8 +153,6 @@ export class Model extends Core {
 				} );
 			}
 		} )
-
-		this._alive = false;
 	}
 
 	/**
@@ -199,21 +166,21 @@ export class Model extends Core {
 	 * @returns String
 	 */
 	string() {
-		return String();
+		return String( -1 );
 	}
 
 	/**
 	 * @returns Number
 	 */
 	number() {
-		return Number()
+		return Number( -1 )
 	}
 
 	/**
 	 * @returns boolean
 	 */
 	boolean() {
-		return Boolean();
+		return Boolean( false )
 	}
 
 	/**
@@ -228,7 +195,6 @@ export class Model extends Core {
 		switch ( event ) {
 			case 'change':
 				return this._events.onChange.push( callback );
-
 		}
 
 		throw new Error( `event: '${ event }' not found.' `);

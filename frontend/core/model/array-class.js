@@ -1,9 +1,8 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: nope.
- * TODO:
+ * @description: TODO.
  */
-import Model from "CORE/model";
+import { Model, refresh as modelRefresh } from "CORE/model";
 import { Component } from "CORE/index";
 
 /**
@@ -41,6 +40,8 @@ export default class ArrayClass extends Array {
 
 			if ( beforeLen !== afterLen ) {
 				onChangeCallbacks();
+
+				modelRefresh( this._parent );
 			}
 		} );
 
@@ -51,16 +52,13 @@ export default class ArrayClass extends Array {
 		// TODO: Add silence.
 		const result = super.push( ... items );
 
-		// onchange:array:insert
-		this._parent._events.onChange.forEach( ( event ) => event( {} ) );
+		modelRefresh( this._parent );
 
 		return result;
 	}
 
-	// TODO: Remove
 	pushSilent( item ) {
-		item._silent = true;
-		return super.push( item );
+		return  super.push( item );
 	}
 
 	clear() {
@@ -70,6 +68,8 @@ export default class ArrayClass extends Array {
 					prop.remove();
 				}
 			} );
+
+			modelRefresh( this._parent );
 		}
 
 		this.length = 0;
