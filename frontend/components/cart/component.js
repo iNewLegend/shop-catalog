@@ -115,7 +115,7 @@ export class Component extends ( $core.Component ) {
 
 		this.model.items.forEach( ( component ) => {
 			component.render();
-        } );
+		} );
 
 		if ( ! renderOnce ) {
 			$core.internal.run( 'Components/Cart/Internal/UpdateTotal' );
