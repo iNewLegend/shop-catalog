@@ -84,8 +84,21 @@ export class Base extends Core {
 				parent.removeChild( this.element );
 			}
 
-			// Render.
-			this.element = parent.appendChild( this.context.create() );
+			// Support JSX callbacks.
+			if ( 'function' === typeof parent ) {
+				const _parent = parent();
+
+				// Temporary work around for non existing elements.
+				if ( !_parent ) {
+					this.context.create();
+					this.element = this.context.node;
+                } else {
+					this.element = _parent.element.appendChild( this.context.create() );
+				}
+			} else {
+				// Render.
+				this.element = parent.appendChild( this.context.create() );
+			}
 		}
 
 		if ( ! preventDefault ) this.afterRender();

@@ -4,6 +4,7 @@
  */
 import * as core from 'CORE';
 import Core from "CORE/base/core";
+import Context from "./context";
 
 /**
  * @memberOf core
@@ -51,6 +52,9 @@ export class Component extends Core {
 
 		if ( ! view ) {
 			const template = this.template() || this.options.template || '<div>_EMPTY_TEMPLATE_</div>';
+
+			this.options.template = template;
+
 			view = new core.View( this.parent, { template } );
 		}
 
@@ -66,11 +70,6 @@ export class Component extends Core {
 
 		// Link context.
 		this.context = view.element.context;
-
-		// Support JSX.
-		if ( false === this.context.isConnected ) {
-			this.parent.context.append( this.context );
-		}
 
 		this.hookAttachListeners();
 	}

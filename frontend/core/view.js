@@ -15,6 +15,8 @@ export class View extends Core {
 	 */
 	element;
 
+	isRenderOnce = false;
+
 	static getName() {
 		return 'Core/View';
 	}
@@ -39,6 +41,7 @@ export class View extends Core {
 	}
 
 	render() {
+		this.isRenderOnce = true;
 		this.element.render();
 	}
 

@@ -8,7 +8,6 @@ import * as services from 'SERVICES';
 import * as components from 'COMPONENTS';
 import * as pages from 'PAGES';
 
-// TODO Should extend `core.Container` instead of using naked class.
 class App {
 	/**
 	 * Function constructor() : Create App
@@ -86,12 +85,14 @@ class App {
 	}
 
 	hookCatalog() {
+		// On adding item from catalog.
 		$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
 			const cartAddArgs = {
 				...args.component.model.getModelData(),
 				amount: args.component.elements.amount.value,
 			};
 
+			// Add item to cart.
 			$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
 
 			if ( $app.cart.constructor.openCartOnUpdate ) {
@@ -99,23 +100,17 @@ class App {
 			}
 		} );
 
+		// On receive catalog.
 		$core.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+			// Initialize cart.
 			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
-			this.cart.model.items.clear();
-
-			$core.data.get( 'Components/Cart/Data/Index' ).then( () => this.cart.render() );
+			// Request the cart from the server.
+			$core.data.get( 'Components/Cart/Data/Index' );
 		} );
 	}
 
 	hookCart() {
-		// On cart update it state empty or not.
-		$core.internal.onAfter( 'Components/Cart/Internal/ToggleEmptyState', ( { state } ) => {
-			const { amount } = this.elements.header;
-
-			state ? amount.show() : amount.hide();
-		} );
-
 		// On cart update total.
 		$core.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', () => {
 			let totalItemsInCartCount = 0;
@@ -129,6 +124,8 @@ class App {
 			const { amount } = this.elements.header;
 
 			amount.html( totalItemsInCartCount );
+
+			totalItemsInCartCount ? amount.show() : amount.hide();
 		} );
 
 		// On cart checkout button click.
@@ -143,7 +140,6 @@ class App {
 
 		// On receiving cart data from server.
 		$core.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
-
 			// If its first time.
 			if ( ! this.cartRecvOnce ) {
 				this.cartRecvOnce = true;
@@ -172,30 +168,34 @@ class App {
 			} );
 
 			const addCartItems = ( items, missing = [] ) => {
-					items.forEach( ( item ) => {
-						// If that item is the missing item, assign his values to current item.
-						const missedItem = missing.find( ( missingItem ) => missingItem.id === item.id );
+				items.forEach( ( item ) => {
+					// If that item is the missing item, assign his values to current item.
+					const missedItem = missing.find( ( missingItem ) => missingItem.id === item.id );
 
-						// If item find as missing, merge his values to current item.
-						// else get item from the catalog.
-						if ( missedItem ) {
-							item = Object.assign( item, missedItem );
-						} else {
-							item = Object.assign( item, localCatalogItems.find( ( localItem ) => localItem.id === item.id ) );
-						}
+					// If item find as missing, merge his values to current item.
+					// else get item from the catalog.
+					if ( missedItem ) {
+						item = Object.assign( item, missedItem );
+					} else {
+						item = Object.assign( item, localCatalogItems.find( ( localItem ) => localItem.id === item.id ) );
+					}
 
-						// Add missing product to the cart.
-						$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
-					} );
-				}
+					// Add missing product to the cart.
+					$core.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
+				} );
 
-			if ( ! missingProducts.length && cartItems.length ) {
-				return addCartItems( cartItems );
+				this.cart.render();
 			}
 
-			// Request missing products,  On receiving missing products, add cart items to catalog.
+			if ( ! missingProducts.length ) {
+				addCartItems( cartItems );
+
+				return;
+			}
+
+			// Request missing products, On receiving missing products, add cart items to catalog.
 			$core.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts } )
-				.then( ( missing ) => addCartItems( cartItems, missing ) );
+				.then( ( missing ) => addCartItems( cartItems, missing ) )
 		} );
 	}
 }

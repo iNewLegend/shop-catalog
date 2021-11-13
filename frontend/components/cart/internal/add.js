@@ -28,7 +28,16 @@ export class Add extends ($core.internal.Command) {
 			return addItem( product );
 		}
 
-		return $core.data.post( 'Components/Cart/Data/Add', { id, amount } ).then( () => addItem( product ) );
+		const component = this.getController().getComponent(),
+			$itemsList = component.elements.items();
+
+		return $core.data.post( 'Components/Cart/Data/Add', { id, amount } )
+			.then( () => addItem( product ) )
+			.then( () => {
+				if ( false === $itemsList ) {
+					component.render();
+				}
+			})
 	}
 
 	/**
@@ -83,9 +92,7 @@ export class Add extends ($core.internal.Command) {
 
 		data.id = parseInt( data.id );
 
-		const parent = this.getController().getComponent().elements.items;
-
-		return new CartItemComponent( parent, {
+		return new CartItemComponent( () => this.getController().getComponent().elements.items(), {
 			logger,
 			...data,
 		} );

@@ -29,7 +29,9 @@ export class Context {
 		this.beforeCreate();
 
 		// Support JSX.
-		if ( this.context instanceof $core.Element ) {
+		if ( 'function' === typeof this.context ) {
+			this.node = this.context();
+		} else if ( this.context instanceof $core.Element ) {
 			this.node = this.context.context;
 		} else {
 			this.node = HTML.toNode( this.context );

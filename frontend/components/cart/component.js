@@ -27,96 +27,62 @@ export class Component extends ( $core.Component ) {
 	}
 
 	initialize( options ) {
+		this.model.on( 'change', this.onChange.bind( this ) );
+
 		this.logger = new $core.modules.Logger( Component.getName(), true );
 
 		options.logger = this.logger;
+
+		this.elements = {
+			items: () => $core.Factory.createElement( '.cart .items' ),
+			totalPrice: () => $core.Factory.createElement( '.cart .total .price' ),
+		};
 
 		return super.initialize( options );
 	}
 
 	template() {
-		return (`
-			<div class="cart">
-				<h1 id="empty"  style="text-align: center">Your cart is empty.</h1>
+		return () => {
+			const isCartEmpty = ! !! this.model.items.length,
+				totalClass = isCartEmpty ? 'total' : 'total open';
+
+			return <div class="cart">
+				{ isCartEmpty ? <h1 id="empty" style="text-align: center">Your cart is empty.</h1> : null }
 				<ul class="items">
-					<li class="total open">
+					<li class={totalClass}>
 						<h2>TOTAL</h2>
-						<h3>$<span class="price">${ this.model.getTotal() }</span></h3>
+						<h3><span class="price">{this.model.getTotal()}</span></h3>
 					</li>
 				</ul>
 
-				<button class="checkout bg-info" onclick="$core.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button>
+				{ ! isCartEmpty ? <button class="checkout bg-info" onClick="$core.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
 			</div>
-		`);
+		}
 	}
 
-	afterRender() {
-		super.afterRender();
-
-		this.logger.startEmpty();
-
-		this.elements = {
-			self: $core.Factory.createElement( 'div.cart' ),
-			empty: $core.Factory.createElement( '.cart #empty' ),
-			items: $core.Factory.createElement( '.cart .items' ),
-			itemsTotal: $core.Factory.createElement( '.cart .items .total' ),
-			totalPrice: $core.Factory.createElement( '.cart .total .price' ),
-			checkout: $core.Factory.createElement( '.cart .checkout' )
-		};
-
-		this.model.on( 'change', this.onChange.bind( this ) );
-	}
 
 	/**
 	 * Function onChange() : Called when cart model changed.
 	 */
 	onChange( statesSnapshot ) {
-		const { prevModel } = statesSnapshot;
+		this.logger.startWith( statesSnapshot )
 
-		if ( ! prevModel ) {
-			// In cases the cart empty from the beginning.
-			return $core.internal.run( 'Components/Cart/Internal/ToggleEmptyState', {
-				state: !! this.model.items.length
-			} );
+		let { prevModel, currentModel } = statesSnapshot;
+
+		if ( ! prevModel || ! currentModel ) {
+			return;
 		}
 
-		if ( prevModel.state !== this.model.state ) {
-			this.onStateChange( this.model.state );
-		}
+		prevModel = JSON.parse( prevModel );
+		currentModel = JSON.parse( currentModel );
 
-		if ( statesSnapshot.currentModel.items?.__currentSnapshot !== prevModel.items?.__currentSnapshot ) {
-			this.onItemsChange();
+		if ( prevModel.state !== currentModel.state ) {
+			return this.onStateChange( this.model.state );
 		}
 	}
 
 	onStateChange( state ) {
 		state ? this.open() : this.close();
-	}
-
-	/**
-	 * Function onItemsChange() : Update when cart items changed.
-	 */
-	onItemsChange() {
-		this.logger.startEmpty();
-
-		let cartEfficientEmptyState = null;
-
-		// Guess when the cart become empty or become full or not changed = null.
-		if ( "undefined" === typeof this.itemEmptyState ) {
-			cartEfficientEmptyState = !! this.model.items.length;
-		} else if ( this.itemEmptyState !== !! this.model.items.length ) {
-			cartEfficientEmptyState = !! this.model.items.length;
-		}
-
-		if ( null !== cartEfficientEmptyState ) {
-			$core.internal.run( 'Components/Cart/Internal/ToggleEmptyState', {
-				state: cartEfficientEmptyState
-			} );
-		}
-
-		this.itemEmptyState = cartEfficientEmptyState;
-
-		$core.internal.run( 'Components/Cart/Internal/UpdateTotal' );
 	}
 
 	/**
@@ -140,6 +106,20 @@ export class Component extends ( $core.Component ) {
 		this.model.items.forEach( ( item ) => {
 			item.view.element.element.style = 'animation: none';
 		} );
+	}
+
+	render() {
+		const renderOnce = this.view.isRenderOnce;
+
+		super.render();
+
+		this.model.items.forEach( ( component ) => {
+			component.render();
+        } );
+
+		if ( ! renderOnce ) {
+			$core.internal.run( 'Components/Cart/Internal/UpdateTotal' );
+		}
 	}
 }
 

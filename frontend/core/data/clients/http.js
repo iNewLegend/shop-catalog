@@ -65,6 +65,7 @@ export class Http extends Core {
 			data = await response.json();
 		} catch ( e ) {
 			console.error( e );
+			console.trace();
 
 			return false;
 		}

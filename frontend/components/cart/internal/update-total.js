@@ -14,7 +14,7 @@ export class UpdateTotal extends ( $core.internal.Command ) {
 	apply( args, options ) {
 		const component = this.getController().getComponent();
 
-		component.elements.totalPrice.element.innerText = component.model.getTotal();
+		component.elements.totalPrice().element.innerText = component.model.getTotal();
 	}
 }
 
