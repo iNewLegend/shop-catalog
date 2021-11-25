@@ -12,9 +12,14 @@ export class UpdateTotal extends ( $core.internal.Command ) {
 	}
 
 	apply( args, options ) {
-		const component = this.getController().getComponent();
+		// The command should update state only.
+		const component = this.getController().getComponent(),
+			totalPrice = component.model.getTotal(),
+			totalPriceElement = component.elements.totalPrice();
 
-		component.elements.totalPrice().element.innerText = component.model.getTotal();
+		if ( totalPriceElement ) {
+			totalPriceElement.innerText = totalPrice
+		}
 	}
 }
 

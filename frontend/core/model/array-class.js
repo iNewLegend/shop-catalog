@@ -30,22 +30,12 @@ export default class ArrayClass extends Array {
 	}
 
 	filter( callback ) {
-		// Determine remove or insert and call 'onchange:array:insert' 'onchange:array:remove'
-		const beforeLen = this.length,
-			result = super.filter( callback ),
-			afterLen = result.length;
+		const result = super.filter( callback ),
+			newInstance =  new ArrayClass( this._parent, result );
 
-		setTimeout( () => {
-			const onChangeCallbacks = () => this._parent._events.onChange.forEach( ( event ) => event( {} ) );
+		modelRefresh( this._parent );
 
-			if ( beforeLen !== afterLen ) {
-				onChangeCallbacks();
-
-				modelRefresh( this._parent );
-			}
-		} );
-
-		return new ArrayClass( this._parent, result );
+		return newInstance;
 	}
 
 	push( ...items ) {

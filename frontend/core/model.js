@@ -34,7 +34,7 @@ export const refresh = ( model ) => {
 		currentModel: data,
 	} ) );
 
-	model._prevModel = data;
+	model._prevModel = Object.assign( data );
 	model._prevModelHash = dataHash;
 }
 

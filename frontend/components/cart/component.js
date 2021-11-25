@@ -42,12 +42,13 @@ export class Component extends ( $core.Component ) {
 	}
 
 	template() {
+		// JSX Element callback applied on render.
 		return () => {
-			const isCartEmpty = ! !! this.model.items.length,
+			const isCartEmpty = !!! this.model.items.length,
 				totalClass = isCartEmpty ? 'total' : 'total open';
 
 			return <div class="cart">
-				{ isCartEmpty ? <h1 id="empty" style="text-align: center">Your cart is empty.</h1> : null }
+				{isCartEmpty ? <h1 id="empty" style="text-align: center">Your cart is empty.</h1> : null}
 				<ul class="items">
 					<li class={totalClass}>
 						<h2>TOTAL</h2>
@@ -55,11 +56,11 @@ export class Component extends ( $core.Component ) {
 					</li>
 				</ul>
 
-				{ ! isCartEmpty ? <button class="checkout bg-info" onClick="$core.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
+				{ ! isCartEmpty ?
+					<button class="checkout bg-info" onClick="$core.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null }
 			</div>
 		}
 	}
-
 
 	/**
 	 * Function onChange() : Called when cart model changed.
@@ -77,7 +78,7 @@ export class Component extends ( $core.Component ) {
 		currentModel = JSON.parse( currentModel );
 
 		if ( prevModel.state !== currentModel.state ) {
-			return this.onStateChange( this.model.state );
+			this.onStateChange( this.model.state );
 		}
 	}
 
@@ -109,17 +110,11 @@ export class Component extends ( $core.Component ) {
 	}
 
 	render() {
-		const renderOnce = this.view.isRenderOnce;
-
 		super.render();
 
 		this.model.items.forEach( ( component ) => {
 			component.render();
 		} );
-
-		if ( ! renderOnce ) {
-			$core.internal.run( 'Components/Cart/Internal/UpdateTotal' );
-		}
 	}
 }
 

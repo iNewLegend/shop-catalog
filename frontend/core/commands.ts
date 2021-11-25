@@ -48,7 +48,7 @@ export class Commands extends Core {
                     break;
                 }
 
-                callback( args, options );
+               callback( args, options );
             }
         }
     }

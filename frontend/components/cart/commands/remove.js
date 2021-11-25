@@ -23,8 +23,14 @@ export class Remove extends ( $core.commands.Command ) {
 			model = this.getController().getModel();
 
 		return $core.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
-			// Remove cart.
+			// Find item that being removed.
+			const item = model.items.find( ( filteredItem ) => filteredItem.model.id === id );
+
+			// Filter out item that being removed.
 			model.items = model.items.filter( ( filteredItem ) => filteredItem.model.id !== id );
+
+			// Remove item from dom.
+			item.remove();
 		} );
 	}
 }
