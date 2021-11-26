@@ -17,6 +17,9 @@
 	background: #026586;
 }
 
+#sidebar .cart #empty {
+	text-align: center;
+}
 
 #sidebar .cart .checkout.open {
 	display: block;

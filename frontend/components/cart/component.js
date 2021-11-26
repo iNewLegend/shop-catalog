@@ -48,7 +48,7 @@ export class Component extends ( $core.Component ) {
 				totalClass = isCartEmpty ? 'total' : 'total open';
 
 			return <div class="cart">
-				{isCartEmpty ? <h1 id="empty" style="text-align: center">Your cart is empty.</h1> : null}
+				{isCartEmpty ? <h1 id="empty">Your cart is empty.</h1> : null}
 				<ul class="items">
 					<li class={totalClass}>
 						<h2>TOTAL</h2>
