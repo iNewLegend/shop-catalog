@@ -87,17 +87,14 @@ class App {
 	hookCatalog() {
 		// On adding item from catalog.
 		$core.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
-			const cartAddArgs = {
+			// Add item to cart.
+			$core.internal.run( 'Components/Cart/Internal/Add', {
 				...args.component.model.getModelData(),
 				amount: args.component.elements.amount.value,
-			};
+			} );
 
-			// Add item to cart.
-			$core.internal.run( 'Components/Cart/Internal/Add', cartAddArgs );
-
-			if ( $app.cart.constructor.openCartOnUpdate ) {
-				$core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } );
-			}
+			// Toggle sidebar and show cart
+			$core.commands.run( 'Components/Sidebar/Commands/Toggle' );
 		} );
 
 		// On receive catalog.

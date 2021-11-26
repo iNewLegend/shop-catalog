@@ -12,8 +12,6 @@ import Model from './model';
  * @property {components.cart.Model} model
  */
 export class Component extends ( $core.Component ) {
-	static openCartOnUpdate = true;
-
 	static getName() {
 		return 'Components/Cart/Component';
 	}
