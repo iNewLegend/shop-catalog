@@ -78,9 +78,7 @@ class App {
 
 		$core.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
 			// Toggle virtual cart state.
-			args.state ?
-				this.cart.model.state = true :
-				this.cart.model.state = false
+			$core.internal.run( 'Components/Cart/Internal/ToggleState', args );
 		} );
 	}
 

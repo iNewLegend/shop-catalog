@@ -36,9 +36,10 @@ export class Controller extends ( $core.controllers.Controller ) {
 			const total = $core.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
 				component = this.getComponent();
 
+			// Render on when empty state changes, to use JSX for showing empty/contain cart.
 			if ( 0 === total ) {
 				component.render();
-			} else if ( this.prevTotal === 0 && total > 0 ) {
+			} else if ( ! this.prevTotal && total > 0 ) {
 				component.render();
 			}
 

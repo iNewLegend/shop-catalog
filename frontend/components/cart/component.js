@@ -72,9 +72,6 @@ export class Component extends ( $core.Component ) {
 			return;
 		}
 
-		prevModel = JSON.parse( prevModel );
-		currentModel = JSON.parse( currentModel );
-
 		if ( prevModel.state !== currentModel.state ) {
 			this.onStateChange( this.model.state );
 		}

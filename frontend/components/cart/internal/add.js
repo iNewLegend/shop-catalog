@@ -28,16 +28,10 @@ export class Add extends ( $core.internal.Command ) {
 			return addItem( product );
 		}
 
-		const component = this.getController().getComponent(),
-			$itemsList = component.elements.items();
+		const component = this.getController().getComponent();
 
 		return $core.data.post( 'Components/Cart/Data/Add', { id, amount } )
 			.then( () => addItem( product ) )
-			.then( () => {
-				if ( false === $itemsList ) {
-					component.render();
-				}
-			} )
 	}
 
 	/**

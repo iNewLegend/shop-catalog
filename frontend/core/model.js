@@ -69,7 +69,7 @@ export class Model extends Core {
 		this._options = options;
 
 		this._logger = new Logger( this.getName(), true, { sameColor: true } );
-		this._logger.startWith( { options } );``
+		this._logger.startWith( { options } );
 
 		this.initialize();
 

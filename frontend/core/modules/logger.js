@@ -288,6 +288,8 @@ export class Logger {
 	startWith( params ) {
 		if ( ! this.state ) return;
 
+		params = Object.assign( {}, params );
+
 		const type = 'se';
 		const source = this._getCallerName();
 

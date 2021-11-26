@@ -16,7 +16,6 @@ export class UpdateTotal extends ( $core.internal.Command ) {
 	 * @return {number}
 	 */
 	apply( args, options ) {
-		// The command should update state only.
 		const component = this.getController().getComponent(),
 			totalPrice = component.model.getTotal(),
 			totalPriceElement = component.elements.totalPrice();
