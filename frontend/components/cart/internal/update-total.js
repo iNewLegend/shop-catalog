@@ -1,6 +1,6 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Internal command for update total items in cart.
+ * @description: Internal command for update total elements in cart (UPDATES VIEWS ONLY).
  */
 
 /**
@@ -11,6 +11,10 @@ export class UpdateTotal extends ( $core.internal.Command ) {
 		return 'Components/Cart/Internal/UpdateTotal';
 	}
 
+	/**
+	 * @override
+	 * @return {number}
+	 */
 	apply( args, options ) {
 		// The command should update state only.
 		const component = this.getController().getComponent(),
@@ -18,8 +22,10 @@ export class UpdateTotal extends ( $core.internal.Command ) {
 			totalPriceElement = component.elements.totalPrice();
 
 		if ( totalPriceElement ) {
-			totalPriceElement.innerText = totalPrice
+			totalPriceElement.element.innerText = totalPrice
 		}
+
+		return parseInt( totalPrice );
 	}
 }
 

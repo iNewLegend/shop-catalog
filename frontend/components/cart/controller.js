@@ -32,13 +32,21 @@ export class Controller extends ( $core.controllers.Controller ) {
 			'Components/Cart/Commands/Remove'
 		);
 
-		$core.commands.onAfter( 'Components/Cart/Commands/Remove', ( args ) => {
-			this.getComponent().render();
-		} )
+		const updateTotal = () => {
+			const total = $core.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
+				component = this.getComponent();
 
-		$core.internal.onAfter( 'Components/Cart/Internal/Add', ( args ) => {
-			this.getComponent().render();
-		} );
+			if ( 0 === total ) {
+				component.render();
+			} else if ( this.prevTotal === 0 && total > 0 ) {
+				component.render();
+			}
+
+			this.prevTotal = total;
+		}
+
+		$core.internal.onAfter( 'Components/Cart/Internal/Add', updateTotal );
+		$core.commands.onAfter( 'Components/Cart/Commands/Remove', updateTotal )
 	}
 }
 
