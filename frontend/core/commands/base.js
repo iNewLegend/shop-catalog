@@ -19,7 +19,7 @@ export default class CommandBase extends Core {
 		super();
 
 		if ( ! this.constructor.logger ) {
-			this.constructor.logger = new Logger( this.constructor.getName() );
+			this.constructor.logger = new Logger( this.constructor.getName(), true, { sameColor: true } );
 			this.constructor.logger.setOutputHandler( services.Terminal.onOutput );
 		}
 

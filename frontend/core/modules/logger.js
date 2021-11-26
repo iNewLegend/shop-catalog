@@ -61,9 +61,9 @@ export class Logger {
 			this.color = Logger.sharedData[ this._name ];
 		} else {
 			this.color = this.getRandomColor();
-		}
 
-		Logger.colorsInUse.push( this.color );
+			Logger.colorsInUse.push( this.color );
+		}
 
 		this.outputHandler = console.log.bind();
 
