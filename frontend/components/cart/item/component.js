@@ -86,15 +86,11 @@ export class Component extends ( $core.Component ) {
 		}
 
 		if ( states.currentModel.amount !== states.prevModel.amount ) {
-			this.updateAmount( states.currentModel.amount );
+			$core.internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
+				amount: states.currentModel.amount,
+				sum: this.model.getTotal(),
+			} );
 		}
-	}
-
-	updateAmount( amountSet ) {
-		const { amount, sum } = this.elements;
-
-		amount.innerHTML = amountSet;
-		sum.innerHTML = (parseFloat( this.model.getTotal().toString() ).toFixed( 2 ));
 	}
 
 	/**
