@@ -6,9 +6,9 @@
         "baseUrl": "./",
         "paths": {
             "COMPONENTS": ["frontend/components/index.js"],
-            "CORE": ["frontend/core/index.js"],
+            "CORE": ["frontend/core"],
             "LIBRARY": ["frontend/library/index.js"],
-            "MODULES": ["frontend/modules/index.js"],
+            "MODULES": ["frontend/modules/"],
             "PAGES": ["frontend/pages/index.js"],
             "SERVICES": ["frontend/services/index.js"],
             "DEV-LIBRARY": ["dev/library/index.js"],

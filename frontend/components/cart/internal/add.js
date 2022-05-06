@@ -7,7 +7,7 @@ import CartItemComponent from 'COMPONENTS/cart/item/component';
 /**
  * @memberOf components.cart.internal
  */
-export class Add extends ( $core.internal.Command ) {
+export class Add extends ($flow.internal.Command) {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}
@@ -30,7 +30,7 @@ export class Add extends ( $core.internal.Command ) {
 
 		const component = this.getController().getComponent();
 
-		return $core.data.post( 'Components/Cart/Data/Add', { id, amount } )
+		return $flow.data.post( 'Components/Cart/Data/Add', { id, amount } )
 			.then( () => addItem( product ) )
 	}
 
@@ -62,7 +62,7 @@ export class Add extends ( $core.internal.Command ) {
 			existItem = this.getController().getModel().getById( itemId )
 
 		existItem ?
-			existItem.model.amount += item.model.amount :
+			existItem.model.amount += item.model.amount : // Should be command.
 			this.doInsertItem( item );
 
 		if ( ! highlight ) {

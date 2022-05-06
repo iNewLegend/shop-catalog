@@ -13,38 +13,32 @@ import './pagination.css';
  * @memberOf components.catalog
  */
 
-/**
- * @memberOf components.catalog
- */
-export class Pagination extends $core.Component {
-	constructor( parent, options ) {
-		super( parent, options );
-
-		this.logger = new $core.modules.Logger( Pagination.getName(), true, { sameColor: true } );
-
-		this.logger.startWith( { options } );
-
-        this.page = 0;
-
-        this.events = {
-            onPageChange: ( page ) => {},
-        };
-    }
-
+export class Pagination extends $flow.modules.Component {
 	static getName() {
 		return 'Components/Catalog/Pagination';
 	}
 
+	constructor( parent, options ) {
+		super( parent, options );
+
+		this.logger = new $flow.modules.Logger( Pagination.getName(), true, { sameColor: true } );
+
+		this.logger.startWith( { options } );
+
+		this.page = 0;
+		this.events = {};
+	}
+
 	template() {
-		return (`
+		return () => (
 			<div id="pagination" class="pagination hidden">
 				<div class="pagination">
-					<a onclick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
-					<span class="placeholder"></span>
-					<a onclick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
+					<a onClick="this.onPageChange( (this.page - 1 ) )" class="prev" href="#">&laquo;</a>
+					<span class="placeholder"/>
+					<a onClick="this.onPageChange( (this.page  + 1 ) )" class="next" href="#">&raquo;</a>
 				</div>
 			</div>
-        `);
+		);
 	}
 
 	afterRender() {
@@ -52,9 +46,9 @@ export class Pagination extends $core.Component {
 
 		this.elements = {
 			self: this.view.element,
-			prev: $core.Factory.createElement( "#pagination .prev" ),
-			next: $core.Factory.createElement( "#pagination .next" ),
-			placeHolder: $core.Factory.createElement( '#pagination .placeholder' )
+			prev: $flow.Factory.createElement( "#pagination .prev" ),
+			next: $flow.Factory.createElement( "#pagination .next" ),
+			placeHolder: $flow.Factory.createElement( '#pagination .placeholder' )
 		};
 	}
 
@@ -73,7 +67,6 @@ export class Pagination extends $core.Component {
 
 		// Clear.
 		placeHolder.html( '' );
-
 		// Notify events.
 		this.events.onPageChange( page );
 	}
@@ -98,7 +91,7 @@ export class Pagination extends $core.Component {
 
 		// Create pages.
 		for ( let i = 0; i < paginationData.pages; ++i ) {
-			const anchor = new $core.Element( placeHolder, `<a href="#">${i + 1}</a>` );
+			const anchor = new $flow.modules.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
 			this.anchors.push( anchor );
 
@@ -109,13 +102,13 @@ export class Pagination extends $core.Component {
 		}
 
 		// Set page.
-        this.page = paginationData.current + 1;
+		this.page = paginationData.current + 1;
 
-        // Next.
-        if ( paginationData.current >= ( paginationData.pages - 1 ) ) {
-            next.hide();
-        } else {
-            next.show();
+		// Next.
+		if ( paginationData.current >= (paginationData.pages - 1) ) {
+			next.hide();
+		} else {
+			next.show();
 		}
 
 		// Prev.
@@ -139,7 +132,7 @@ export class Pagination extends $core.Component {
 			case 'page:change': {
 				this.events.onPageChange = callback;
 			}
-			break;
+				break;
 
 			default: {
 				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );

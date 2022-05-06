@@ -6,18 +6,15 @@
 /**
  * @memberOf components.cart.item
  */
-export default class Model extends ( $core.Model ) {
+export default class Model extends ($flow.Model) {
+	id = this.number();
+	name = this.string();
+	price = this.number();
+	amount = this.string();
+
 	static getName() {
 		return 'Components/Cart/Item/Model';
 	}
-
-	id = this.number();
-
-	name = this.string();
-
-	price = this.number();
-
-	amount = this.string();
 
 	getTotal() {
 		return this.amount * this.price;

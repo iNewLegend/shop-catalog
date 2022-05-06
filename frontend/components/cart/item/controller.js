@@ -5,10 +5,7 @@
 import * as commands from "./commands/";
 import * as internal from "./internal/";
 
-/**
- * @memberOf components.cart.item
- */
-export class Controller extends ( $core.controllers.Controller ) {
+export class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Cart/Item/Controller';
 	}

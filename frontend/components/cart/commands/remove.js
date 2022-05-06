@@ -3,10 +3,7 @@
  * @description: Remove item from cart.
  */
 
-/**
- * @memberOf components.cart.commands
- */
-export class Remove extends ( $core.commands.Command ) {
+export class Remove extends $flow.commands.Command {
 	static getName() {
 		return 'Components/Cart/Commands/Remove';
 	}
@@ -22,7 +19,7 @@ export class Remove extends ( $core.commands.Command ) {
 		const id = args.model.id,
 			model = this.getController().getModel();
 
-		return $core.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
+		return $flow.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
 			// Find item that being removed.
 			const item = model.items.find( ( filteredItem ) => filteredItem.model.id === id );
 

@@ -6,10 +6,10 @@
 /**
  * @memberOf components.sidebar
  */
-export default class Model extends ( $core.Model ) {
+export default class Model extends ($flow.Model) {
+	state = this.boolean();
+
 	static getName() {
 		return 'Components/Sidebar/Model';
 	}
-
-	state = this.boolean();
 }

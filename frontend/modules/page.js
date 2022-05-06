@@ -2,8 +2,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Modules Namespace O__o
  */
-import { Container } from 'CORE';
-import * as services from 'SERVICES';
+import { Terminal } from '../services/';
+import { Container } from '../app-flow/modules/elements/';
 
 /**
  * @memberOf modules
@@ -14,8 +14,8 @@ export class Page extends Container {
 	}
 
 	initialize() {
-		this.logger = new $core.modules.Logger( Page.getName(), true );
-		this.logger.setOutputHandler( services.Terminal.onOutput );
+		this.logger = new $flow.modules.Logger( Page.getName(), true );
+		this.logger.setOutputHandler( Terminal.onOutput );
 
 		this.logger.startWith( this.constructor.name );
 

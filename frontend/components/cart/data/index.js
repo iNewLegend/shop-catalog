@@ -6,7 +6,7 @@
 /**
  * @memberOf components.cart.data
  */
-export class Index extends ( $core.data.Command ) {
+export class Index extends ($flow.data.Command) {
 	static getName() {
 		return 'Components/Cart/Data/Index';
 	}

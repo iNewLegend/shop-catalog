@@ -8,7 +8,7 @@ import Model from './model.js';
 /**
  * @memberOf components.sidebar
  */
-export default class Component extends ( $core.Component ) {
+export default class Component extends $flow.modules.Component {
 	static getName() {
 		return 'Components/Sidebar/Component';
 	}
@@ -25,14 +25,16 @@ export default class Component extends ( $core.Component ) {
 		super.initialize( options );
 
 		this.elements = {
-			overlay: $core.Factory.createElement( '#overlay' ),
+			overlay: $flow.Factory.createElement( '#overlay' ),
 		}
 
-		this.elements.overlay.click( () => $core.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } ) );
+		this.elements.overlay.click(
+			() => $flow.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } )
+		);
 
 		this.model.on( 'change', () => {
 			const state = this.model.state;
-				state ?
+			state ?
 				this.onShow() :
 				this.onHide();
 		} );

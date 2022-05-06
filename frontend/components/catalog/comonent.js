@@ -8,10 +8,7 @@ import Spinner from './spinner/spinner';
 import Controller from './controller';
 import Model from './model';
 
-/**
- * @memberOf components.catalog
- */
-export class Comonent extends ( $core.Component ) {
+export class Comonent extends $flow.modules.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -28,7 +25,7 @@ export class Comonent extends ( $core.Component ) {
 	}
 
 	initialize( options ) {
-		this.logger = new $core.modules.Logger( Comonent.getName(), true, { sameColor: true } );
+		this.logger = new $flow.modules.Logger( Comonent.getName(), true, { sameColor: true } );
 		this.logger.startWith( { options } );
 
 		this.apis = {
@@ -66,11 +63,11 @@ export class Comonent extends ( $core.Component ) {
 		pagination.render();
 
 		pagination.on( 'page:change', ( page ) => {
-			$core.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
+			$flow.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
 				.then( this.onCatalogReceived.bind( this ) );
-		});
+		} );
 
-		$core.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
+		$flow.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
 			.then( this.onCatalogReceived.bind( this ) );
 	}
 

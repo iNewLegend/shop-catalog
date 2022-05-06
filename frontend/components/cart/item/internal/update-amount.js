@@ -3,17 +3,13 @@
  * @description: For each cart item update amount,sum in DOM.
  */
 
-/**
- * @memberOf components.cart.item.internal
- */
-export class UpdateAmount extends ( $core.internal.Command ) {
+export class UpdateAmount extends $flow.modules.CommandInternal {
 	static getName() {
 		return 'Components/Cart/Item/Internal/UpdateAmount';
 	}
 
 	apply( args ) {
-		const component = this.getController().getComponent(),
-			{ amount, sum } = args;
+		const { amount, component, sum } = args;
 
 		component.elements.amount.innerHTML = amount;
 		component.elements.sum.innerHTML = (parseFloat( sum.toString() ).toFixed( 2 ));

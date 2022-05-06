@@ -6,7 +6,11 @@
 		"target": "es5",
 		"allowJs": true,
 		"moduleResolution": "node",
-		"sourceMap": true
+		"sourceMap": true,
+		"baseUrl": ".",
+		"paths": {
+			"@@": ["frontend/"],
+		}
 	},
 	"include": [
 		"frontend"

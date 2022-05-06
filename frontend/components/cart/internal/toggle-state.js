@@ -4,10 +4,7 @@
  * to allow it to manged by external sources.
  */
 
-/**
- * @memberOf components.cart.internal
- */
-export class ToggleState extends ( $core.internal.Command ) {
+export class ToggleState extends $flow.modules.CommandInternal {
 	static getName() {
 		return 'Components/Cart/Internal/ToggleState';
 	}

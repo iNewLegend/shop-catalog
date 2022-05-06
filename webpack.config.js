@@ -32,7 +32,7 @@ module.exports = {
 				        ],
 				        plugins: [
 				        	[ '@babel/plugin-proposal-object-rest-spread' ],
-					        [ "@babel/plugin-transform-react-jsx", { "pragma": "new $core.JsxElement" } ]
+					        [ "@babel/plugin-transform-react-jsx", { "pragma": "new $flow.elements.JsxElement" } ]
 				        ]
 			        }
 		        }
@@ -42,16 +42,12 @@ module.exports = {
     resolve: {
 	    extensions: ['.tsx', '.ts', '.js'],
 
-	    // TODO: Read jsconfig.json for aliases.
         alias: {
             'COMPONENTS': path.resolve( __dirname, 'frontend/components' ),
             'CORE': path.resolve( __dirname, 'frontend/core' ),
-            'LIBRARY': path.resolve( __dirname, 'frontend/library' ),
-            'MODULES': path.resolve( __dirname, 'frontend/modules' ),
+            'CORE-ERRORS': path.resolve( __dirname, 'frontend/core/errors' ),
             'PAGES': path.resolve( __dirname, 'frontend/pages' ),
             'SERVICES': path.resolve( __dirname, 'frontend/services' ),
-            'DEV-LIBRARY': path.resolve( __dirname, 'dev/library' ),
-            'DEV-MODULES': path.resolve( __dirname, 'dev/modules' ),
         }
     },
     stats: {

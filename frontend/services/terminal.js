@@ -4,6 +4,7 @@
  * TODO: Remove JQuery.
  */
 import JQuery from '../library/jquery.js';
+
 const CircularJSON = require( 'circular-json' );
 
 const LOCAL_STORAGE_KEY = 'local_storage_key';
@@ -22,13 +23,17 @@ export class Terminal {
 		captureHeight: 0,
 	};
 
+	static getName() {
+		return 'Services/Terminal';
+	}
+
 	/**
 	 * Function constructor() : Create Terminal
 	 */
 	constructor() {
 		if ( Terminal.instance == null ) {
 
-			this.logger = new $core.modules.Logger( Terminal.getName(), true );
+			this.logger = new $flow.modules.Logger( Terminal.getName(), true );
 			this.logger.startEmpty();
 
 			this.localStorage = window.localStorage;
@@ -55,10 +60,6 @@ export class Terminal {
 		}
 
 		return Terminal.instance;
-	}
-
-	static getName() {
-		return 'Services/Terminal';
 	}
 
 	/**
@@ -298,9 +299,9 @@ Terminal.onOutput = function( output ) {
 				selector += '.' + [ ...el.classList ].join( '.' );
 			}
 
-            output = `[Event]: type: '${output.type}' element: '${selector}'`;
-        } else {
-            output = CircularJSON.stringify( output, null, 4 );
+			output = `[Event]: type: '${output.type}' element: '${selector}'`;
+		} else {
+			output = CircularJSON.stringify( output, null, 4 );
 
 			output = `<pre>${output}</pre>`;
 		}

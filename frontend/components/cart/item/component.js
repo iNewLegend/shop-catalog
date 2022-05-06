@@ -9,7 +9,7 @@ import Model from './model';
  * @memberOf components.cart.item
  * @property {Model} model
  */
-export class Component extends ( $core.Component ) {
+export class Component extends $flow.modules.Component {
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}
@@ -60,7 +60,7 @@ export class Component extends ( $core.Component ) {
 	                <div class="thumbnail"><img alt="item" src="img/product-${id}.jpg" /></div>
 	                <div class="info">
 	                    <h2>${name}</h2>
-	                    <button class="color-primary close" onclick="$core.commands.run( 'Components/Cart/Item/Commands/Remove', { virtualId: this.virtualId, model: this.model } )">&times;</button>
+	                    <button class="color-primary close" onclick="$flow.commands.run( 'Components/Cart/Item/Commands/Remove', { virtualId: this.virtualId, model: this.model } )">&times;</button>
 	                    <div class="amount-price">
 	                        <span class="amount">${amount}</span> x <strong>${price}</strong>
 	                        <p class="sum">$<span class="value">${sum}</span></p>
@@ -86,7 +86,8 @@ export class Component extends ( $core.Component ) {
 		}
 
 		if ( states.currentModel.amount !== states.prevModel.amount ) {
-			$core.internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
+			$flow.internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
+				component: this,
 				amount: states.currentModel.amount,
 				sum: this.model.getTotal(),
 			} );
