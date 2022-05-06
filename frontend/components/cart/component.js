@@ -7,6 +7,11 @@ import './cart.css';
 import Controller from './controller'
 import Model from './model';
 
+/**
+ * @name CartComponent
+ * @property {Model} model
+ * @property {{}} elements
+ */
 export class Component extends $flow.Component {
 	static getName() {
 		return 'Components/Cart/Component';

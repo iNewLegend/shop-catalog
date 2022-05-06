@@ -2,7 +2,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Get the catalog from the server and cache it.
  */
-
 export class Index extends $flow.commandBases.CommandData {
 	static localCatalog = [];
 

@@ -2,7 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Internal command for adding items to cart.
  */
-import CartItemComponent from 'COMPONENTS/cart/item/component';
+import CartItemComponent from '../../../components/cart/item/component';
 
 export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	static getName() {

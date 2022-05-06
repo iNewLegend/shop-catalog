@@ -2,7 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages one item unit.
  */
-import Controller from "COMPONENTS/cart/item/controller";
+import Controller from './controller';
 import Model from './model';
 
 /**

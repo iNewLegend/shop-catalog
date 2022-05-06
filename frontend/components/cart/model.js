@@ -2,7 +2,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart items/data.
  */
-
 export default class Model extends $flow.Model {
 	/**
 	 * State of the cart, open/closed.

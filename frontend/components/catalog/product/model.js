@@ -2,7 +2,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges one product unit.
  */
-
 export default class Model extends $flow.Model {
 	/**
 	 * Item id.

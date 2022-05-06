@@ -2,7 +2,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart item unit.
  */
-
 export default class Model extends $flow.Model {
 	id = this.number();
 	name = this.string();

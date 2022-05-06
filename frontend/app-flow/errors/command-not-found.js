@@ -2,7 +2,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description:
  */
-
 export class CommandNotFound extends Error {
 	/**
 	 * @param {string} command

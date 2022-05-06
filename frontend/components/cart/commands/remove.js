@@ -2,7 +2,6 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Remove item from cart.
  */
-
 export class Remove extends ( $flow.commandBases.CommandPublic ) {
 	static getName() {
 		return 'Components/Cart/Commands/Remove';

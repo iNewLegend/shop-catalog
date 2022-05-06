@@ -3,7 +3,6 @@
  * @description: JQuery Addons
  * TODO: Remove jQuery should be removed.
  */
-
 export function JQuery_GetSelector( $ ) {
 	// https://stackoverflow.com/posts/15623322/revisions
 

@@ -12,7 +12,6 @@ import './pagination.css';
  * @property {number} perPage amount of pages per page.
  * @memberOf components.catalog
  */
-
 export class Pagination extends $flow.Component {
 	static getName() {
 		return 'Components/Catalog/Pagination';

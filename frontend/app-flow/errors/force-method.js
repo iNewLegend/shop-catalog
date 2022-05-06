@@ -10,7 +10,7 @@ export class ForceMethodBase extends Error {
 
 export class ForceMethod extends Error {
 	/**
-	 * @param {core.Core} core
+	 * @param {Core} core
 	 * @param {string} methodName
 	 */
 	constructor( core, methodName ) {
