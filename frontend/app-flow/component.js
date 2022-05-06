@@ -2,18 +2,19 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-import { Model, View } from '..';
+import { Model } from './model';
+import { View } from './view';
 import { Element } from './element';
 
-import Core from '../base/core';
+import Core from './base/core';
 
 /**
- * @name $flow.modules.Component
+ * @name $flow.Component
  */
 export class Component extends Core {
 
 	static getName() {
-		return 'Core/Component';
+		return 'Flow/Component';
 	}
 
 	static getControllerClass() {
@@ -85,11 +86,9 @@ export class Component extends Core {
 		};
 	}
 
-	beforeRender() {
-	}
+	beforeRender() {}
 
-	template() {
-	}
+	template() {}
 
 	render() {
 		this.beforeRender();
@@ -99,8 +98,7 @@ export class Component extends Core {
 		this.afterRender();
 	}
 
-	afterRender() {
-	}
+	afterRender() {}
 
 	show() {
 		this.view.element.show();
@@ -127,8 +125,8 @@ export class Component extends Core {
 		const ControllerClass = this.constructor.getControllerClass();
 
 		if ( ControllerClass ) {
-			return $flow.controllers.get( ControllerClass.getName() ) ||
-				$flow.controllers.register( new ControllerClass( this ), this.model );
+			return $flow.managers.controllers.get( ControllerClass.getName() ) ||
+				$flow.managers.controllers.register( new ControllerClass( this ), this.model );
 		}
 
 		return this.options.controller || this;

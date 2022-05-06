@@ -2,14 +2,14 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: WIP.
  */
-import Container from './elements/container';
+import Container from './container';
 
 /**
- * @name $flow.modules.Element
+ * @name $flow.Element
  */
 export class Element extends Container {
 	static getName() {
-		return 'Core/Element';
+		return 'Flow/Element';
 	}
 
 	initialize() {
@@ -22,11 +22,9 @@ export class Element extends Container {
 		this.afterInit();
 	}
 
-	beforeInit() {
-	}
+	beforeInit() {}
 
-	afterInit() {
-	}
+	afterInit() {}
 
 	afterRender( attachListeners = true ) {
 		super.afterRender();

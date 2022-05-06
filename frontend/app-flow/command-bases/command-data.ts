@@ -2,15 +2,15 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging data command unit.
  */
-import { Command } from './command';
-import ForceMethod from "../../errors/force-method";
+import { ForceMethod } from '../errors/force-method';
+import { CommandPublic } from './command-public';
 
 declare var $flow: any;
 
-export abstract class CommandData extends Command {
+export abstract class CommandData extends CommandPublic {
 
     static getName() {
-        return 'Core/Data/CommandData';
+        return 'Flow/CommandBases/CommandData';
     }
 
     getEndpoint(): string {
@@ -20,7 +20,7 @@ export abstract class CommandData extends Command {
     apply( args = this.args, options = this.options ) {
         const endpoint = this.applyEndpointFormat( this.getEndpoint(), args.query );
 
-        return $flow.data.constructor.client._fetch( endpoint, args.type, args.data || null );
+        return $flow.managers.data.constructor.client._fetch( endpoint, args.type, args.data || null );
     }
 
     private applyEndpointFormat( endpoint: string, data: any = {} ): string {

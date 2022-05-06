@@ -3,10 +3,7 @@
  * @description: Manges cart item unit.
  */
 
-/**
- * @memberOf components.cart.item
- */
-export default class Model extends ($flow.Model) {
+export default class Model extends $flow.Model {
 	id = this.number();
 	name = this.string();
 	price = this.number();

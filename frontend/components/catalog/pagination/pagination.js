@@ -13,7 +13,7 @@ import './pagination.css';
  * @memberOf components.catalog
  */
 
-export class Pagination extends $flow.modules.Component {
+export class Pagination extends $flow.Component {
 	static getName() {
 		return 'Components/Catalog/Pagination';
 	}
@@ -91,7 +91,7 @@ export class Pagination extends $flow.modules.Component {
 
 		// Create pages.
 		for ( let i = 0; i < paginationData.pages; ++i ) {
-			const anchor = new $flow.modules.Element( placeHolder, `<a href="#">${i + 1}</a>` );
+			const anchor = new $flow.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
 			this.anchors.push( anchor );
 

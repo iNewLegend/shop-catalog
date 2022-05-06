@@ -7,7 +7,7 @@ import { Commands } from "./commands";
 
 export class Internal extends Commands {
     static getName() {
-        return 'Core/Internal';
+        return 'Flow/Managers/Internal';
     }
 }
 

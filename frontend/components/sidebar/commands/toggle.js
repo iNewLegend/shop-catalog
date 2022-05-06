@@ -3,10 +3,7 @@
  * @description: Toggles the state.
  */
 
-/**
- * @memberOf components.sidebar.commands
- */
-export class Toggle extends ($flow.commands.Command) {
+export class Toggle extends ( $flow.commandBases.CommandPublic ) {
 	static getName() {
 		return 'Components/Sidebar/Commands/Toggle';
 	}

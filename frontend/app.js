@@ -3,6 +3,7 @@
  * @description: Main File
  */
 import './app-flow/';
+
 import * as services from './services/';
 import * as components from './components/';
 import * as pages from './pages/';
@@ -14,14 +15,14 @@ class App {
 	constructor() {
 		services.Terminal.initialize();
 
-		// Tell logger act differently when it see instanceOf `$flow.modules.Component`.
-		$flow.modules.Logger.createCustomWrapper( $flow.modules.Component, ( args ) => {
-			if ( args instanceof $flow.modules.Component ) {
+		// Tell logger act differently when it see instanceOf `$flow.Component`.
+		$flow.modules.Logger.createCustomWrapper( $flow.Component, ( args ) => {
+			if ( args instanceof $flow.Component ) {
 				return {
-					// Return readable version of component, instead logging all the HTML.
+					// Return readable version of component, instead of logging all the HTML.
 					__CUSTOM_LOGGER_WRAPPER__: true,
 					name: args.getName(),
-					model: args.model.getModelData(),
+					model: args?.model?.getModelData() || args,
 				}
 			}
 		} )
@@ -52,7 +53,7 @@ class App {
 			}
 		};
 
-		this.container = new $flow.elements.Container( this.elements.sections.main, '<div class="page container"></div>' );
+		this.container = new $flow.Container( this.elements.sections.main, '<div class="page container"></div>' );
 
 		this.pages = {
 			catalog: new pages.Catalog( this.container, '<div class="pages catalog"></div>' ),
@@ -85,40 +86,40 @@ class App {
 			this.container.render();
 		} );
 
-		header.toggle.click( () => $flow.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
+		header.toggle.click( () => $flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle', { state: true } ) );
 
-		$flow.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
+		$flow.managers.commands.onBefore( 'Components/Sidebar/Commands/Toggle', ( args ) => {
 			// Toggle virtual cart state.
-			$flow.internal.run( 'Components/Cart/Internal/ToggleState', args );
+			$flow.managers.internal.run( 'Components/Cart/Internal/ToggleState', args );
 		} );
 	}
 
 	hookCatalog() {
 		// On adding item from catalog.
-		$flow.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
+		$flow.managers.commands.onAfter( 'Components/Catalog/Commands/Add', ( args ) => {
 			// Add item to cart.
-			$flow.internal.run( 'Components/Cart/Internal/Add', {
+			$flow.managers.internal.run( 'Components/Cart/Internal/Add', {
 				...args.component.model.getModelData(),
 				amount: args.component.elements.amount.value,
 			} );
 
 			// Toggle sidebar and show cart
-			$flow.commands.run( 'Components/Sidebar/Commands/Toggle' );
+			$flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle' );
 		} );
 
 		// On receive catalog.
-		$flow.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
+		$flow.managers.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
 			// Initialize cart.
 			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
 
 			// Request the cart from the server.
-			$flow.data.get( 'Components/Cart/Data/Index' );
+			$flow.managers.data.get( 'Components/Cart/Data/Index' );
 		} );
 	}
 
 	hookCart() {
 		// On cart update total.
-		$flow.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', () => {
+		$flow.managers.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', () => {
 			let totalItemsInCartCount = 0;
 
 			// Get total from all products in cart.
@@ -135,9 +136,9 @@ class App {
 		} );
 
 		// On cart checkout button click.
-		$flow.commands.onAfter( 'Components/Cart/Commands/Checkout', () => {
+		$flow.managers.commands.onAfter( 'Components/Cart/Commands/Checkout', () => {
 			// Toggle the sidebar off.
-			$flow.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
+			$flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
 
 			// Select checkout page.
 			this.container.set( this.pages.checkout );
@@ -145,7 +146,7 @@ class App {
 		} );
 
 		// On receiving cart data from server.
-		$flow.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
+		$flow.managers.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
 			// If its first time.
 			if ( ! this.cartRecvOnce ) {
 				this.cartRecvOnce = true;
@@ -161,7 +162,7 @@ class App {
 			// Find out missing product and request it from the server.
 			const cartItems = args.result,
 				// Get local items from the catalog.
-				localCatalogItems = await $flow.data.get( 'Components/Catalog/Data/Index', {}, { local: true } ),
+				localCatalogItems = await $flow.managers.data.get( 'Components/Catalog/Data/Index', {}, { local: true } ),
 				missingProducts = [];
 
 			// Find out missing products.
@@ -187,7 +188,7 @@ class App {
 					}
 
 					// Add missing product to the cart.
-					$flow.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
+					$flow.managers.internal.run( 'Components/Cart/Internal/Add', item, { local: true } )
 				} );
 
 				this.cart.render();
@@ -200,7 +201,7 @@ class App {
 			}
 
 			// Request missing products, On receiving missing products, add cart items to catalog.
-			$flow.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts } )
+			$flow.managers.data.get( 'Components/Catalog/Data/Get', { ids: missingProducts } )
 				.then( ( missing ) => addCartItems( cartItems, missing ) )
 		} );
 	}

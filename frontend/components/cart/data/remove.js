@@ -3,10 +3,7 @@
  * @description: Request remove cart item from backend.
  */
 
-/**
- * @memberOf components.cart.data
- */
-export class Remove extends ($flow.data.Command) {
+export class Remove extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Remove';
 	}

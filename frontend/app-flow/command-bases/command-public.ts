@@ -4,17 +4,13 @@
  * @propose: Add extra logic/typing to CommandBase.
  */
 import CommandBase from './command-base';
-import Controller from '../../controller';
+import Controller from '../controller';
 
-/**
- * @name $flow.commands.Command
- */
-export class Command extends CommandBase {
+export class CommandPublic extends CommandBase {
     public static controller: Controller
 
-    getName() {
-        // @ts-ignore
-        return super.getName();
+    static getName() {
+        return 'Flow/CommandBases/CommandPublic';
     }
 
     getController(): Controller {
@@ -23,4 +19,4 @@ export class Command extends CommandBase {
     }
 }
 
-export default Command;
+export default CommandPublic;

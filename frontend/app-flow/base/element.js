@@ -2,7 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-import Context from '../modules/context';
+import Context from '../context';
 import Core from './core';
 
 export class ElementBase extends Core {
@@ -17,7 +17,7 @@ export class ElementBase extends Core {
 	options;
 
 	static getName() {
-		return 'Core/Element/Base';
+		return 'Flow/Base/Element';
 	}
 
 	/**
@@ -55,8 +55,7 @@ export class ElementBase extends Core {
 		this.afterInit();
 	}
 
-	initialize( options = {} ) {
-	}
+	initialize( options = {} ) {}
 
 	render( preventDefault = false ) {
 		if ( ! preventDefault ) this.beforeRender();
@@ -102,17 +101,13 @@ export class ElementBase extends Core {
 		return this.element;
 	}
 
-	beforeInit() {
-	}
+	beforeInit() {}
 
-	afterInit() {
-	};
+	afterInit() {}
 
-	beforeRender() {
-	}
+	beforeRender() {}
 
-	afterRender() {
-	}
+	afterRender() {}
 }
 
 export default ElementBase;

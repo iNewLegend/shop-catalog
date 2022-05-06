@@ -3,10 +3,7 @@
  * @description: Get the catalog from the server and cache it.
  */
 
-/**
- * @memberOf components.catalog.data
- */
-export class Index extends ($flow.data.Command) {
+export class Index extends $flow.commandBases.CommandData {
 	static localCatalog = [];
 
 	static getName() {

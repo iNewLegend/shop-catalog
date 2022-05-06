@@ -8,9 +8,6 @@
 		"moduleResolution": "node",
 		"sourceMap": true,
 		"baseUrl": ".",
-		"paths": {
-			"@@": ["frontend/"],
-		}
 	},
 	"include": [
 		"frontend"

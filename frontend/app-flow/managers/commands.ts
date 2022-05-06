@@ -2,17 +2,20 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging commands, Part of MVC.
  */
-import { Logger } from "./modules/";
-import { Terminal } from "../services";
-import { CommandAlreadyRegistered, CommandNotFound } from './errors/'
-import Command from './modules/command-bases/command';
-import Controller from './controller'
+import { CommandPublic } from '../command-bases/command-public';
+import { Terminal } from "../../services/terminal";
+import { Logger } from '../modules/logger';
 
-import Core from './base/core';
+import { CommandAlreadyRegistered, CommandNotFound } from '../errors/'
+
+import Controller from '../controller'
+import Core from '../base/core';
 
 export interface CommandArgsInterface {
     [ key: string ]: any
 }
+
+type onAfterCallback = ( args: Object, options: Object ) => any
 
 interface OnAffectHookInterface {
     [ key: string ]: Array<String>
@@ -22,19 +25,18 @@ interface OnAfterOnceHookInterface {
     [ key: string ]: Array<Function>
 }
 
-type onAfterCallback = ( args: Object, options: Object ) => any
-
 interface onAfterHookInterface {
     [ key: string ]: Array<onAfterCallback>
 }
 
 export class Commands extends Core {
+    commands: { [ key: string ]: ( typeof CommandPublic ) } = {};
 
-    commands: { [ args: string ]: ( typeof Command ) } = {};
     onBeforeHooks: OnAfterOnceHookInterface = {};
     onAfterEffectHooks: OnAffectHookInterface = {};
     onAfterOnceHooks: OnAfterOnceHookInterface = {};
     onAfterHooks: onAfterHookInterface = {};
+
     private logger: Logger;
 
     constructor() {
@@ -47,11 +49,11 @@ export class Commands extends Core {
     }
 
     get Command() {
-        return Command;
+        return CommandPublic;
     }
 
     static getName() {
-        return 'Core/Commands';
+        return 'Flow/Managers/Commands';
     }
 
     private static runCallbacks( callbacks: Array<Function>, args: CommandArgsInterface = {}, options: Object = {} ) {
@@ -68,7 +70,7 @@ export class Commands extends Core {
         }
     }
 
-    public run( command: string | Command, args: CommandArgsInterface = {}, options = {} ) {
+    public run( command: string | CommandPublic, args: CommandArgsInterface = {}, options = {} ) {
         if ( typeof command === "string" ) {
             command = this.getCommandInstance( command, args, options );
         }
@@ -76,11 +78,10 @@ export class Commands extends Core {
         return this.runInstance( command, args, options );
     }
 
-    public register( commands: Array<typeof Command>, controller: Controller ) {
-        const result: typeof Command[] = [];
+    public register( commands: Array<typeof CommandPublic>, controller: Controller ) {
+        const result: typeof CommandPublic[] = [];
 
         Object.values( commands ).forEach( ( command ) => {
-            // @ts-ignore
             const commandName = command.getName();
 
             if ( this.commands[ commandName ] ) {
@@ -129,7 +130,7 @@ export class Commands extends Core {
         this.onAfterHooks[ hookCommand ].push( callback );
     }
 
-    public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): Command {
+    public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): CommandPublic {
         const CommandClass = this.commands[ name ];
 
         if ( ! CommandClass ) {
@@ -143,12 +144,12 @@ export class Commands extends Core {
         return this.commands;
     }
 
-    protected runInstance( command: Command, args: CommandArgsInterface = {}, options = {} ) {
+    protected runInstance( command: CommandPublic, args: CommandArgsInterface = {}, options = {} ) {
         let result: any = null;
 
         this.logger.startWith( { command: command.getName(), options, 'CommandArgs': '->' } );
         this.logger.debug( 'CommandArgs:' );
-        this.logger.object( this.logger.useWrapper( args ) );
+        this.logger.object( args );
 
         if ( this.onBeforeHooks[ command.getName() ] ) {
             const callbacks = this.onBeforeHooks[ command.getName() ];
@@ -166,7 +167,7 @@ export class Commands extends Core {
         return result;
     }
 
-    protected onAfterRun( command: Command, args: CommandArgsInterface, options: Object, result: any ) {
+    protected onAfterRun( command: CommandPublic, args: CommandArgsInterface, options: Object, result: any ) {
         if ( this.onAfterEffectHooks[ command.getName() ] ) {
             this.onAfterEffectHooks[ command.getName() ].forEach( ( command ) => {
                 args.result = result;
@@ -192,3 +193,5 @@ export class Commands extends Core {
         return result;
     }
 }
+
+export default Commands;

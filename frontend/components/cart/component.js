@@ -7,10 +7,7 @@ import './cart.css';
 import Controller from './controller'
 import Model from './model';
 
-/**
- * @property {components.cart.Model} model
- */
-export class Component extends $flow.modules.Component {
+export class Component extends $flow.Component {
 	static getName() {
 		return 'Components/Cart/Component';
 	}
@@ -55,7 +52,7 @@ export class Component extends $flow.modules.Component {
 
 				{! isCartEmpty ?
 					<button class="checkout bg-info"
-					        onClick="$flow.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
+					        onClick="$flow.managers.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
 			</div>
 		}
 	}

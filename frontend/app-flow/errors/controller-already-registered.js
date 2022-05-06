@@ -5,7 +5,7 @@
 
 export class ControllerAlreadyRegistered extends Error {
 	/**
-	 * @param {core.controllers.Controller} controller
+	 * @param {$flow.Controller} controller
 	 */
 	constructor( controller ) {
 		super( `Controller: '${controller.getName()}' is already registered` );

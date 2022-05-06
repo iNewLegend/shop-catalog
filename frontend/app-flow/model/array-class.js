@@ -2,7 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: TODO.
  */
-import { Component } from '../modules/';
+import { Component } from '../component';
 import { Model, refresh as modelRefresh } from '../model';
 
 export default class ArrayClass extends Array {

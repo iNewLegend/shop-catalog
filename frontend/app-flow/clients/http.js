@@ -1,4 +1,3 @@
-// TODO REMOVE - This File example how all should looks
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Used to communicate with backend.
@@ -10,7 +9,7 @@ import Core from '../base/core';
 
 export class Http extends Core {
 	static getName() {
-		return 'Data/Http';
+		return 'Flow/Clients/Http';
 	}
 
 	/**

@@ -24,13 +24,13 @@ export class Controller extends $flow.Controller {
 	}
 
 	setupHooks() {
-		$flow.commands.onAfterAffect(
+		$flow.managers.commands.onAfterAffect(
 			'Components/Cart/Item/Commands/Remove',
 			'Components/Cart/Commands/Remove'
 		);
 
 		const updateTotal = () => {
-			const total = $flow.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
+			const total = $flow.managers.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
 				component = this.getComponent();
 
 			// Render on when empty state changes, to use JSX for showing empty/contain cart.
@@ -43,8 +43,8 @@ export class Controller extends $flow.Controller {
 			this.prevTotal = total;
 		}
 
-		$flow.internal.onAfter( 'Components/Cart/Internal/Add', updateTotal );
-		$flow.commands.onAfter( 'Components/Cart/Commands/Remove', updateTotal )
+		$flow.managers.internal.onAfter( 'Components/Cart/Internal/Add', updateTotal );
+		$flow.managers.commands.onAfter( 'Components/Cart/Commands/Remove', updateTotal )
 	}
 }
 

@@ -3,10 +3,7 @@
  * @description: Get specific items from catalog.
  */
 
-/**
- * @memberOf components.catalog.data
- */
-export class Get extends ($flow.data.Command) {
+export class Get extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Catalog/Data/Get';
 	}

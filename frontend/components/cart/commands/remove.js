@@ -3,7 +3,7 @@
  * @description: Remove item from cart.
  */
 
-export class Remove extends $flow.commands.Command {
+export class Remove extends ( $flow.commandBases.CommandPublic ) {
 	static getName() {
 		return 'Components/Cart/Commands/Remove';
 	}
@@ -19,7 +19,7 @@ export class Remove extends $flow.commands.Command {
 		const id = args.model.id,
 			model = this.getController().getModel();
 
-		return $flow.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
+		return $flow.managers.data.post( 'Components/Cart/Data/Remove', { id } ).then( () => {
 			// Find item that being removed.
 			const item = model.items.find( ( filteredItem ) => filteredItem.model.id === id );
 

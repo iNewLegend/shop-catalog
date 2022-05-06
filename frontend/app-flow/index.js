@@ -1,39 +1,39 @@
 import "@babel/polyfill"
 
-// TODO Fix & sort by abc.
-import { Commands } from './commands';
-import Controllers from "./controllers";
-import { Data } from './data';
-import { Internal } from './internal';
+import * as commandBases from './command-bases/'
+import * as errors from './errors/'
+import * as managers from './managers/'
+import * as modules from './modules/'
+
+import { Component } from './component'
+import { Container } from './container'
+import { Context } from './context'
+import { Controller } from "./controller";
+import { Element } from "./element";
 import { Factory } from './factory';
+import { JsxElement } from './jsx-element';
 import { Model } from './model';
 import { View } from './view';
-
-import * as modules from './modules/'
-import * as elements from './modules/elements/'
-import Controller from "./controller";
 
 if ( ! global.$flow ) {
 	/**
 	 * @name @flow
 	 * */
 	global.$flow = {
-		// Part of core.
-		commands: new Commands(),
-		controllers: new Controllers(),
-		data: new Data(),
-		internal: new Internal(),
+		commandBases,
+		errors,
+		managers,
+		modules,
 
-		// Part of core.
+		Component,
+		Container,
+		Context,
 		Controller,
+		Element,
 		Factory,
+		JsxElement,
 		Model,
 		View,
-
-		elements,
-		modules,
 	}
 }
 
-// TODO: sort by abc.
-export { Commands, Factory, Model, View };

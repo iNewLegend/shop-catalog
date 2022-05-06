@@ -3,7 +3,7 @@
  * @description: nope.
  */
 import { ForceMethod } from './errors/force-method';
-import { Element } from './modules/element';
+import { Element } from './element';
 
 import Core from './base/core';
 
@@ -16,7 +16,7 @@ export class View extends Core {
 	isRenderOnce = false;
 
 	static getName() {
-		return 'Core/View';
+		return 'Flow/View';
 	}
 
 	constructor( parent, options = {} ) {
@@ -31,8 +31,7 @@ export class View extends Core {
 		this.initialize( options );
 	}
 
-	initialize( options ) {
-	}
+	initialize( options ) {}
 
 	template() {
 		throw new ForceMethod( this, 'template' );

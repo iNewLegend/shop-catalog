@@ -2,15 +2,15 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-import { Element } from "./modules";
+import { Element } from "./element";
 
 export class Factory {
 	static getName() {
-		return 'Core/Factory';
+		return 'Flow/Factory';
 	}
 
 	/**
-	 * @returns {$flow.modules.Element|false}
+	 * @returns {$flow.Element|false}
 	 */
 	static createElement( selector ) {
 		selector = document.querySelector( selector );

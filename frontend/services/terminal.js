@@ -3,15 +3,12 @@
  * @description: A live console that you can open by tilda key.
  * TODO: Remove JQuery.
  */
-import JQuery from '../library/jquery.js';
+import JQuery from '../app-flow/library/jquery';
 
 const CircularJSON = require( 'circular-json' );
 
 const LOCAL_STORAGE_KEY = 'local_storage_key';
 
-/**
- * @memberOf services;
- */
 export class Terminal {
 	static instance = null;
 

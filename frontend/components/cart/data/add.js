@@ -3,10 +3,7 @@
  * @description: Request add cart item from backend.
  */
 
-/**
- * @memberOf components.cart.data
- */
-export class Add extends ($flow.data.Command) {
+export class Add extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Add';
 	}

@@ -3,10 +3,7 @@
  */
 import './spinner.css';
 
-/**
- * @memberOf components.catalog
- */
-export class Spinner extends $flow.modules.Component {
+export class Spinner extends $flow.Component {
 	static getName() {
 		return 'Components/Catalog/Spinner';
 	}

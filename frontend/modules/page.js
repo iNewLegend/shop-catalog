@@ -3,7 +3,7 @@
  * @description: Modules Namespace O__o
  */
 import { Terminal } from '../services/';
-import { Container } from '../app-flow/modules/elements/';
+import { Container } from '../app-flow/container';
 
 /**
  * @memberOf modules

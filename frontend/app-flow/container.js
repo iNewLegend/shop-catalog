@@ -2,21 +2,22 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-import ElementBase from '../../base/element-base';
+import ElementBase from './base/element';
 
+/**
+ * @name $flow.Container
+ */
 export class Container extends ElementBase {
 	static RENDER_WITHOUT_CHILD = 'RENDER_WITHOUT_CHILD';
 
 	static getName() {
-		return 'Core/Container';
+		return 'Flow/Container';
 	}
 
 	initialize() {
 		this.events = {
-			onBeforeRender: ( /* Container */ container ) => {
-			},
-			onAfterRender: ( /* Container */ Container ) => {
-			},
+			onBeforeRender: ( /* Container */ container ) => {},
+			onAfterRender: ( /* Container */ Container ) => {},
 		};
 
 	}

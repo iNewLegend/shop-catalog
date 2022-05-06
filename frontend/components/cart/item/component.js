@@ -6,10 +6,9 @@ import Controller from "COMPONENTS/cart/item/controller";
 import Model from './model';
 
 /**
- * @memberOf components.cart.item
  * @property {Model} model
  */
-export class Component extends $flow.modules.Component {
+export class CartItemComponent extends $flow.Component {
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}
@@ -43,7 +42,7 @@ export class Component extends $flow.modules.Component {
 		// TODO: If this code is require and become duplicate over time hold a method to cover it. like `cloneWithName`.
 		if ( this.logger ) {
 			this.logger = this.logger.clone();
-			this.logger.name = Component.getName() + '/' + id;
+			this.logger.name = CartItemComponent.getName() + '/' + id;
 
 			this.logger.startWith( { id, name, price } );
 		}
@@ -60,7 +59,7 @@ export class Component extends $flow.modules.Component {
 	                <div class="thumbnail"><img alt="item" src="img/product-${id}.jpg" /></div>
 	                <div class="info">
 	                    <h2>${name}</h2>
-	                    <button class="color-primary close" onclick="$flow.commands.run( 'Components/Cart/Item/Commands/Remove', { virtualId: this.virtualId, model: this.model } )">&times;</button>
+	                    <button class="color-primary close" onclick="$flow.managers.commands.run( 'Components/Cart/Item/Commands/Remove', { virtualId: this.virtualId, model: this.model } )">&times;</button>
 	                    <div class="amount-price">
 	                        <span class="amount">${amount}</span> x <strong>${price}</strong>
 	                        <p class="sum">$<span class="value">${sum}</span></p>
@@ -86,7 +85,7 @@ export class Component extends $flow.modules.Component {
 		}
 
 		if ( states.currentModel.amount !== states.prevModel.amount ) {
-			$flow.internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
+			$flow.managers.internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
 				component: this,
 				amount: states.currentModel.amount,
 				sum: this.model.getTotal(),
@@ -103,4 +102,4 @@ export class Component extends $flow.modules.Component {
 	}
 }
 
-export default Component;
+export default CartItemComponent;

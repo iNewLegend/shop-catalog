@@ -2,17 +2,18 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging controllers, Part of MVC.
  */
-import { ControllerAlreadyRegistered } from './errors/';
-import { Core } from './base/core';
+import { ControllerAlreadyRegistered } from '../errors/controller-already-registered';
 
-export default class Controllers extends Core {
+import Core from '../base/core'
+
+export class Controllers extends Core {
 	/**
 	 * @type {Object.<$flow.Controller>}
 	 */
 	controllers = {};
 
 	static getName() {
-		return 'Core/Controllers';
+		return 'Flow/Managers/Controllers';
 	}
 
 	/**
@@ -44,3 +45,5 @@ export default class Controllers extends Core {
 		return controller;
 	}
 }
+
+export default Controllers;

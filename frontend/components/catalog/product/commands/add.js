@@ -3,7 +3,7 @@
  * @description: Add an item to catalog.
  */
 
-export class Add extends $flow.modules.CommandBase {
+export class Add extends ( $flow.commandBases.CommandBase ) {
 	static getName() {
 		return 'Components/Catalog/Product/Commands/Add';
 	}

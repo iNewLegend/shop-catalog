@@ -4,10 +4,7 @@
  */
 import CartItemComponent from 'COMPONENTS/cart/item/component';
 
-/**
- * @memberOf components.cart.internal
- */
-export class Add extends ($flow.internal.Command) {
+export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}
@@ -30,14 +27,14 @@ export class Add extends ($flow.internal.Command) {
 
 		const component = this.getController().getComponent();
 
-		return $flow.data.post( 'Components/Cart/Data/Add', { id, amount } )
+		return $flow.managers.data.post( 'Components/Cart/Data/Add', { id, amount } )
 			.then( () => addItem( product ) )
 	}
 
 	/**
 	 * function doInsertItem() : Insert item.
 	 *
-	 * @param {components.cart.item.Component} item
+	 * @param {CartItemComponent} item
 	 */
 	doInsertItem( item ) {
 		// Hook item insert.
@@ -51,7 +48,7 @@ export class Add extends ($flow.internal.Command) {
 	/**
 	 * Function doAddItem() : Adds item to cart
 	 *
-	 * @param {components.cart.item.Component} item
+	 * @param {CartItemComponent} item
 	 * @param {boolean} notifyCartChanged
 	 * @param {boolean} highlight
 	 */
@@ -77,7 +74,7 @@ export class Add extends ($flow.internal.Command) {
 	 *
 	 * @param {Object} data
 	 *
-	 * @returns {components.cart.item.Component}
+	 * @returns {CartItemComponent}
 	 */
 	createItem( data ) {
 		const { logger } = this;

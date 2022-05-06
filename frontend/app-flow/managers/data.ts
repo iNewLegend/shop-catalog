@@ -2,9 +2,10 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Responsible for manging data commands.
  */
-import { CommandArgsInterface, Commands } from "./commands";
-import { CommandData } from "./modules/command-bases/command-data";
-import Http from './clients/http';
+import { CommandArgsInterface, Commands } from './commands'
+import { CommandData } from '../command-bases/command-data';
+
+import Http from '../clients/http';
 
 export class Data extends Commands {
     public static client: Http;
@@ -24,7 +25,7 @@ export class Data extends Commands {
     }
 
     static getName() {
-        return 'Core/Data';
+        return 'Flow/Managers/Data';
     }
 
     public get( command: string, args: CommandArgsInterface = {}, options: {} = {} ) {

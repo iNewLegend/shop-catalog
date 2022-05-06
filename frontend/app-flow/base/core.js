@@ -7,8 +7,11 @@ import { ForceMethodBase } from '../errors/force-method';
 export class Core {
 	static idCounter = 0;
 
+	/**
+	 * @return {string}
+	 */
 	static getName() {
-		throw new ForceMethodBase( 'Core/Base/Core', 'getName' );
+		throw new ForceMethodBase( 'Flow/Base/Core', 'getName' );
 	}
 
 	constructor() {

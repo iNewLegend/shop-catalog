@@ -8,7 +8,7 @@ import Spinner from './spinner/spinner';
 import Controller from './controller';
 import Model from './model';
 
-export class Comonent extends $flow.modules.Component {
+export class Comonent extends $flow.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -63,11 +63,11 @@ export class Comonent extends $flow.modules.Component {
 		pagination.render();
 
 		pagination.on( 'page:change', ( page ) => {
-			$flow.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
+			$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
 				.then( this.onCatalogReceived.bind( this ) );
 		} );
 
-		$flow.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
+		$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
 			.then( this.onCatalogReceived.bind( this ) );
 	}
 

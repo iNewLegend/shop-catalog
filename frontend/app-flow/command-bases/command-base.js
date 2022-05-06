@@ -1,16 +1,14 @@
-// TODO REMOVE - This File example how all should looks
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: is base class for all commands instances, part of MVC, responsible for commands, and managed by Controller.
  */
-import { Terminal } from '../../../services/';
-import { ForceMethod } from '../../errors/';
-import { Logger } from '../';
+import { Terminal } from '../../services/terminal';
+import { ForceMethod } from '../errors/';
+import { Logger } from '../modules/';
 
-import Core from '../../base/core';
+import Core from '../base/core';
 
 /**
- * @name $flow.modules.CommandBase
  * @abstract
  */
 export class CommandBase extends Core {

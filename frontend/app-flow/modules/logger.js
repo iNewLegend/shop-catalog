@@ -159,7 +159,7 @@ export class Logger {
 	 * @param {{}} obj
 	 */
 	printNextlineObject( type, source, key, obj ) {
-		// obj = Object.assign( {}, obj );
+		obj = this.useWrapper( obj );
 
 		this.out.apply( this, [ `%c(${type})-> %c%c${this._name}%c::%c${source}%c() ->> ${key} %c↓` ].concat( this.defaultStyle ) );
 		// print in next line
@@ -390,14 +390,8 @@ export class Logger {
 
 		for ( let key in params ) {
 			// TODO: Avoid - Logger should not know about component find better solution.
-			if ( params[ key ] instanceof $flow.modules.Component ) {
-				params[ key ] = {
-					model: params[ key ].model.getModelData(),
-				}
-				params[ key ] = CircularJSON.stringify( params[ key ] );
-
-			} else if ( typeof params[ key ] === 'object' ) {
-				params[ key ] = CircularJSON.stringify( params[ key ] );
+			if ( typeof params[ key ] === 'object' ) {
+				params[ key ] = CircularJSON.stringify( this.useWrapper( params[ key ] ) );
 			}
 
 			this.out.apply( this, [ `%c(ob)-> %c%c${this._name}%c::%c${source}%c() [${notice}] ->> ${key}: '${params[ key ]}'%c` ].concat( this.defaultStyle ) );

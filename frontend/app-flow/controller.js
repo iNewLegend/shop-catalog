@@ -10,8 +10,12 @@ import Core from './base/core';
 export class Controller extends Core {
 	static model;
 
+	static getName() {
+		return 'Flow/Controller'
+	}
+
 	/**
-	 * @param {core.Component} component
+	 * @param {$flow.Component} component
 	 */
 	constructor( component ) {
 		super();
@@ -26,8 +30,7 @@ export class Controller extends Core {
 		this.setupHooks();
 	}
 
-	setupHooks() {
-	}
+	setupHooks() {}
 
 	register() {
 		/**
@@ -37,9 +40,9 @@ export class Controller extends Core {
 			data = Object.values( (this.getData()) ),
 			internal = Object.values( (this.getInternal()) );
 
-		this.commands = $flow.commands.register( commands, this );
-		this.data = $flow.data.register( data, this );
-		this.internal = $flow.internal.register( internal, this );
+		this.commands = $flow.managers.commands.register( commands, this );
+		this.data = $flow.managers.data.register( data, this );
+		this.internal = $flow.managers.internal.register( internal, this );
 	}
 
 	getCommands() {

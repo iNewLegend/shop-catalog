@@ -61,7 +61,7 @@ export class Model extends Core {
 	};
 
 	static getName() {
-		return 'Core/Model';
+		return 'Flow/Model';
 	}
 
 	constructor( options = {} ) {
@@ -132,7 +132,7 @@ export class Model extends Core {
 
 			if ( prop instanceof ArrayClass ) {
 				// If its array of components.
-				if ( prop.some( ( instance ) => instance instanceof $flow.modules.Component ) ) {
+				if ( prop.some( ( instance ) => instance instanceof $flow.Component ) ) {
 					result[ property ] = prop.map( ( prop ) => prop.model.getModelData() );
 					return;
 				}

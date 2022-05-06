@@ -3,7 +3,7 @@
  * @description: Internal command for update total elements in cart (UPDATES VIEWS ONLY).
  */
 
-export class UpdateTotal extends $flow.modules.CommandInternal {
+export class UpdateTotal extends ( $flow.commandBases.CommandInternal ) {
 	static getName() {
 		return 'Components/Cart/Internal/UpdateTotal';
 	}

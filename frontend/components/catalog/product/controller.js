@@ -10,7 +10,7 @@ export class Controller extends $flow.Controller {
 	}
 
 	setupHooks() {
-		$flow.commands.onAfterAffect( 'Components/Catalog/Product/Commands/Add', 'Components/Catalog/Commands/Add' );
+		$flow.managers.commands.onAfterAffect( 'Components/Catalog/Product/Commands/Add', 'Components/Catalog/Commands/Add' );
 	}
 
 	getCommands() {

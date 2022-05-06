@@ -3,10 +3,7 @@
  * @description: Request cart from backend.
  */
 
-/**
- * @memberOf components.cart.data
- */
-export class Index extends ($flow.data.Command) {
+export class Index extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Index';
 	}

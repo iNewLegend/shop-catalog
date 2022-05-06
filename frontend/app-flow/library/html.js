@@ -1,10 +1,10 @@
 export default class HTML {
 	static getName() {
-		return 'Library/HTML';
+		return 'Flow/Library/HTML';
 	}
 
 	/**
-	 * @param {String} HTML representing a single element
+	 * @param {string} html HTML representing a single element
 	 * @return {Node}
 	 */
 	static toNode( html ) {
@@ -17,7 +17,7 @@ export default class HTML {
 	}
 
 	/**
-	 * @param {String} HTML representing any number of sibling elements
+	 * @param {String} html HTML representing any number of sibling elements
 	 * @return {NodeList}
 	 */
 	static toNodes( html ) {

@@ -3,10 +3,7 @@
  * @description: Manges cart items/data.
  */
 
-/**
- * @memberOf components.cart
- */
-export default class Model extends ($flow.Model) {
+export default class Model extends $flow.Model {
 	/**
 	 * State of the cart, open/closed.
 	 *

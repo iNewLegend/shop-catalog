@@ -2,8 +2,11 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-import HTML from '../../library/html';
+import HTML from './library/html';
 
+/**
+ * @name $flow.Context
+ */
 export class Context {
 	/**
 	 * @type {Node}
@@ -11,7 +14,7 @@ export class Context {
 	node;
 
 	static getName() {
-		return 'Core/Context';
+		return 'Flow/Context';
 	}
 
 	constructor( context ) {
@@ -28,7 +31,7 @@ export class Context {
 		// Support JSX.
 		if ( 'function' === typeof this.context ) {
 			this.node = this.context();
-		} else if ( this.context instanceof $flow.modules.Element ) {
+		} else if ( this.context instanceof $flow.Element ) {
 			this.node = this.context.context;
 		} else {
 			this.node = HTML.toNode( this.context );
@@ -39,11 +42,9 @@ export class Context {
 		return this.node;
 	}
 
-	beforeCreate() {
-	}
+	beforeCreate() {}
 
-	afterCreate() {
-	}
+	afterCreate() {}
 }
 
 export default Context;

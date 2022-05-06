@@ -4,10 +4,7 @@
  * @description: Manges catalog model.
  */
 
-/**
- * @memberOf components.catalog
- */
-export default class Model extends ($flow.Model) {
+export default class Model extends $flow.Model {
 	/**
 	 * Loaded items to be rendered.
 	 *

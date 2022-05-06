@@ -5,10 +5,7 @@
 import Controller from './controller';
 import Model from './model.js';
 
-/**
- * @memberOf components.sidebar
- */
-export default class Component extends $flow.modules.Component {
+export default class Component extends $flow.Component {
 	static getName() {
 		return 'Components/Sidebar/Component';
 	}
@@ -29,7 +26,7 @@ export default class Component extends $flow.modules.Component {
 		}
 
 		this.elements.overlay.click(
-			() => $flow.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } )
+			() => $flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } )
 		);
 
 		this.model.on( 'change', () => {
