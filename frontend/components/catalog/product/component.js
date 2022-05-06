@@ -114,7 +114,7 @@ export class Component extends $flow.Component {
 			case 'product:change': {
 				this.events.onProductChange = callback;
 			}
-				break;
+			break;
 
 			default: {
 				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );

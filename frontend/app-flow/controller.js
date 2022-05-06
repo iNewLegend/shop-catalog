@@ -37,7 +37,7 @@ export class Controller extends Core {
 		 * @type {Array<Command>}
 		 */
 		const commands = Object.values( this.getCommands() ),
-			data = Object.values( (this.getData()) ),
+			data = Object.values( this.getData() ),
 			internal = Object.values( (this.getInternal()) );
 
 		this.commands = $flow.managers.commands.register( commands, this );

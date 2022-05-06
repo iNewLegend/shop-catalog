@@ -11,28 +11,23 @@ const CircularJSON = require( 'circular-json' );
  * @name $flow.modules.Logger
  */
 export class Logger {
-	get name() {
-		return this._name;
-	}
-
-	set name( val ) {
-		this._name = val;
-	}
-
 	static wrappers = {};
 	static sharedData = {};
 	static colorsInUse = [];
 
+	static getName() {
+		return 'Modules/Logger';
+	}
+
+	/**
+	 * Function createCustomWrapper() : Creates custom wrapper for log entities.
+	 */
 	static createCustomWrapper( classType, callback ) {
 		if ( ! this.wrappers[ classType ] ) {
 			this.wrappers[ classType.name ] = [];
 		}
 
 		this.wrappers[ classType.name ].push( { classType, callback } );
-	}
-
-	static getName() {
-		return 'Modules/Logger';
 	}
 
 	/**
@@ -167,7 +162,7 @@ export class Logger {
 	}
 
 	/**
-	 * Function _printMultiLineObject() : Print object in multiline format.
+	 * Function printMultiLineObject() : Print object in multiline format.
 	 *
 	 * @param {string} type
 	 * @param {string} source
@@ -247,13 +242,8 @@ export class Logger {
 		};
 
 		let similar = Logger.colorsInUse.some( ( value ) => {
-			// it return the ratio of diffrence... closer to 1.0 is less difference.
-
-			if ( hexColorDelta( color, value ) < 0.8 ) {
-				return false;
-			}
-
-			return true;
+			// it return the ratio of difference... closer to 1.0 is less difference.
+			return hexColorDelta( color, value ) >= 0.8;
 		} );
 
 		// if the color is similar, try again.
@@ -273,6 +263,13 @@ export class Logger {
 		this.outputHandler = outputHandler;
 	}
 
+	/**
+	 * Function useWrapper() : Search for each wrapper and filter the object according to the wrapper filter.
+	 *
+	 * @param {*} obj
+	 *
+	 * @return {*}
+	 */
 	useWrapper( obj ) {
 		let result = obj;
 
@@ -327,7 +324,7 @@ export class Logger {
 	/**
 	 * Function startWith() : Notify function start with args.
 	 *
-	 * @param {*} output
+	 * @param {*} params
 	 */
 	startWith( params ) {
 		if ( ! this.state ) return;
@@ -358,7 +355,7 @@ export class Logger {
 	}
 
 	/**
-	 * Function recv() : Notify recv from server
+	 * Function recv() : Preview as receive.
 	 *
 	 * @param {{}} params
 	 * @param {{}|[]} data
@@ -376,7 +373,7 @@ export class Logger {
 	}
 
 	/**
-	 * Function object() : Prints object
+	 * Function object() : Prints object.
 	 *
 	 * @param {{}} params
 	 * @param {string} notice
@@ -389,7 +386,6 @@ export class Logger {
 		params = Object.create( params );
 
 		for ( let key in params ) {
-			// TODO: Avoid - Logger should not know about component find better solution.
 			if ( typeof params[ key ] === 'object' ) {
 				params[ key ] = CircularJSON.stringify( this.useWrapper( params[ key ] ) );
 			}
@@ -410,7 +406,7 @@ export class Logger {
 	}
 
 	/**
-	 * Function throw() : Throws error
+	 * Function throw() : Throws error.
 	 *
 	 * @param {string} output
 	 * @param {string} name
