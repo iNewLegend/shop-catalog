@@ -23,8 +23,7 @@ export class Component extends $flow.Component {
 		super( parent, options );
 
 		this.events = {
-			onProductChange: ( product, amount ) => {
-			},
+			onProductChange: ( product, amount ) => {},
 		};
 	}
 
