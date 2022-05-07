@@ -13,7 +13,7 @@
   - NestJS.
   
 ## Frontend
-  - Core: Set of modules to communicate with DOM & Appling MVC.
+  - `$flow`: Set of modules to communicate with DOM & Appling MVC.
 
 ### Build-With
 - Babel
