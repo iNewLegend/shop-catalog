@@ -16,13 +16,13 @@ class App {
 		services.Terminal.initialize();
 
 		// Tell logger act differently when it see instanceOf `$flow.Component`.
-		$flow.modules.Logger.createCustomWrapper( $flow.Component, ( args ) => {
-			if ( args instanceof $flow.Component ) {
+		$flow.modules.Logger.createCustomWrapper( $flow.Component, ( obj ) => {
+			if ( obj instanceof $flow.Component ) {
 				return {
 					// Return readable version of component, instead of logging all the HTML.
 					__CUSTOM_LOGGER_WRAPPER__: true,
-					name: args.getName(),
-					model: args?.model?.getModelData() || args,
+					name: obj.getName(),
+					model: obj?.model?.getModelData() || obj,
 				}
 			}
 		} )
