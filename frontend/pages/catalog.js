@@ -2,8 +2,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Catalog page.
  */
-import { Page } from 'MODULES';
-import * as components from 'COMPONENTS';
+import Page from '../modules/page';
+import * as components from '../components/';
 
 /**
  * @memberOf pages

@@ -2,11 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Get specific items from catalog.
  */
-
-/**
- * @memberOf components.catalog.data
- */
-export class Get extends ( $core.data.Command ) {
+export class Get extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Catalog/Data/Get';
 	}

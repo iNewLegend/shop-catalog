@@ -8,10 +8,11 @@ import Controller from './controller'
 import Model from './model';
 
 /**
- * @memberOf components.cart
- * @property {components.cart.Model} model
+ * @name CartComponent
+ * @property {Model} model
+ * @property {{}} elements
  */
-export class Component extends ( $core.Component ) {
+export class Component extends $flow.Component {
 	static getName() {
 		return 'Components/Cart/Component';
 	}
@@ -27,13 +28,13 @@ export class Component extends ( $core.Component ) {
 	initialize( options ) {
 		this.model.on( 'change', this.onChange.bind( this ) );
 
-		this.logger = new $core.modules.Logger( Component.getName(), true );
+		this.logger = new $flow.modules.Logger( Component.getName(), true );
 
 		options.logger = this.logger;
 
 		this.elements = {
-			items: () => $core.Factory.createElement( '.cart .items' ),
-			totalPrice: () => $core.Factory.createElement( '.cart .total .price' ),
+			items: () => $flow.Factory.createElement( '.cart .items' ),
+			totalPrice: () => $flow.Factory.createElement( '.cart .total .price' ),
 		};
 
 		return super.initialize( options );
@@ -54,8 +55,9 @@ export class Component extends ( $core.Component ) {
 					</li>
 				</ul>
 
-				{ ! isCartEmpty ?
-					<button class="checkout bg-info" onClick="$core.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null }
+				{! isCartEmpty ?
+					<button class="checkout bg-info"
+					        onClick="$flow.managers.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
 			</div>
 		}
 	}

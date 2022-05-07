@@ -4,16 +4,13 @@
  */
 import * as commands from "./commands/";
 
-/**
- * @memberOf components.catalog.product
- */
-export class Controller extends ( $core.controllers.Controller ) {
+export class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Catalog/Product/Controller';
 	}
 
 	setupHooks() {
-		$core.commands.onAfterAffect( 'Components/Catalog/Product/Commands/Add', 'Components/Catalog/Commands/Add' );
+		$flow.managers.commands.onAfterAffect( 'Components/Catalog/Product/Commands/Add', 'Components/Catalog/Commands/Add' );
 	}
 
 	getCommands() {

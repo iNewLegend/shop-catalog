@@ -2,11 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Add catalog item.
  */
-
-/**
- * @memberOf components.catalog.commands
- */
-export class Add extends ( $core.commands.Command ) {
+export class Add extends ( $flow.commandBases.CommandPublic ) {
 	static getName() {
 		return 'Components/Catalog/Commands/Add';
 	}

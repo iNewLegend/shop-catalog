@@ -3,26 +3,21 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges catalog model.
  */
-
-/**
- * @memberOf components.catalog
- */
-export default class Model extends ( $core.Model ) {
-	static getName() {
-		return 'Components/Catalog/Model';
-	}
-
+export default class Model extends $flow.Model {
 	/**
 	 * Loaded items to be rendered.
 	 *
 	 * @type {components.catalog.product.Component[]}
 	 */
 	products = this.array();
-
 	/**
 	 * Current page number.
 	 *
 	 * @type {number}
 	 */
 	page = 0;
+
+	static getName() {
+		return 'Components/Catalog/Model';
+	}
 }

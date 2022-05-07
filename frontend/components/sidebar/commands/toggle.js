@@ -2,11 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Toggles the state.
  */
-
-/**
- * @memberOf components.sidebar.commands
- */
-export class Toggle extends ( $core.commands.Command ) {
+export class Toggle extends ( $flow.commandBases.CommandPublic ) {
 	static getName() {
 		return 'Components/Sidebar/Commands/Toggle';
 	}

@@ -2,11 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Request cart from backend.
  */
-
-/**
- * @memberOf components.cart.data
- */
-export class Index extends ( $core.data.Command ) {
+export class Index extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Index';
 	}

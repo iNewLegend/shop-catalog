@@ -3,10 +3,7 @@
  */
 import './spinner.css';
 
-/**
- * @memberOf components.catalog
- */
-export class Spinner extends $core.Component {
+export class Spinner extends $flow.Component {
 	static getName() {
 		return 'Components/Catalog/Spinner';
 	}
@@ -20,7 +17,7 @@ export class Spinner extends $core.Component {
 		setTimeout( () => {
 			this.view.element.hide();
 
-			if( callback ) callback();
+			if ( callback ) callback();
 		}, ms );
 	}
 }

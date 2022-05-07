@@ -2,12 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Internal command for adding items to cart.
  */
-import CartItemComponent from 'COMPONENTS/cart/item/component';
+import Component from '../../../components/cart/item/component';
 
-/**
- * @memberOf components.cart.internal
- */
-export class Add extends ( $core.internal.Command ) {
+export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}
@@ -30,14 +27,14 @@ export class Add extends ( $core.internal.Command ) {
 
 		const component = this.getController().getComponent();
 
-		return $core.data.post( 'Components/Cart/Data/Add', { id, amount } )
+		return $flow.managers.data.post( 'Components/Cart/Data/Add', { id, amount } )
 			.then( () => addItem( product ) )
 	}
 
 	/**
 	 * function doInsertItem() : Insert item.
 	 *
-	 * @param {components.cart.item.Component} item
+	 * @param {Component} item
 	 */
 	doInsertItem( item ) {
 		// Hook item insert.
@@ -51,7 +48,7 @@ export class Add extends ( $core.internal.Command ) {
 	/**
 	 * Function doAddItem() : Adds item to cart
 	 *
-	 * @param {components.cart.item.Component} item
+	 * @param {Component} item
 	 * @param {boolean} notifyCartChanged
 	 * @param {boolean} highlight
 	 */
@@ -62,7 +59,7 @@ export class Add extends ( $core.internal.Command ) {
 			existItem = this.getController().getModel().getById( itemId )
 
 		existItem ?
-			existItem.model.amount += item.model.amount :
+			existItem.model.amount += item.model.amount : // Should be command.
 			this.doInsertItem( item );
 
 		if ( ! highlight ) {
@@ -77,7 +74,7 @@ export class Add extends ( $core.internal.Command ) {
 	 *
 	 * @param {Object} data
 	 *
-	 * @returns {components.cart.item.Component}
+	 * @returns {Component}
 	 */
 	createItem( data ) {
 		const { logger } = this;
@@ -86,7 +83,7 @@ export class Add extends ( $core.internal.Command ) {
 
 		data.id = parseInt( data.id );
 
-		return new CartItemComponent( () => this.getController().getComponent().elements.items(), {
+		return new Component( () => this.getController().getComponent().elements.items(), {
 			logger,
 			...data,
 		} );

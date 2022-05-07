@@ -2,11 +2,8 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Catalog page.
  */
-import { Page } from 'MODULES';
+import Page from '../modules/page';
 
-/**
- * @memberOf pages
- */
 export class Checkout extends Page {
 	static getName() {
 		return 'Pages/Checkout';
@@ -19,6 +16,7 @@ export class Checkout extends Page {
 		this.logger.startWith( { options } );
 	}
 
+	// TODO: Check this method.
 	_render() {
 		return (`
             <div class="checkout">

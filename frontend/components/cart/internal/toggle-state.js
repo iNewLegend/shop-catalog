@@ -3,11 +3,7 @@
  * @description: Toggle cart state shown/hidden, used to update the cart about it own view state,
  * to allow it to manged by external sources.
  */
-
-/**
- * @memberOf components.cart.internal
- */
-export class ToggleState extends ( $core.internal.Command ) {
+export class ToggleState extends ( $flow.commandBases.CommandInternal ) {
 	static getName() {
 		return 'Components/Cart/Internal/ToggleState';
 	}

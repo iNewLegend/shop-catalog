@@ -6,19 +6,7 @@ import './product.css';
 import Controller from './controller';
 import Model from './model';
 
-/**
- * @memberOf components.catalog.product
- * @property {Model} model
- */
-export class Component extends ( $core.Component ) {
-	constructor( parent, options ) {
-		super( parent, options );
-
-		this.events = {
-			onProductChange: ( product, amount ) => {},
-		};
-	}
-
+export class Component extends $flow.Component {
 	static getName() {
 		return 'Components/Catalog/Product/Component';
 	}
@@ -31,6 +19,14 @@ export class Component extends ( $core.Component ) {
 		return Model
 	}
 
+	constructor( parent, options ) {
+		super( parent, options );
+
+		this.events = {
+			onProductChange: ( product, amount ) => {},
+		};
+	}
+
 	initialize( options ) {
 		const { id, name, price } = this.options;
 
@@ -39,7 +35,7 @@ export class Component extends ( $core.Component ) {
 		this.model.price = price;
 
 		/**
-		 * @type {core.modules.Logger}
+		 * @type {$flow.modules.Logger}
 		 */
 		this.logger = options.logger;
 
@@ -77,7 +73,7 @@ export class Component extends ( $core.Component ) {
 					<div class="footer">
 						<h5>Price: <span class="price">${price}$</span></h5>
 						<div class="row">
-							<button onclick="$core.commands.run( 'Components/Catalog/Product/Commands/Add', { component: this } );" class="bg-primary">Add To Cart</button>
+							<button onclick="$flow.managers.commands.run( 'Components/Catalog/Product/Commands/Add', { component: this } );" class="bg-primary">Add To Cart</button>
 							<input onchange="this.onProductChange( event )" class="amount" type="number" name="amount"	value="1" min="1">
 						</div>
 					</div>

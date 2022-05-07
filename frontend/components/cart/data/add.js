@@ -2,11 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Request add cart item from backend.
  */
-
-/**
- * @memberOf components.cart.data
- */
-export class Add extends ( $core.data.Command ) {
+export class Add extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Add';
 	}
@@ -15,5 +11,3 @@ export class Add extends ( $core.data.Command ) {
 		return 'cart/addItem';
 	}
 }
-
-export default Add;

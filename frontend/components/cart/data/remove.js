@@ -2,11 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Request remove cart item from backend.
  */
-
-/**
- * @memberOf components.cart.data
- */
-export class Remove extends ( $core.data.Command ) {
+export class Remove extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Remove';
 	}
@@ -15,5 +11,3 @@ export class Remove extends ( $core.data.Command ) {
 		return 'cart/removeItem';
 	}
 }
-
-export default Remove;

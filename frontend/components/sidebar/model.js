@@ -2,14 +2,10 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Sidebar model.
  */
+export default class Model extends $flow.Model {
+	state = this.boolean();
 
-/**
- * @memberOf components.sidebar
- */
-export default class Model extends ( $core.Model ) {
 	static getName() {
 		return 'Components/Sidebar/Model';
 	}
-
-	state = this.boolean();
 }

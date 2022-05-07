@@ -6,10 +6,7 @@ import * as commands from "./commands/";
 import * as data from "./data/";
 import * as internal from "./internal/";
 
-/**
- * @memberOf components.cart
- */
-export class Controller extends ( $core.controllers.Controller ) {
+export class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Cart/Controller';
 	}
@@ -27,13 +24,13 @@ export class Controller extends ( $core.controllers.Controller ) {
 	}
 
 	setupHooks() {
-		$core.commands.onAfterAffect(
+		$flow.managers.commands.onAfterAffect(
 			'Components/Cart/Item/Commands/Remove',
 			'Components/Cart/Commands/Remove'
 		);
 
 		const updateTotal = () => {
-			const total = $core.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
+			const total = $flow.managers.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
 				component = this.getComponent();
 
 			// Render on when empty state changes, to use JSX for showing empty/contain cart.
@@ -46,8 +43,8 @@ export class Controller extends ( $core.controllers.Controller ) {
 			this.prevTotal = total;
 		}
 
-		$core.internal.onAfter( 'Components/Cart/Internal/Add', updateTotal );
-		$core.commands.onAfter( 'Components/Cart/Commands/Remove', updateTotal )
+		$flow.managers.internal.onAfter( 'Components/Cart/Internal/Add', updateTotal );
+		$flow.managers.commands.onAfter( 'Components/Cart/Commands/Remove', updateTotal )
 	}
 }
 

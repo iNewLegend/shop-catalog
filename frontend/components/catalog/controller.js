@@ -5,10 +5,7 @@
 import * as data from './data/';
 import * as commands from './commands/';
 
-/**
- * @memberOf components.catalog
- */
-export class Controller extends ( $core.controllers.Controller ) {
+export class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Catalog/Controller';
 	}
