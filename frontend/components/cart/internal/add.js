@@ -2,7 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Internal command for adding items to cart.
  */
-import CartItemComponent from '../../../components/cart/item/component';
+import Component from '../../../components/cart/item/component';
 
 export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	static getName() {
@@ -34,7 +34,7 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	/**
 	 * function doInsertItem() : Insert item.
 	 *
-	 * @param {CartItemComponent} item
+	 * @param {Component} item
 	 */
 	doInsertItem( item ) {
 		// Hook item insert.
@@ -48,7 +48,7 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	/**
 	 * Function doAddItem() : Adds item to cart
 	 *
-	 * @param {CartItemComponent} item
+	 * @param {Component} item
 	 * @param {boolean} notifyCartChanged
 	 * @param {boolean} highlight
 	 */
@@ -74,7 +74,7 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	 *
 	 * @param {Object} data
 	 *
-	 * @returns {CartItemComponent}
+	 * @returns {Component}
 	 */
 	createItem( data ) {
 		const { logger } = this;
@@ -83,7 +83,7 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 
 		data.id = parseInt( data.id );
 
-		return new CartItemComponent( () => this.getController().getComponent().elements.items(), {
+		return new Component( () => this.getController().getComponent().elements.items(), {
 			logger,
 			...data,
 		} );

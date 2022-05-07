@@ -8,7 +8,7 @@ import Model from './model';
 /**
  * @property {Model} model
  */
-export class CartItemComponent extends $flow.Component {
+export class Component extends $flow.Component {
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}
@@ -42,7 +42,7 @@ export class CartItemComponent extends $flow.Component {
 		// TODO: If this code is require and become duplicate over time hold a method to cover it. like `cloneWithName`.
 		if ( this.logger ) {
 			this.logger = this.logger.clone();
-			this.logger.name = CartItemComponent.getName() + '/' + id;
+			this.logger.name = Component.getName() + '/' + id;
 
 			this.logger.startWith( { id, name, price } );
 		}
@@ -102,4 +102,4 @@ export class CartItemComponent extends $flow.Component {
 	}
 }
 
-export default CartItemComponent;
+export default Component;
