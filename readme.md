@@ -48,7 +48,7 @@ $ npm install
 ```
 ## [ Frontend ]
 ```shell script
-$ npm run frontend:watch:server
+$ npm run frontend:watch:sever
 ```
 * Access this url [http://localhost:8080](http://localhost:8080)
 ## [ Backend ]
