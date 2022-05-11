@@ -62,29 +62,28 @@ export class Comonent extends $flow.Component {
 
 		pagination.render();
 
-		pagination.on( 'page:change', ( page ) => {
-			$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
-				.then( this.onCatalogReceived.bind( this ) );
+		$flow.managers.data.onAfter( 'Components/Catalog/Data/Index', ( data, options ) => {
+			if ( options.local ) {
+				return;
+			}
+
+			this.model.products.clear();
+
+			const { spinner } = this.components;
+
+			spinner.fadeOut();
+
+			// TODO WHy?
+			data.result.result.forEach( ( product ) =>
+				this.addProduct( product )
+			);
+
+			this.renderProducts();
+
+			$flow.managers.internal.run( 'Components/Catalog/Pagination/Internal/Set',  data.result.pagination );
 		} );
 
 		$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
-			.then( this.onCatalogReceived.bind( this ) );
-	}
-
-	onCatalogReceived( data ) {
-		this.model.products.clear();
-
-		const { spinner, pagination } = this.components;
-
-		spinner.fadeOut();
-
-		pagination.set( data.pagination );
-
-		data.result.forEach( ( product ) =>
-			this.addProduct( product )
-		);
-
-		this.renderProducts();
 	}
 
 	/**
