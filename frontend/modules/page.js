@@ -17,7 +17,7 @@ export class Page extends Container {
 		this.logger = new $flow.modules.Logger( Page.getName(), true );
 		this.logger.setOutputHandler( Terminal.onOutput );
 
-		this.logger.startWith( this.constructor.name );
+		this.logger.startEmpty() ;
 
 		super.initialize();
 	}
