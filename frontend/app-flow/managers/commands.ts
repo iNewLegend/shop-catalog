@@ -33,9 +33,11 @@ export class Commands extends Core {
     commands: { [ key: string ]: ( typeof CommandPublic ) } = {};
 
     onBeforeHooks: OnAfterOnceHookInterface = {};
+    onBeforeUIHooks: OnAfterOnceHookInterface = {};
     onAfterEffectHooks: OnAffectHookInterface = {};
     onAfterOnceHooks: OnAfterOnceHookInterface = {};
     onAfterHooks: onAfterHookInterface = {};
+    onAfterUIHooks: onAfterHookInterface = {};
 
     private logger: Logger;
 
@@ -106,6 +108,15 @@ export class Commands extends Core {
         this.onBeforeHooks[ hookCommand ].push( callback );
     }
 
+    public onBeforeUI( hookCommand: string, callback: onAfterCallback ) {
+        if ( ! this.onBeforeUIHooks[ hookCommand ] ) {
+            this.onBeforeUIHooks[ hookCommand ] = [];
+        }
+
+        this.onBeforeUIHooks[ hookCommand ].push( callback );
+    }
+
+
     public onAfterOnce( command: string, callback: () => void ) {
         if ( ! this.onAfterOnceHooks[ command ] ) {
             this.onAfterOnceHooks[ command ] = [];
@@ -128,6 +139,14 @@ export class Commands extends Core {
         }
 
         this.onAfterHooks[ hookCommand ].push( callback );
+    }
+
+    public onAfterUI( hookCommand: string, callback: onAfterCallback ) {
+        if ( ! this.onAfterUIHooks[ hookCommand ] ) {
+            this.onAfterUIHooks[ hookCommand ] = [];
+        }
+
+        this.onAfterUIHooks[ hookCommand ].push( callback );
     }
 
     public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): CommandPublic {
@@ -153,6 +172,11 @@ export class Commands extends Core {
 
         if ( this.onBeforeHooks[ command.getName() ] ) {
             const callbacks = this.onBeforeHooks[ command.getName() ];
+            callbacks.forEach( ( callback ) => callback( args ) );
+        }
+
+        if ( this.onBeforeUIHooks[ command.getName() ] ) {
+            const callbacks = this.onBeforeUIHooks[ command.getName() ];
             callbacks.forEach( ( callback ) => callback( args ) );
         }
 
@@ -188,6 +212,11 @@ export class Commands extends Core {
             Commands.runCallbacks( callbacks );
 
             delete this.onAfterOnceHooks[ command.getName() ];
+        }
+
+
+        if ( this.onAfterUIHooks ) {
+            Commands.runCallbacks( Object.assign( [], this.onAfterUIHooks[ command.getName() ] ), args, options );
         }
 
         return result;
