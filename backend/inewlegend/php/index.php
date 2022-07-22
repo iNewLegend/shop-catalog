@@ -1,5 +1,4 @@
 <?php
-
 use Core\Core;
 use Modules\Command;
 
@@ -47,7 +46,7 @@ if ( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' ) {
 	exit();
 }
 
-$cmd = ltrim( $_SERVER['PATH_INFO'], '/' );
+$cmd = ltrim( $_SERVER['REQUEST_URI'], '/' );
 
 if ( $cmd == 'phpinfo' ) {
 	phpinfo();

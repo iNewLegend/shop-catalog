@@ -59,7 +59,7 @@ $ npm run frontend:watch:sever
     ```shell script
     $ npm run backend:php:debug
     ```
-    * For creating the database access this url `http://localhost:8081/?cmd=admin/install/<mysql_host>/<mysql_username>/<mysql_password>/<mysql_database_name>` and dont forget replace <> with yours real credentials. this will create the database and create simple mock catalog.
+    * For creating the database access this url `http://localhost:8081/?admin/install/<mysql_host>/<mysql_username>/<mysql_password>/<mysql_database_name>` and dont forget replace <> with yours real credentials. this will create the database and create simple mock catalog.
     * ## Rules:
         ### Code Access
         | Type | Modules | Services | Library
