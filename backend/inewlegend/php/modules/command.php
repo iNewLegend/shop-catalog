@@ -120,7 +120,7 @@ class Command {
 			if ( ! empty( $cmd ) ) {
 
 				foreach ( $cmd as $key => $param ) {
-					$cmd[ $key ] = filter_var( $param, FILTER_SANITIZE_STRING );
+					$cmd[ $key ] = filter_var( $param, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 				}
 
 				$this->params = array_values( $cmd );

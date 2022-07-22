@@ -31,14 +31,15 @@
   
 # [ Demo ]
 ### preview
-<img width="1722" alt="image" src="https://user-images.githubusercontent.com/10234691/167249966-17c8f761-03d0-4938-89fc-625b0c06b474.png">
-<img width="1723" alt="image" src="https://user-images.githubusercontent.com/10234691/167249990-4a7806e2-3e41-4678-a704-e03d8d46b361.png">
-<img width="1719" alt="image" src="https://user-images.githubusercontent.com/10234691/167250030-eaf456f3-0ccb-41e0-a024-d9cbedccd935.png">
-<img width="1721" alt="image" src="https://user-images.githubusercontent.com/10234691/167250067-165a43a6-a606-49b4-a342-d9b80228e8a0.png">
+
+https://user-images.githubusercontent.com/10234691/167252894-74428297-945b-4642-92ea-295c0c7894ec.mov
+
+
+
 
 
 ### [ Live ]
-No hosting at the moment
+http://inewlegend.myftp.org:9090/shop-catalog/frontend/dist/
 
 # [ Install ]:
 ```shell script
