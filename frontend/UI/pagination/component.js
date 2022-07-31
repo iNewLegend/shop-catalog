@@ -5,10 +5,9 @@
 import './pagination.css';
 import Controller from './controller';
 
-
-export class Pagination extends $flow.Component {
+export class Component extends $flow.Component {
 	static getName() {
-		return 'Components/Catalog/Pagination';
+		return 'UI/Pagination';
 	}
 
 	static getControllerClass() {
@@ -18,14 +17,14 @@ export class Pagination extends $flow.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		this.logger = new $flow.modules.Logger( Pagination.getName(), true, { sameColor: true } );
+		this.logger = new $flow.modules.Logger( Component.getName(), true, { sameColor: true } );
 
 		this.logger.startWith( { options } );
 
 		this.page = 0;
 		this.events = {};
 
-		$flow.managers.internal.onBeforeUI( 'Components/Catalog/Pagination/Internal/Set', ( args ) => {
+		$flow.managers.internal.onBeforeUI( 'UI/Pagination/Internal/Set', ( args ) => {
 			this.show();
 
 			// Clear.
@@ -40,9 +39,8 @@ export class Pagination extends $flow.Component {
 			this.anchors = [];
 		} )
 
-		$flow.managers.internal.onAfterUI( 'Components/Catalog/Pagination/Internal/Set', ( args ) => {
+		$flow.managers.internal.onAfterUI( 'UI/Pagination/Internal/Set', ( args ) => {
 			const { next, prev, placeHolder } = this.elements;
-
 
 			// Create pages.
 			for ( let i = 0; i < args.pages; ++i ) {
@@ -51,8 +49,8 @@ export class Pagination extends $flow.Component {
 				this.anchors.push( anchor );
 
 				anchor.render();
-				anchor.click(  () => {
-					$flow.managers.commands.run( 'Components/Catalog/Pagination/Commands/Set-Page', { page: i } );
+				anchor.click( () => {
+					$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: i } );
 				} );
 
 				this.show();
@@ -78,9 +76,11 @@ export class Pagination extends $flow.Component {
 		return () => (
 			<div id="pagination" class="pagination hidden">
 				<div class="pagination">
-					<a onClick="$flow.managers.commands.run( 'Components/Catalog/Pagination/Commands/Set-Page', { page: this.page - 1 } )" class="prev" href="#">&laquo;</a>
+					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: this.page - 1 } )"
+					   class="prev" href="#">&laquo;</a>
 					<span class="placeholder"/>
-					<a onClick="$flow.managers.commands.run( 'Components/Catalog/Pagination/Commands/Set-Page', { page: this.page + 1 } )" class="next" href="#">&raquo;</a>
+					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: this.page + 1 } )"
+					   class="next" href="#">&raquo;</a>
 				</div>
 			</div>
 		);
@@ -98,4 +98,4 @@ export class Pagination extends $flow.Component {
 	}
 }
 
-export default Pagination;
+export default Component;

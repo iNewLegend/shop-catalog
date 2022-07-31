@@ -9,11 +9,10 @@
  * @property {number} total total amount of items.
  * @property {number} pages amount of pages.
  * @property {number} perPage amount of pages per page.
- * @memberOf components.catalog
  */
 export class Set extends ( $flow.commandBases.CommandInternal ) {
 	static getName() {
-		return 'Components/Catalog/Pagination/Internal/Set';
+		return 'UI/Pagination/Internal/Set';
 	}
 
 	/**

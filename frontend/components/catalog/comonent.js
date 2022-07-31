@@ -2,13 +2,13 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manages catalog
  */
-import Pagination from './pagination/pagination';
+import Pagination from '../../UI/pagination/component';
 import Product from './product/component';
 import Spinner from './spinner/spinner';
 import Controller from './controller';
 import Model from './model';
 
-export class Comonent extends $flow.Component {
+export class Component extends $flow.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -25,7 +25,7 @@ export class Comonent extends $flow.Component {
 	}
 
 	initialize( options ) {
-		this.logger = new $flow.modules.Logger( Comonent.getName(), true, { sameColor: true } );
+		this.logger = new $flow.modules.Logger( Component.getName(), true, { sameColor: true } );
 		this.logger.startWith( { options } );
 
 		this.apis = {
@@ -80,7 +80,7 @@ export class Comonent extends $flow.Component {
 
 			this.renderProducts();
 
-			$flow.managers.internal.run( 'Components/Catalog/Pagination/Internal/Set',  data.result.pagination );
+			$flow.managers.internal.run( 'UI/Pagination/Internal/Set',  data.result.pagination );
 		} );
 
 		$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
@@ -97,10 +97,10 @@ export class Comonent extends $flow.Component {
 	onProductAmountChange( product, amount ) {
 		this.logger.startWith( { amount } );
 
-		if ( amount > Comonent.amountMaxValue ) {
-			amount = Comonent.amountMaxValue;
-		} else if ( amount < Comonent.amountMinValue ) {
-			amount = Comonent.amountMinValue;
+		if ( amount > Component.amountMaxValue ) {
+			amount = Component.amountMaxValue;
+		} else if ( amount < Component.amountMinValue ) {
+			amount = Component.amountMinValue;
 		}
 
 		product.setAmount( amount );
@@ -143,4 +143,4 @@ export class Comonent extends $flow.Component {
 	}
 }
 
-export default Comonent;
+export default Component;

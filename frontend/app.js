@@ -115,6 +115,20 @@ class App {
 			// Request the cart from the server.
 			$flow.managers.data.get( 'Components/Cart/Data/Index' );
 		} );
+
+		// On request page.
+		$flow.managers.commands.onAfter( 'UI/Pagination/Commands/GetPage', async ( { page  } ) => {
+			// Get the data from the server.
+			const result = await $flow.managers.data.get( 'Components/Catalog/Data/Index', {
+				page,
+				local: true,
+			} );
+
+			// If answer supports pagination, then tell the pagination about the change.
+			if ( result.pagination ) {
+				$flow.managers.internal.run( 'UI/Pagination/Internal/Set', result.pagination );
+			}
+		} );
 	}
 
 	hookCart() {

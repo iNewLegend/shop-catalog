@@ -7,7 +7,7 @@ import * as internal from './internal/';
 
 export class Controller extends $flow.Controller {
 	static getName() {
-		return 'Components/Catalog/Pagination/Controller';
+		return 'UI/Pagination/Controller';
 	}
 
 	getCommands() {
