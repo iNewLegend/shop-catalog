@@ -15,7 +15,7 @@ class App {
 	constructor() {
 		services.Terminal.initialize();
 
-		// Tell logger act differently when it see instanceOf `$flow.Component`.
+		// Tell logger act differently when it sees instanceOf `$flow.Component`.
 		$flow.modules.Logger.createCustomWrapper( $flow.Component, ( obj ) => {
 			if ( obj instanceof $flow.Component ) {
 				return {

@@ -11,31 +11,28 @@ import { CommandAlreadyRegistered, CommandNotFound } from '../errors/'
 import Controller from '../controller'
 import Core from '../base/core';
 
+type CommandCallbackType = (args: Object, options: Object ) => any
+
 export interface CommandArgsInterface {
     [ key: string ]: any
 }
 
-type onAfterCallback = ( args: Object, options: Object ) => any
-
-interface OnAffectHookInterface {
+interface OnHookAffectInterface {
     [ key: string ]: Array<String>
 }
 
-interface OnAfterOnceHookInterface {
-    [ key: string ]: Array<Function>
-}
-
-interface onAfterHookInterface {
-    [ key: string ]: Array<onAfterCallback>
+interface OnHookInterface {
+    [ key: string ]: Array<CommandCallbackType>
 }
 
 export class Commands extends Core {
     commands: { [ key: string ]: ( typeof CommandPublic ) } = {};
 
-    onBeforeHooks: OnAfterOnceHookInterface = {};
-    onAfterEffectHooks: OnAffectHookInterface = {};
-    onAfterOnceHooks: OnAfterOnceHookInterface = {};
-    onAfterHooks: onAfterHookInterface = {};
+    onBeforeHooks: OnHookInterface = {};
+
+    onAfterHooks: OnHookInterface = {};
+    onAfterOnceHooks: OnHookInterface = {};
+    onAfterAffectHooks: OnHookAffectInterface = {};
 
     private logger: Logger;
 
@@ -98,38 +95,6 @@ export class Commands extends Core {
         return result;
     }
 
-    public onBefore( hookCommand: string, callback: onAfterCallback ) {
-        if ( ! this.onBeforeHooks[ hookCommand ] ) {
-            this.onBeforeHooks[ hookCommand ] = [];
-        }
-
-        this.onBeforeHooks[ hookCommand ].push( callback );
-    }
-
-    public onAfterOnce( command: string, callback: () => void ) {
-        if ( ! this.onAfterOnceHooks[ command ] ) {
-            this.onAfterOnceHooks[ command ] = [];
-        }
-
-        this.onAfterOnceHooks[ command ].push( callback );
-    }
-
-    public onAfterAffect( hookCommand: string, affectCommand: string ) {
-        if ( ! this.onAfterEffectHooks[ hookCommand ] ) {
-            this.onAfterEffectHooks[ hookCommand ] = [];
-        }
-
-        this.onAfterEffectHooks[ hookCommand ].push( affectCommand );
-    }
-
-    public onAfter( hookCommand: string, callback: onAfterCallback ) {
-        if ( ! this.onAfterHooks[ hookCommand ] ) {
-            this.onAfterHooks[ hookCommand ] = [];
-        }
-
-        this.onAfterHooks[ hookCommand ].push( callback );
-    }
-
     public getCommandInstance( name: string, args: CommandArgsInterface, options = {} ): CommandPublic {
         const CommandClass = this.commands[ name ];
 
@@ -144,6 +109,38 @@ export class Commands extends Core {
         return this.commands;
     }
 
+    public onBefore( hookCommand: string, callback: CommandCallbackType ) {
+        if ( ! this.onBeforeHooks[ hookCommand ] ) {
+            this.onBeforeHooks[ hookCommand ] = [];
+        }
+
+        this.onBeforeHooks[ hookCommand ].push( callback );
+    }
+
+    public onAfter( hookCommand: string, callback: CommandCallbackType ) {
+        if ( ! this.onAfterHooks[ hookCommand ] ) {
+            this.onAfterHooks[ hookCommand ] = [];
+        }
+
+        this.onAfterHooks[ hookCommand ].push( callback );
+    }
+
+    public onAfterOnce( command: string, callback: () => void ) {
+        if ( ! this.onAfterOnceHooks[ command ] ) {
+            this.onAfterOnceHooks[ command ] = [];
+        }
+
+        this.onAfterOnceHooks[ command ].push( callback );
+    }
+
+    public onAfterAffect( hookCommand: string, affectCommand: string ) {
+        if ( ! this.onAfterAffectHooks[ hookCommand ] ) {
+            this.onAfterAffectHooks[ hookCommand ] = [];
+        }
+
+        this.onAfterAffectHooks[ hookCommand ].push( affectCommand );
+    }
+
     protected runInstance( command: CommandPublic, args: CommandArgsInterface = {}, options = {} ) {
         let result: any = null;
 
@@ -153,7 +150,7 @@ export class Commands extends Core {
 
         if ( this.onBeforeHooks[ command.getName() ] ) {
             const callbacks = this.onBeforeHooks[ command.getName() ];
-            callbacks.forEach( ( callback ) => callback( args ) );
+            callbacks.forEach( ( callback ) => callback( args, options ) );
         }
 
         result = command.run();
@@ -168,8 +165,8 @@ export class Commands extends Core {
     }
 
     protected onAfterRun( command: CommandPublic, args: CommandArgsInterface, options: Object, result: any ) {
-        if ( this.onAfterEffectHooks[ command.getName() ] ) {
-            this.onAfterEffectHooks[ command.getName() ].forEach( ( command ) => {
+        if ( this.onAfterAffectHooks[ command.getName() ] ) {
+            this.onAfterAffectHooks[ command.getName() ].forEach( (command ) => {
                 args.result = result;
 
                 result = this.run( command.toString(), args, options );
