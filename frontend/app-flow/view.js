@@ -7,6 +7,9 @@ import { Element } from './element';
 
 import Core from './base/core';
 
+/**
+ * @name $flow.View
+ */
 export class View extends Core {
 	/**
 	 * @type {Element}

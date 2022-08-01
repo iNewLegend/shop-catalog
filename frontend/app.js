@@ -43,11 +43,6 @@ class App {
 				spinner: $flow.Factory.createElement( 'header #toggle .spinner' )
 			},
 
-			sidebar: {
-				self: $flow.Factory.createElement( '#sidebar' ), // TODO: Self should not be exist, if you use self, it should be component.
-				closeButton: $flow.Factory.createElement( '#sidebar #close' ),
-			},
-
 			sections: {
 				main: $flow.Factory.createElement( "section.main" )
 			}
@@ -113,7 +108,7 @@ class App {
 		// On receive catalog.
 		$flow.managers.data.onAfterOnce( 'Components/Catalog/Data/Index', () => {
 			// Initialize cart.
-			this.cart = new components.Cart( this.elements.sidebar.self, this.apis );
+			this.cart = new components.Cart( this.sidebar.view.element );
 
 			// Request the cart from the server.
 			$flow.managers.data.get( 'Components/Cart/Data/Index' );
