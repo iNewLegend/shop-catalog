@@ -1,10 +1,9 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: A live console that you can open by tilda key.
- * TODO: Remove JQuery.
  */
-import JQuery from '../app-flow/library/jquery';
 
+// TODO: Remove.
 const CircularJSON = require( 'circular-json' );
 
 const LOCAL_STORAGE_KEY = 'local_storage_key';
@@ -63,11 +62,8 @@ export class Terminal {
 	 * Function _initialize() : initialize Terminal
 	 */
 	_initialize() {
-		const { body, terminal } = this.elements;
-		const { buttons } = terminal;
-
-		// add .GetSelector to jQuery
-		JQuery.addGetSelector( $ );
+		const { body, terminal } = this.elements,
+			{ buttons } = terminal;
 
 		body.keydown( this._onKeyDown.bind( this ) );
 		body.mousemove( this._onMouseMove.bind( this ) );
@@ -276,10 +272,7 @@ Terminal.onOutput = function( output ) {
 
 	console.log.apply( this, arguments );
 
-	// if jQuery element
-	if ( output instanceof jQuery ) {
-		output = `[jQuery Element]: '${output.getSelector()}'`;
-	} else if ( typeof output == 'object' ) {
+	 if ( typeof output == 'object' ) {
 		// for events.
 		if ( output instanceof Event ) {
 			/**

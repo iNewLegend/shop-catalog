@@ -15,9 +15,9 @@ import { JsxElement } from './jsx-element';
 import { Model } from './model';
 import { View } from './view';
 
-if ( ! global.$flow ) {
+if ( ! global[ "$flow" ] ) {
 	/**
-	 * @name @flow
+	 * @name $flow
 	 * */
 	global.$flow = {
 		commandBases,

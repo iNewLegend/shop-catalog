@@ -18,24 +18,17 @@
 ### Build-With
 - Babel
 - Webpack
-- JQuery
 
-## Current Goals
-- Remove jQuery.
+## Stick with principles
+- MVC
 - Modular
 - Well structured
 - No dependencies except babel and webpack. 
-
-## Done Goals
-- Apply MVC.
   
 # [ Demo ]
 ### preview
 
 https://user-images.githubusercontent.com/10234691/167252894-74428297-945b-4642-92ea-295c0c7894ec.mov
-
-
-
 
 
 ### [ Live ]
