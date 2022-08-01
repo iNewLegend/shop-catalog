@@ -29,10 +29,12 @@ export class Commands extends Core {
     commands: { [ key: string ]: ( typeof CommandPublic ) } = {};
 
     onBeforeHooks: OnHookInterface = {};
+    onBeforeUIHooks: OnHookInterface = {};
 
     onAfterHooks: OnHookInterface = {};
     onAfterOnceHooks: OnHookInterface = {};
     onAfterAffectHooks: OnHookAffectInterface = {};
+    onAfterUIHooks: OnHookInterface = {};
 
     private logger: Logger;
 
@@ -109,6 +111,9 @@ export class Commands extends Core {
         return this.commands;
     }
 
+    /**
+     * Used to set hooks that effects only data and not UI.
+     */
     public onBefore( hookCommand: string, callback: CommandCallbackType ) {
         if ( ! this.onBeforeHooks[ hookCommand ] ) {
             this.onBeforeHooks[ hookCommand ] = [];
@@ -117,6 +122,20 @@ export class Commands extends Core {
         this.onBeforeHooks[ hookCommand ].push( callback );
     }
 
+    /**
+     * Used to set hooks that effects only UI.
+     */
+    public onBeforeUI( hookCommand: string, callback: CommandCallbackType ) {
+        if ( ! this.onBeforeUIHooks[ hookCommand ] ) {
+            this.onBeforeUIHooks[ hookCommand ] = [];
+        }
+
+        this.onBeforeUIHooks[ hookCommand ].push( callback );
+    }
+
+    /**
+     * Used to set hooks that effects only data and not UI.
+     */
     public onAfter( hookCommand: string, callback: CommandCallbackType ) {
         if ( ! this.onAfterHooks[ hookCommand ] ) {
             this.onAfterHooks[ hookCommand ] = [];
@@ -125,6 +144,20 @@ export class Commands extends Core {
         this.onAfterHooks[ hookCommand ].push( callback );
     }
 
+    /**
+     * Used to set hooks that effects only UI.
+     */
+    public onAfterUI( hookCommand: string, callback: CommandCallbackType ) {
+        if ( ! this.onAfterUIHooks[ hookCommand ] ) {
+            this.onAfterUIHooks[ hookCommand ] = [];
+        }
+
+        this.onAfterUIHooks[ hookCommand ].push( callback );
+    }
+
+    /**
+     * Used to set hooks that effects only data and not UI.
+     */
     public onAfterOnce( command: string, callback: () => void ) {
         if ( ! this.onAfterOnceHooks[ command ] ) {
             this.onAfterOnceHooks[ command ] = [];
@@ -150,6 +183,11 @@ export class Commands extends Core {
 
         if ( this.onBeforeHooks[ command.getName() ] ) {
             const callbacks = this.onBeforeHooks[ command.getName() ];
+            callbacks.forEach( ( callback ) => callback( args, options ) );
+        }
+
+        if ( this.onBeforeUIHooks[ command.getName() ] ) {
+            const callbacks = this.onBeforeUIHooks[ command.getName() ];
             callbacks.forEach( ( callback ) => callback( args, options ) );
         }
 
@@ -185,6 +223,10 @@ export class Commands extends Core {
             Commands.runCallbacks( callbacks );
 
             delete this.onAfterOnceHooks[ command.getName() ];
+        }
+
+        if ( this.onAfterUIHooks ) {
+            Commands.runCallbacks( Object.assign( [], this.onAfterUIHooks[ command.getName() ] ), args, options );
         }
 
         return result;

@@ -43,8 +43,8 @@ export class Controller extends $flow.Controller {
 			this.prevTotal = total;
 		}
 
-		$flow.managers.internal.onAfter( 'Components/Cart/Internal/Add', updateTotal );
-		$flow.managers.commands.onAfter( 'Components/Cart/Commands/Remove', updateTotal )
+		$flow.managers.internal.onAfterUI( 'Components/Cart/Internal/Add', updateTotal );
+		$flow.managers.commands.onAfterUI( 'Components/Cart/Commands/Remove', updateTotal )
 	}
 }
 
