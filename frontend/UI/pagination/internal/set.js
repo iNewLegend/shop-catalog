@@ -15,12 +15,7 @@ export class Set extends ( $flow.commandBases.CommandInternal ) {
 		return 'UI/Pagination/Internal/Set';
 	}
 
-	/**
-	 * @override
-	 * @param {PaginationData} args
-	 * @param {Object} options
-	 */
-	apply( args, options ) {
+	apply() {
 		// All the logic is side effects of the UI.
 	}
 }

@@ -115,7 +115,7 @@ class App {
 		} );
 
 		// On request page.
-		$flow.managers.commands.onAfter( 'UI/Pagination/Commands/GetPage', async ( { page  } ) => {
+		$flow.managers.commands.onAfter( 'UI/Pagination/Commands/GetPage', async ( { component, page } ) => {
 			// Get the data from the server.
 			const result = await $flow.managers.data.get( 'Components/Catalog/Data/Index', {
 				page,
@@ -124,7 +124,10 @@ class App {
 
 			// If answer supports pagination, then tell the pagination about the change.
 			if ( result.pagination ) {
-				$flow.managers.internal.run( 'UI/Pagination/Internal/Set', result.pagination );
+				$flow.managers.internal.run( 'UI/Pagination/Internal/Set', {
+					component,
+					pagination: result.pagination,
+				} );
 			}
 		} );
 	}

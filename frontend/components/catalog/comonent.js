@@ -80,7 +80,10 @@ export class Component extends $flow.Component {
 
 			this.renderProducts();
 
-			$flow.managers.internal.run( 'UI/Pagination/Internal/Set',  data.result.pagination );
+			$flow.managers.internal.run( 'UI/Pagination/Internal/Set',  {
+				component: this.components.pagination,
+				pagination: data.result.pagination,
+			} );
 		} );
 
 		$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: 0 } )

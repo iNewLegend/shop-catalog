@@ -29,10 +29,10 @@ export class Component extends $flow.Component {
 		return () => (
 			<div id="pagination" class="pagination hidden">
 				<div class="pagination">
-					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: this.page - 1 } )"
+					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { component: this, page: this.page - 1 } )"
 					   class="prev" href="#">&laquo;</a>
 					<span class="placeholder"/>
-					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: this.page + 1 } )"
+					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { component: this, page: this.page + 1 } )"
 					   class="next" href="#">&raquo;</a>
 				</div>
 			</div>

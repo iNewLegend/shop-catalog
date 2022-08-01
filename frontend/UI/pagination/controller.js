@@ -19,9 +19,7 @@ export class Controller extends $flow.Controller {
 	}
 
 	setupHooks() {
-		$flow.managers.internal.onBeforeUI( 'UI/Pagination/Internal/Set', ( args ) => {
-			const { component } = this;
-
+		$flow.managers.internal.onBeforeUI( 'UI/Pagination/Internal/Set', ( { component } ) => {
 			component.show();
 
 			// Clear.
@@ -36,33 +34,35 @@ export class Controller extends $flow.Controller {
 			component.anchors = [];
 		} )
 
-		$flow.managers.internal.onAfterUI( 'UI/Pagination/Internal/Set', ( args ) => {
-			const { component } = this,
-				{ next, prev, placeHolder } = component.elements;
+		$flow.managers.internal.onAfterUI( 'UI/Pagination/Internal/Set', ( { component, pagination } ) => {
+			const { next, prev, placeHolder } = component.elements;
 
 			// Create pages.
-			for ( let i = 0; i < args.pages; ++i ) {
+			for ( let i = 0; i < pagination.pages; ++i ) {
 				const anchor = new $flow.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
 				component.anchors.push( anchor );
 
 				anchor.render();
 				anchor.click( () => {
-					$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: i } );
+					$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', {
+						component,
+						page: i
+					} );
 				} );
 
 				component.show();
 			}
 
 			// Next.
-			if ( args.current >= (args.pages - 1) ) {
+			if ( pagination.current >= ( pagination.pages - 1 ) ) {
 				next.hide();
 			} else {
 				next.show();
 			}
 
 			// Prev.
-			if ( 1 !== args.current ) {
+			if ( 1 !== pagination.current ) {
 				prev.hide();
 			} else {
 				prev.show();
