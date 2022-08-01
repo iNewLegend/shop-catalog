@@ -23,53 +23,6 @@ export class Component extends $flow.Component {
 
 		this.page = 0;
 		this.events = {};
-
-		$flow.managers.internal.onBeforeUI( 'UI/Pagination/Internal/Set', ( args ) => {
-			this.show();
-
-			// Clear.
-			this.elements.placeHolder.html( '' );
-
-			if ( this.anchors ) {
-				this.anchors.forEach( ( anchor ) => {
-					anchor.element.remove();
-				} );
-			}
-
-			this.anchors = [];
-		} )
-
-		$flow.managers.internal.onAfterUI( 'UI/Pagination/Internal/Set', ( args ) => {
-			const { next, prev, placeHolder } = this.elements;
-
-			// Create pages.
-			for ( let i = 0; i < args.pages; ++i ) {
-				const anchor = new $flow.Element( placeHolder, `<a href="#">${i + 1}</a>` );
-
-				this.anchors.push( anchor );
-
-				anchor.render();
-				anchor.click( () => {
-					$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { page: i } );
-				} );
-
-				this.show();
-			}
-
-			// Next.
-			if ( args.current >= (args.pages - 1) ) {
-				next.hide();
-			} else {
-				next.show();
-			}
-
-			// Prev.
-			if ( 1 !== args.current ) {
-				prev.hide();
-			} else {
-				prev.show();
-			}
-		} );
 	}
 
 	template() {
