@@ -2,7 +2,7 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-import HTML from './library/html';
+import HTML from './utils/html';
 
 /**
  * @name $flow.Context
