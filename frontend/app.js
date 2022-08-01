@@ -102,7 +102,10 @@ class App {
 				...args.component.model.getModelData(),
 				amount: args.component.elements.amount.value,
 			} );
+		} );
 
+		// On adding item from catalog.
+		$flow.managers.commands.onAfterUI( 'Components/Catalog/Commands/Add', ( args ) => {
 			// Toggle sidebar and show cart
 			$flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle' );
 		} );
@@ -119,7 +122,7 @@ class App {
 
 	hookCart() {
 		// On cart update total.
-		$flow.managers.internal.onAfter( 'Components/Cart/Internal/UpdateTotal', () => {
+		$flow.managers.internal.onAfterUI( 'Components/Cart/Internal/UpdateTotal', () => {
 			let totalItemsInCartCount = 0;
 
 			// Get total from all products in cart.
@@ -136,7 +139,7 @@ class App {
 		} );
 
 		// On cart checkout button click.
-		$flow.managers.commands.onAfter( 'Components/Cart/Commands/Checkout', () => {
+		$flow.managers.commands.onAfterUI( 'Components/Cart/Commands/Checkout', () => {
 			// Toggle the sidebar off.
 			$flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } );
 
@@ -145,6 +148,7 @@ class App {
 			this.container.render();
 		} );
 
+		// TODO: Figure out how to handle this part UI and Data logic to separate hooks.
 		// On receiving cart data from server.
 		$flow.managers.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
 			// If its first time.
