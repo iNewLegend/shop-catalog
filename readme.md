@@ -18,10 +18,8 @@
 ### Build-With
 - Babel
 - Webpack
-- JQuery
 
 ## Current Goals
-- Remove jQuery.
 - Modular
 - Well structured
 - No dependencies except babel and webpack. 
