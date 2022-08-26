@@ -40,7 +40,7 @@ header( 'Access-Control-Allow-Origin: http://localhost:8080' );
 header( 'Access-Control-Allow-Headers:X-Request-With, Content-Type' );
 header( 'Access-Control-Allow-Credentials: true' ); // for cookies
 
-header( 'Access-Control-Allow-Methods: GET, POST, OPTIONS' );
+header( 'Access-Control-Allow-Methods: GET, POST, OPTIONS, PATCH' );
 
 if ( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' ) {
 	exit();
@@ -55,12 +55,8 @@ if ( $cmd == 'phpinfo' ) {
 
 $command = new Command();
 
-if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+if ( in_array( $_SERVER['REQUEST_METHOD'], [ 'POST', 'PATCH' ] ) ) {
 	$command->parse( $cmd );
-
-	// better to use serialized post and use $_POST instead of file_get_contents
-	// since i made it custom , let use file_get_contents for now.
-
 	$command->setParameters( (array) json_decode( file_get_contents( 'php://input' ) ) );
 } else if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
 	$command->parse( $cmd );

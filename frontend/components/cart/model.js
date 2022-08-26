@@ -2,16 +2,22 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart items/data.
  */
+
+/* global $flow */
+
 export default class Model extends $flow.Model {
 	/**
 	 * State of the cart, open/closed.
 	 *
 	 */
 	state = this.boolean();
+
 	/**
+	 * @inheritDoc
+	 *
 	 * Loaded items to be rendered.
 	 *
-	 * @type {components.cart.item.Component[]}
+	 * @type {Component[]|import('@appflux/mvc/dist/model/array-class').default}
 	 */
 	items = this.array();
 
@@ -24,12 +30,12 @@ export default class Model extends $flow.Model {
 	 *
 	 * @param {number} id
 	 *
-	 * @returns {components.cart.item.Component}
+	 * @return {CartComponent}
 	 */
 	getById( id ) {
 		this.logger.startWith( { id } );
 
-		return this.items.find( ( item ) => item.model.id === id );
+		return this.items.find( ( /* CartComponent */ item ) => item.model.id === id );
 	}
 
 	getTotal() {

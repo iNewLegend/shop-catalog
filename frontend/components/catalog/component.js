@@ -3,12 +3,18 @@
  * @description: Manages catalog
  */
 import Pagination from '../../UI/pagination/component';
-import Product from './product/component';
+import CatalogProductComponent from './product/component';
 import Spinner from './spinner/spinner';
 import Controller from './controller';
-import Model from './model';
 
-export class Component extends $flow.Component {
+import { getComponent } from "@appflux/mvc";
+
+/* global $flow */
+
+/**
+ * @name CatalogComponent
+ */
+export class Component extends getComponent() {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -20,17 +26,9 @@ export class Component extends $flow.Component {
 		return Controller;
 	}
 
-	static getModelClass() {
-		return Model
-	}
-
 	initialize( options ) {
 		this.logger = new $flow.modules.Logger( Component.getName(), true, { sameColor: true } );
 		this.logger.startWith( { options } );
-
-		this.apis = {
-			catalog: options.api,
-		};
 
 		return super.initialize( options );
 	}
@@ -48,11 +46,11 @@ export class Component extends $flow.Component {
 		super.afterRender();
 
 		this.elements = {
-			row: this.view.element.children[ 0 ],
+			row: this.getView().element.children[ 0 ],
 		};
 
 		this.components = {
-			pagination: new Pagination( this.view.element ),
+			pagination: new Pagination( this.getView().element ),
 			spinner: new Spinner( this.elements.row ),
 		};
 
@@ -94,7 +92,7 @@ export class Component extends $flow.Component {
 	 *
 	 * Function override amount ( Used as filter ).
 	 *
-	 * @param {components.catalog.product.Component.Component} product
+	 * @param {CatalogProductComponent} product
 	 * @param {number} amount
 	 */
 	onProductAmountChange( product, amount ) {
@@ -110,24 +108,16 @@ export class Component extends $flow.Component {
 	}
 
 	/**
-	 * Function addProduct() : Add's a product.
+	 * Function addProduct() : Adds a product.
 	 *
 	 * Function Create product component and push it `this.products`.
 	 *
-	 * @param {components.catalog.product.Component} product
+	 * @param {CatalogProductComponent} product
 	 *
-	 * @returns {components.catalog.product.Component}
+	 * @returns {CatalogProductComponent}
 	 */
 	addProduct( product ) {
-		const productComponent = new Product( this.elements.row, {
-			api: {
-				catalog: this.apis.catalog,
-			},
-
-			logger: this.logger,
-
-			...product,
-		} );
+		const productComponent = new CatalogProductComponent( this.elements.row, product );
 
 		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 

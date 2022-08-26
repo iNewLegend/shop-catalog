@@ -4,25 +4,22 @@
  */
 import './cart.css';
 
-import Controller from './controller'
-import Model from './model';
+import CartController from './controller'
+import { getComponent } from "@appflux/mvc";
+
+/* global $flow */
 
 /**
  * @name CartComponent
- * @property {Model} model
- * @property {{}} elements
+ * @extends {Component}
  */
-export class Component extends $flow.Component {
+export class Component extends getComponent() {
 	static getName() {
 		return 'Components/Cart/Component';
 	}
 
 	static getControllerClass() {
-		return Controller;
-	}
-
-	static getModelClass() {
-		return Model;
+		return CartController;
 	}
 
 	initialize( options ) {
@@ -32,10 +29,18 @@ export class Component extends $flow.Component {
 
 		options.logger = this.logger;
 
-		this.elements = {
-			items: () => $flow.Factory.createElement( '.cart .items' ),
-			totalPrice: () => $flow.Factory.createElement( '.cart .total .price' ),
-		};
+		// Determine View, if cart empty or not, re-render when empty-state changed, since JSx applied in `template()`.
+		$flow.managers.internal.onAfterUI(
+			'Components/Cart/Internal/UpdateTotal',
+			( args, options ) => {
+				if ( 0 === args.result ) {
+					this.render();
+				} else if ( args.result && ! this.prevResult ) {
+					this.render();
+				}
+
+				this.prevResult = args.result;
+			} );
 
 		return super.initialize( options );
 	}
@@ -48,6 +53,7 @@ export class Component extends $flow.Component {
 
 			return <div class="cart">
 				{isCartEmpty ? <h1 id="empty">Your cart is empty.</h1> : null}
+
 				<ul class="items">
 					<li class={totalClass}>
 						<h2>TOTAL</h2>
@@ -59,6 +65,7 @@ export class Component extends $flow.Component {
 					<button class="checkout bg-info"
 					        onClick="$flow.managers.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
 			</div>
+
 		}
 	}
 
@@ -66,7 +73,7 @@ export class Component extends $flow.Component {
 	 * Function onChange() : Called when cart model changed.
 	 */
 	onChange( statesSnapshot ) {
-		this.logger.startWith( statesSnapshot )
+		this.logger.startWith( statesSnapshot );
 
 		let { prevModel, currentModel } = statesSnapshot;
 
@@ -102,12 +109,23 @@ export class Component extends $flow.Component {
 	clearHighlight() {
 		// Clear highlight.
 		this.model.items.forEach( ( item ) => {
-			item.view.element.element.style = 'animation: none';
+			item.view.element.getElement().style = 'animation: none';
 		} );
 	}
 
 	render() {
 		super.render();
+
+		this.elements = {
+			items: $flow.Factory.createElementRef(
+				'.cart .items',
+				'Components/Cart/Component/Items'
+			),
+			totalPrice: $flow.Factory.createElementRef(
+				'.cart .total .price',
+				'Components/Cart/Component/TotalPrice'
+			),
+		};
 
 		this.model.items.forEach( ( component ) => {
 			component.render();

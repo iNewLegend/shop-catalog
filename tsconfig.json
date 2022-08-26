@@ -1,17 +1,18 @@
 {
 	"compilerOptions": {
-		"outDir": "./dist/",
-		"noImplicitAny": true,
-		"module": "esnext",
-		"target": "es5",
-		"allowJs": true,
-		"moduleResolution": "node",
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"strictPropertyInitialization": false,
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution":	"Node", /* Support swallow paths 'index' */
+		"declaration": true,
+		"declarationDir": "./types",
+		"baseUrl": "./",
 		"sourceMap": true,
+
 	},
-	"include": [
-		"frontend"
-	],
-	"exclude": [
-		"node_modules"
-	]
+	"include": ["frontend/**/*"],
+	"exclude": ["node_modules", "frontend/dist"]
 }

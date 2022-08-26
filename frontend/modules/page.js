@@ -3,12 +3,14 @@
  * @description: Modules Namespace O__o
  */
 import { Terminal } from '../services/';
-import { Container } from '../app-flow/container';
+import { getContainer } from "@appflux/mvc";
+
+/* global $flow */
 
 /**
  * @memberOf modules
  */
-export class Page extends Container {
+export class Page extends getContainer() {
 	static getName() {
 		return 'Modules/Page';
 	}
@@ -17,7 +19,7 @@ export class Page extends Container {
 		this.logger = new $flow.modules.Logger( Page.getName(), true );
 		this.logger.setOutputHandler( Terminal.onOutput );
 
-		this.logger.startEmpty() ;
+		this.logger.startWith( { parentName: this.constructor.getName() } );
 
 		super.initialize();
 	}
