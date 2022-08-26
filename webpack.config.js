@@ -12,7 +12,10 @@ module.exports = {
 		path: path.resolve( __dirname, 'frontend/dist' )
 	},
 	devServer: {
-		contentBase: 'frontend/dist'
+		static: {
+			directory: path.join(__dirname, 'frontend/dist'),
+			serveIndex: true,
+		},
 	},
 	module: {
 		rules: [

@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"frontend:watch": "npx webpack --watch",
-		"frontend:watch:server": "npx webpack serve --watch-content-base",
+		"frontend:watch:server": "npx webpack-dev-server",
 		"backend:php:debug": "cd backend/inewlegend/php; php -S localhost:8081",
 		"backend:nestjs:debug": "cd backend/underyourskin/nestjs; npm run start:debug",
 		"postinstall": "cd backend/underyourskin/nestjs; npm i"
