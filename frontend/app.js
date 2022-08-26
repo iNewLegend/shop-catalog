@@ -2,11 +2,11 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Main File
  */
-import './app-flow/';
-
 import * as services from './services/';
 import * as components from './components/';
 import * as pages from './pages/';
+
+/* global $flow */
 
 class App {
 	/**
@@ -14,6 +14,13 @@ class App {
 	 */
 	constructor() {
 		services.Terminal.initialize();
+
+		// Log commands run in custom window, use tilda to open.
+		$flow.managers.commands.getLogger().setOutputHandler( services.Terminal.onOutput );
+		$flow.managers.internal.getLogger().setOutputHandler( services.Terminal.onOutput );
+		$flow.managers.data.getLogger().setOutputHandler( services.Terminal.onOutput );
+
+		$flow.managers.data.getClient().getLogger().setOutputHandler( services.Terminal.onOutput );
 
 		// Tell logger act differently when it sees instanceOf `$flow.Component`.
 		$flow.modules.Logger.createCustomWrapper( $flow.Component, ( obj ) => {
@@ -32,7 +39,7 @@ class App {
 
 		this.logger.startEmpty();
 
-		this.sidebar = new components.Sidebar( window.document.querySelector( '#sidebar' ).parentElement );
+		this.sidebar = new components.Sidebar( document.querySelector( '#sidebar' ).parentElement );
 
 		this.elements = {
 			header: {
@@ -143,8 +150,10 @@ class App {
 			this.container.render();
 		} );
 
+		// TODO: Code too messy.
 		// TODO: Figure out how to handle this part UI and Data logic to separate hooks.
 		// On receiving cart data from server.
+		// $flow.managers.data.onAfterOnceUI( 'Components/Cart/Data/Index,
 		$flow.managers.data.onAfter( 'Components/Cart/Data/Index', async ( args ) => {
 			// If its first time.
 			if ( ! this.cartRecvOnce ) {
@@ -153,7 +162,7 @@ class App {
 				const { cart, spinner } = this.elements.header;
 
 				// Hide the spinner and show cart.
-				cart.show();
+				cart.show(); // Which one???
 				spinner.hide();
 			}
 

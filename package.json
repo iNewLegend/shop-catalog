@@ -1,4 +1,5 @@
 {
+	"main": "frontend/app",
 	"scripts": {
 		"frontend:watch": "npx webpack --watch",
 		"frontend:watch:server": "npx webpack serve --watch-content-base",
@@ -7,17 +8,23 @@
 		"postinstall": "cd backend/underyourskin/nestjs; npm i"
 	},
 	"dependencies": {
+		"@appflux/core": "^1.0.2-alpha.16",
+		"@appflux/mvc": "^1.0.3-alpha.7",
 		"@babel/plugin-transform-react-jsx": "^7.17.3",
-		"@babel/polyfill": "^7.7.0"
+		"@babel/polyfill": "^7.7.0",
+		"hash-it": "^5.0.2",
+		"install": "^0.13.0",
+		"regenerator-runtime": "^0.13.9"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.17.10",
 		"@babel/plugin-proposal-class-properties": "^7.16.7",
 		"@babel/preset-env": "^7.17.10",
 		"@babel/preset-typescript": "^7.16.7",
+		"@types/circular-json": "^0.4.0",
+		"@types/object-hash": "^2.2.0",
 		"@webpack-cli/serve": "^1.6.1",
 		"babel-loader": "^8.2.5",
-		"circular-json": "^0.5.9",
 		"css-loader": "^3.4.2",
 		"object-hash": "^2.2.0",
 		"ssri": "^9.0.0",

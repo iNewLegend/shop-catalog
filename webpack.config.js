@@ -45,4 +45,8 @@ module.exports = {
     stats: {
         colors: true
     },
+	externals: {
+		'@appflux/core': '$flow',
+		'@appflux/mvc': '$flow',
+	}
 };

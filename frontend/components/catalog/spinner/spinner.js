@@ -2,8 +2,12 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
 import './spinner.css';
+import { getComponent } from "@appflux/mvc";
 
-export class Spinner extends $flow.Component {
+/* global $flow */
+
+// TODO: since the spinner is a agnostic component, it shouldn't be a in catalog.
+export class Spinner extends getComponent() {
 	static getName() {
 		return 'Components/Catalog/Spinner';
 	}

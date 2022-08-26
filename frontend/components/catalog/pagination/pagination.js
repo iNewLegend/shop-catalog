@@ -4,6 +4,10 @@
  */
 import './pagination.css';
 
+import { getComponent } from "@appflux/mvc";
+
+/* global $flow */
+
 /**
  * @typedef PaginationData pagination data.
  * @property {number} current current page.
@@ -12,7 +16,7 @@ import './pagination.css';
  * @property {number} perPage amount of pages per page.
  * @memberOf components.catalog
  */
-export class Pagination extends $flow.Component {
+export class Pagination extends getComponent() {
 	static getName() {
 		return 'Components/Catalog/Pagination';
 	}
@@ -20,7 +24,7 @@ export class Pagination extends $flow.Component {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		this.logger = new $flow.modules.Logger( Pagination.getName(), true, { sameColor: true } );
+		this.logger = new $flow.modules.Logger(  Pagination.getName(), true, { sameColor: true } );
 
 		this.logger.startWith( { options } );
 
@@ -131,7 +135,7 @@ export class Pagination extends $flow.Component {
 			case 'page:change': {
 				this.events.onPageChange = callback;
 			}
-				break;
+			break;
 
 			default: {
 				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );

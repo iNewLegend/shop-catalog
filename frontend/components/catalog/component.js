@@ -3,12 +3,17 @@
  * @description: Manages catalog
  */
 import Pagination from './pagination/pagination';
-import Product from './product/component';
+import CatalogProductComponent from './product/component';
 import Spinner from './spinner/spinner';
 import Controller from './controller';
-import Model from './model';
+import { getComponent } from "@appflux/mvc";
 
-export class Comonent extends $flow.Component {
+/* global $flow */
+
+/**
+ * @name CatalogComponent
+ */
+export class Component extends getComponent() {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -20,17 +25,9 @@ export class Comonent extends $flow.Component {
 		return Controller;
 	}
 
-	static getModelClass() {
-		return Model
-	}
-
 	initialize( options ) {
-		this.logger = new $flow.modules.Logger( Comonent.getName(), true, { sameColor: true } );
+		this.logger = new $flow.modules.Logger( Component.getName(), true, { sameColor: true } );
 		this.logger.startWith( { options } );
-
-		this.apis = {
-			catalog: options.api,
-		};
 
 		return super.initialize( options );
 	}
@@ -48,11 +45,11 @@ export class Comonent extends $flow.Component {
 		super.afterRender();
 
 		this.elements = {
-			row: this.view.element.children[ 0 ],
+			row: this.getView().element.children[ 0 ],
 		};
 
 		this.components = {
-			pagination: new Pagination( this.view.element ),
+			pagination: new Pagination( this.getView().element ),
 			spinner: new Spinner( this.elements.row ),
 		};
 
@@ -92,40 +89,32 @@ export class Comonent extends $flow.Component {
 	 *
 	 * Function override amount ( Used as filter ).
 	 *
-	 * @param {components.catalog.product.Component.Component} product
+	 * @param {CatalogProductComponent} product
 	 * @param {number} amount
 	 */
 	onProductAmountChange( product, amount ) {
 		this.logger.startWith( { amount } );
 
-		if ( amount > Comonent.amountMaxValue ) {
-			amount = Comonent.amountMaxValue;
-		} else if ( amount < Comonent.amountMinValue ) {
-			amount = Comonent.amountMinValue;
+		if ( amount > Component.amountMaxValue ) {
+			amount = Component.amountMaxValue;
+		} else if ( amount < Component.amountMinValue ) {
+			amount = Component.amountMinValue;
 		}
 
 		product.setAmount( amount );
 	}
 
 	/**
-	 * Function addProduct() : Add's a product.
+	 * Function addProduct() : Adds a product.
 	 *
 	 * Function Create product component and push it `this.products`.
 	 *
-	 * @param {components.catalog.product.Component} product
+	 * @param {CatalogProductComponent} product
 	 *
-	 * @returns {components.catalog.product.Component}
+	 * @returns {CatalogProductComponent}
 	 */
 	addProduct( product ) {
-		const productComponent = new Product( this.elements.row, {
-			api: {
-				catalog: this.apis.catalog,
-			},
-
-			logger: this.logger,
-
-			...product,
-		} );
+		const productComponent = new CatalogProductComponent( this.elements.row, product );
 
 		productComponent.on( 'product:change', this.onProductAmountChange.bind( this ) );
 
@@ -144,4 +133,4 @@ export class Comonent extends $flow.Component {
 	}
 }
 
-export default Comonent;
+export default Component;

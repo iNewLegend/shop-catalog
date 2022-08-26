@@ -5,9 +5,17 @@
 import * as data from './data/';
 import * as commands from './commands/';
 
-export class Controller extends $flow.Controller {
+import Model from "./model";
+
+import { getController } from "@appflux/core";
+
+export class Controller extends getController() {
 	static getName() {
 		return 'Components/Catalog/Controller';
+	}
+
+	static getModelClass() {
+		return Model;
 	}
 
 	getCommands() {

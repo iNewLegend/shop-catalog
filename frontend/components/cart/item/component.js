@@ -3,12 +3,14 @@
  * @description: Manages one item unit.
  */
 import Controller from './controller';
-import Model from './model';
+import { getComponent } from "@appflux/mvc";
+
+/* global $flow */
 
 /**
  * @property {Model} model
  */
-export class Component extends $flow.Component {
+export class Component extends getComponent() {
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}
@@ -17,17 +19,6 @@ export class Component extends $flow.Component {
 		return Controller;
 	}
 
-	static getModelClass() {
-		return Model;
-	}
-
-	/**
-	 * @param {Object} options
-	 * @param {number} options.id
-	 * @param {string} options.name
-	 * @param {number} options.price
-	 * @param {string} options.amount
-	 */
 	initialize( options ) {
 		const { id, name, price, amount } = options;
 
@@ -35,17 +26,6 @@ export class Component extends $flow.Component {
 		this.model.name = name;
 		this.model.price = price;
 		this.model.amount = amount;
-
-		this.logger = options.logger;
-
-		// If parent logger 'Components/Cart' passed, clone and extend its name.
-		// TODO: If this code is require and become duplicate over time hold a method to cover it. like `cloneWithName`.
-		if ( this.logger ) {
-			this.logger = this.logger.clone();
-			this.logger.name = Component.getName() + '/' + id;
-
-			this.logger.startWith( { id, name, price } );
-		}
 
 		return super.initialize( options );
 	}
@@ -59,7 +39,7 @@ export class Component extends $flow.Component {
 	                <div class="thumbnail"><img alt="item" src="img/product-${id}.jpg" /></div>
 	                <div class="info">
 	                    <h2>${name}</h2>
-	                    <button class="color-primary close" onclick="$flow.managers.commands.run( 'Components/Cart/Item/Commands/Remove', { virtualId: this.virtualId, model: this.model } )">&times;</button>
+	                    <button class="color-primary close" onclick="$flow.managers.commands.run( 'Components/Cart/Item/Commands/Remove', { model: this.model } )">&times;</button>
 	                    <div class="amount-price">
 	                        <span class="amount">${amount}</span> x <strong>${price}</strong>
 	                        <p class="sum">$<span class="value">${sum}</span></p>
@@ -72,8 +52,8 @@ export class Component extends $flow.Component {
 
 	afterRender() {
 		this.elements = {
-			amount: this.view.element.element.querySelector( '.amount' ),
-			sum: this.view.element.element.querySelector( '.sum .value' ),
+			amount: this.getView().element.getElement().querySelector( '.amount' ),
+			sum: this.getView().element.getElement().querySelector( '.sum .value' ),
 		}
 
 		this.model.on( 'change', this.onChange.bind( this ) );
@@ -98,7 +78,7 @@ export class Component extends $flow.Component {
 	 *
 	 */
 	highlightItem() {
-		this.view.element.element.style = 'animation: highlight 3s';
+		this.getView().element.getElement().style = 'animation: highlight 3s';
 	}
 }
 

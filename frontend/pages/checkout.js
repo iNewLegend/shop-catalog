@@ -12,6 +12,7 @@ export class Checkout extends Page {
 	initialize( options ) {
 		super.initialize( options );
 
+		// TODO: Check this out
 		this.logger.name = Checkout.getName();
 		this.logger.startWith( { options } );
 	}

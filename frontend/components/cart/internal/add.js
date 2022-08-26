@@ -2,9 +2,11 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Internal command for adding items to cart.
  */
-import Component from '../../../components/cart/item/component';
+import ItemComponent from "../item/component";
 
-export class Add extends  ( $flow.commandBases.CommandInternal )  {
+/* global $flow */
+
+export class Add extends ( $flow.commandBases.CommandInternal )  {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}
@@ -15,7 +17,7 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 			product = Object.assign( {}, args, { id, amount } ),
 			addItem = ( product ) => {
 				this.doAddItem(
-					this.createItem( product ),
+					this.createItemComponent( product ),
 					true,
 					! options.local
 				);
@@ -25,22 +27,25 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 			return addItem( product );
 		}
 
-		const component = this.getController().getComponent();
-
-		return $flow.managers.data.post( 'Components/Cart/Data/Add', { id, amount } )
+		return $flow.managers.data.create( 'Components/Cart/Data/Add', { id, amount  } )
 			.then( () => addItem( product ) )
 	}
 
 	/**
 	 * function doInsertItem() : Insert item.
 	 *
-	 * @param {Component} item
+	 * @param {ItemComponent} item
 	 */
 	doInsertItem( item ) {
 		// Hook item insert.
 		this.logger.startWith( { item } );
 
-		this.getController().getModel().items.pushSilent( item );
+		/**
+		 * @type {CartController}
+		 */
+		const controller = $flow.managers.controllers.get( 'Components/Cart/Controller' )
+
+		controller.model.items.pushSilent( item );
 
 		item.render();
 	}
@@ -48,7 +53,7 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	/**
 	 * Function doAddItem() : Adds item to cart
 	 *
-	 * @param {Component} item
+	 * @param {ItemComponent} item
 	 * @param {boolean} notifyCartChanged
 	 * @param {boolean} highlight
 	 */
@@ -56,10 +61,12 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 		this.logger.startWith( { item, notifyCartChanged, highlight } );
 
 		const itemId = item.model.id,
-			existItem = this.getController().getModel().getById( itemId )
+			controller = $flow.managers.controllers.get( 'Components/Cart/Controller' ),
+			existItem = controller.model.getById( itemId )
 
+		// TODO: Fix `model.amount` is string.
 		existItem ?
-			existItem.model.amount += item.model.amount : // Should be command.
+			existItem.model.amount += item.model.amount :
 			this.doInsertItem( item );
 
 		if ( ! highlight ) {
@@ -74,16 +81,17 @@ export class Add extends  ( $flow.commandBases.CommandInternal )  {
 	 *
 	 * @param {Object} data
 	 *
-	 * @returns {Component}
+	 * @returns {ItemComponent}
 	 */
-	createItem( data ) {
+	createItemComponent( data ) {
 		const { logger } = this;
 
 		logger.startWith( { data } );
 
 		data.id = parseInt( data.id );
 
-		return new Component( () => this.getController().getComponent().elements.items(), {
+		// In other words: create the whole MVC in some area upon some data.
+		return new ItemComponent( () => $flow.Factory.getElementRef( 'Components/Cart/Component/Items' ), {
 			logger,
 			...data,
 		} );

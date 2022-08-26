@@ -4,19 +4,21 @@
  */
 import './product.css';
 import Controller from './controller';
-import Model from './model';
+import { getComponent } from "@appflux/mvc";
 
-export class Component extends $flow.Component {
+/* global $flow */
+
+/**
+ * @name CatalogProductComponent
+ * @extends {Component}
+ */
+export class Component extends getComponent() {
 	static getName() {
 		return 'Components/Catalog/Product/Component';
 	}
 
 	static getControllerClass() {
 		return Controller;
-	}
-
-	static getModelClass() {
-		return Model
 	}
 
 	constructor( parent, options ) {
@@ -34,23 +36,6 @@ export class Component extends $flow.Component {
 		this.model.name = name;
 		this.model.price = price;
 
-		/**
-		 * @type {$flow.modules.Logger}
-		 */
-		this.logger = options.logger;
-
-		// If parent logger 'Components/Catalog' passed, clone and extend its name.
-		if ( this.logger ) {
-			this.logger = this.logger.clone();
-			this.logger.name = Component.getName() + '/' + id;
-
-			this.logger.startWith( { id, name, price } );
-		}
-
-		this.apis = {
-			catalog: options.api.catalog,
-		}
-
 		return super.initialize( options );
 	}
 
@@ -58,7 +43,7 @@ export class Component extends $flow.Component {
 		super.afterRender();
 
 		this.elements = {
-			amount: this.view.element.element.querySelector( '.amount' ),
+			amount: this.getView().element.getElement().querySelector( '.amount' ),
 		}
 	}
 
@@ -82,25 +67,9 @@ export class Component extends $flow.Component {
 	}
 
 	onProductChange( e ) {
-		if ( this.logger ) {
-			this.logger.startWith( { e } );
-		}
-
 		const val = e.currentTarget.value;
 
-		if ( this.logger ) {
-			this.logger.debug( `val: '${val}'` );
-		}
-
 		this.events.onProductChange( this, parseInt( val ) );
-	}
-
-	setAmount( amount ) {
-		if ( this.logger ) {
-			this.logger.startWith( { amount } );
-		}
-
-		this.elements.amount.value = amount;
 	}
 
 	/**
@@ -120,6 +89,10 @@ export class Component extends $flow.Component {
 				throw new Error( `${this.constructor.name}::on() -> invalid event type: '${event}'` );
 			}
 		}
+	}
+
+	setAmount( amount ) {
+		this.elements.amount.value = amount;
 	}
 }
 
