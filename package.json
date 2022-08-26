@@ -1,5 +1,4 @@
 {
-	"main": "frontend/app",
 	"scripts": {
 		"frontend:watch": "npx webpack --watch",
 		"frontend:watch:server": "npx webpack serve --watch-content-base",
