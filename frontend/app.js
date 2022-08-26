@@ -162,7 +162,7 @@ class App {
 				const { cart, spinner } = this.elements.header;
 
 				// Hide the spinner and show cart.
-				cart.show(); // Which one???
+				cart.show();
 				spinner.hide();
 			}
 

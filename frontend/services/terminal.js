@@ -270,7 +270,7 @@ Terminal.onOutput = function( output ) {
 
 	console.log.apply( this, arguments );
 
-	 if ( typeof output == 'object' ) {
+	if ( typeof output == 'object' ) {
 		// for events.
 		if ( output instanceof Event ) {
 			/**

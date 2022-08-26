@@ -32,15 +32,15 @@ export class Component extends getComponent() {
 		// Determine View, if cart empty or not, re-render when empty-state changed, since JSx applied in `template()`.
 		$flow.managers.internal.onAfterUI(
 			'Components/Cart/Internal/UpdateTotal',
-			( args, options) => {
-			if ( 0 === args.result ) {
-				this.render();
-			} else if ( args.result && ! this.prevResult ) {
-				this.render();
-			}
+			( args, options ) => {
+				if ( 0 === args.result ) {
+					this.render();
+				} else if ( args.result && ! this.prevResult ) {
+					this.render();
+				}
 
-			this.prevResult = args.result;
-		} );
+				this.prevResult = args.result;
+			} );
 
 		return super.initialize( options );
 	}
@@ -74,7 +74,6 @@ export class Component extends getComponent() {
 	 */
 	onChange( statesSnapshot ) {
 		this.logger.startWith( statesSnapshot );
-
 
 		let { prevModel, currentModel } = statesSnapshot;
 

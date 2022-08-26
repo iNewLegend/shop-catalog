@@ -6,7 +6,6 @@ import { Terminal } from '../services/';
 
 /* global $flow */
 
-
 /**
  * @memberOf modules
  */
