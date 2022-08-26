@@ -2,15 +2,20 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges one product unit.
  */
+
+/* global $flow */
+
 export default class Model extends $flow.Model {
 	/**
 	 * Item id.
 	 */
 	id = this.number();
+
 	/**
 	 * Item name.
 	 */
 	name = this.string();
+
 	/**
 	 * Price of current product.
 	 */
@@ -18,5 +23,9 @@ export default class Model extends $flow.Model {
 
 	static getName() {
 		return 'Components/Catalog/Product/Model';
+	}
+
+	constructor( options ) {
+		super( options );
 	}
 }

@@ -3,15 +3,14 @@
  * @description: Manages sidebar.
  */
 import Controller from './controller';
-import Model from './model.js';
 
-export default class Component extends $flow.Component {
+import { getComponent } from '@appflux/mvc'
+
+/* global $flow */
+
+export default class SidebarComponent extends getComponent() {
 	static getName() {
 		return 'Components/Sidebar/Component';
-	}
-
-	static getModelClass() {
-		return Model;
 	}
 
 	static getControllerClass() {
@@ -42,13 +41,13 @@ export default class Component extends $flow.Component {
 	}
 
 	onShow() {
-		this.view.element.addClass( 'show' )
+		this.getView().element.addClass( 'show' )
 
 		this.elements.overlay.fadeIn();
 	}
 
 	onHide() {
-		this.view.element.removeClass( 'show' )
+		this.getView().element.removeClass( 'show' )
 
 		setTimeout( () => this.elements.overlay.fadeOut(), 400 );
 	}

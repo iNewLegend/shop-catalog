@@ -13,7 +13,7 @@
   - NestJS.
   
 ## Frontend
-  - `$flow`: Set of modules to communicate with DOM & Appling MVC.
+  - `$flow`: Set of modules to communicate with DOM & Applying MVC.
 
 ### Build-With
 - Babel
@@ -22,8 +22,7 @@
 ## Stick with principles
 - MVC
 - Modular
-- Well structured
-- No dependencies except babel and webpack. 
+- Well-structured
   
 # [ Demo ]
 ### preview

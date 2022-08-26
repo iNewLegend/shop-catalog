@@ -2,6 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Get the catalog from the server and cache it.
  */
+
+/* global $flow */
+
 export class Index extends ( $flow.commandBases.CommandData ) {
 	static localCatalog = [];
 
@@ -17,7 +20,8 @@ export class Index extends ( $flow.commandBases.CommandData ) {
 		const { query } = args;
 
 		if ( options.local && this.constructor.localCatalog.length ) {
-			if ( query.id ) {
+			if ( query?.id ) {
+				// noinspection EqualityComparisonWithCoercionJS
 				return this.constructor.localCatalog.find( ( item ) => item.id == query.id );
 			}
 

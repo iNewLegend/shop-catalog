@@ -6,9 +6,23 @@ import * as commands from "./commands/";
 import * as data from "./data/";
 import * as internal from "./internal/";
 
-export class Controller extends $flow.Controller {
+import Model from './model';
+
+import { getController } from "@appflux/core";
+
+/* global $flow */
+
+/**
+ * @name CartController
+ * @property {Model} model
+ */
+export class Controller extends getController() {
 	static getName() {
 		return 'Components/Cart/Controller';
+	}
+
+	static getModelClass() {
+		return Model;
 	}
 
 	getCommands() {
@@ -30,18 +44,8 @@ export class Controller extends $flow.Controller {
 		);
 
 		const updateTotal = () => {
-			const total = $flow.managers.internal.run( 'Components/Cart/Internal/UpdateTotal' ),
-				component = this.getComponent();
-
-			// Render on when empty state changes, to use JSX for showing empty/contain cart.
-			if ( 0 === total ) {
-				component.render();
-			} else if ( ! this.prevTotal && total > 0 ) {
-				component.render();
-			}
-
-			this.prevTotal = total;
-		}
+			setTimeout( () => $flow.managers.internal.run( 'Components/Cart/Internal/UpdateTotal' ) );
+		};
 
 		$flow.managers.internal.onAfterUI( 'Components/Cart/Internal/Add', updateTotal );
 		$flow.managers.commands.onAfterUI( 'Components/Cart/Commands/Remove', updateTotal )

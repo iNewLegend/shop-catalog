@@ -16,16 +16,16 @@ export class Catalog extends Page {
 	initialize( options ) {
 		super.initialize( options );
 
-		const { api } = options;
-
-		this.api = api;
-
 		this.logger.name = Catalog.getName();
-		this.logger.startWith( { api } );
+		this.logger.startWith( { options } );
 
-		this.catalog = new components.Catalog( this, {
-			api: this.api,
-		} );
+		this.catalog = new components.Catalog( this );
+	}
+
+	render( preventDefault ) {
+		this.logger.startWith( { preventDefault } );
+
+		return super.render( preventDefault );
 	}
 
 	afterRender() {

@@ -2,6 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Request cart from backend.
  */
+
+/* global $flow */
+
 export class Index extends ( $flow.commandBases.CommandData ) {
 	static getName() {
 		return 'Components/Cart/Data/Index';

@@ -2,11 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: A live console that you can open by tilda key.
  */
-
-// TODO: Remove.
-const CircularJSON = require( 'circular-json' );
-
 const LOCAL_STORAGE_KEY = 'local_storage_key';
+
+/* global $flow */
 
 export class Terminal {
 	static instance = null;
@@ -272,7 +270,7 @@ Terminal.onOutput = function( output ) {
 
 	console.log.apply( this, arguments );
 
-	 if ( typeof output == 'object' ) {
+	if ( typeof output == 'object' ) {
 		// for events.
 		if ( output instanceof Event ) {
 			/**
@@ -291,7 +289,7 @@ Terminal.onOutput = function( output ) {
 
 			output = `[Event]: type: '${output.type}' element: '${selector}'`;
 		} else {
-			output = CircularJSON.stringify( output, null, 4 );
+			output = JSON.stringify( output, $flow.utils.getCircularReplacer() );
 
 			output = `<pre>${output}</pre>`;
 		}
