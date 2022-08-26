@@ -902,9 +902,9 @@ class Data extends Commands {
   }
 
   constructor() {
-    super(); // TODO: Move to config.
+    super(); // @ts-ignore
 
-    Data.client = new Http('http://localhost:8081');
+    Data.client = new Http($flowConfig.baseURL);
   }
 
   getClient() {
@@ -1058,7 +1058,7 @@ CommandBase: CommandBase$1,
 CommandInternal: CommandInternal$1
 });
 
-var types = /*#__PURE__*/Object.freeze({
+var types$1 = /*#__PURE__*/Object.freeze({
 __proto__: null
 });
 
@@ -1067,6 +1067,68 @@ __proto__: null,
 getCircularReplacer: getCircularReplacer,
 hexColorDelta: hexColorDelta
 });
+
+var name = "@appflux/core";
+var version = "1.0.2-alpha.17";
+var description = "Commands management API";
+var scripts = {
+	test: "jest",
+	build: "rollup -c",
+	watch: "rollup -c -w"
+};
+var repository = {
+	type: "git",
+	url: "git+https://github.com/appflow/core.git"
+};
+var keywords = [
+	"commands",
+	"commander",
+	"flux",
+	"flow",
+	"AppFlow"
+];
+var author = "Leonid Vinikov <czf.leo123@gmail.com> (https://github.com/iNewLegend)";
+var license = "MIT";
+var files = [
+	"dist",
+	"src"
+];
+var publishConfig = {
+	access: "public"
+};
+var types = "dist/index.d.ts";
+var devDependencies = {
+	"@babel/core": "^7.18.10",
+	"@babel/plugin-transform-runtime": "^7.18.10",
+	"@babel/preset-env": "^7.18.10",
+	"@babel/preset-typescript": "^7.18.6",
+	"@rollup/plugin-babel": "^5.3.1",
+	"@rollup/plugin-json": "^4.1.0",
+	"@rollup/plugin-node-resolve": "^13.3.0",
+	"@rollup/plugin-replace": "^4.0.0",
+	"@types/jest": "^28.1.6",
+	"@typescript-eslint/eslint-plugin": "^5.32.0",
+	"@typescript-eslint/parser": "^5.32.0",
+	"babel-jest": "^28.1.3",
+	rollup: "^2.77.2",
+	"rollup-plugin-terser": "^7.0.2",
+	"rollup-plugin-typescript2": "^0.32.1",
+	"ts-jest": "^28.0.7"
+};
+var pkg = {
+	name: name,
+	version: version,
+	description: description,
+	scripts: scripts,
+	repository: repository,
+	keywords: keywords,
+	author: author,
+	license: license,
+	files: files,
+	publishConfig: publishConfig,
+	types: types,
+	devDependencies: devDependencies
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /**
@@ -1134,6 +1196,18 @@ class Controller extends ObjectBase {
 
 if (globalThis?.$flow) {
   throw new Error('$flow is already defined');
+} // API Config.
+
+
+const config = { // @ts-ignore
+  ...globalThis?.$flowConfig,
+  version: pkg.version
+}; // Remove the injection if it was injected.
+// @ts-ignore
+
+if (globalThis?.$flowConfig) {
+  // @ts-ignore
+  delete globalThis?.$flowConfig;
 }
 /**
  * After fighting too much with IDE to make it work with automatic declarations, in order to have with long namespaces like:
@@ -1163,7 +1237,7 @@ const getInternalManager = () => internal$1;
 const getControllersManager = () => controllers$1;
 const getModules = () => modules;
 const getLoggerModule = () => Logger;
-const getTypes = () => types;
+const getTypes = () => types$1;
 const getUtils = () => utils;
 const getObjectBase = () => ObjectBase;
 const getController = () => Controller;
@@ -1174,6 +1248,7 @@ const APIRestart = () => {
 }; // }
 
 const API = {
+  config,
   getCommandBases,
   getCommandBase,
   getCommandPublic,
@@ -1203,7 +1278,7 @@ const API = {
   errors,
   managers,
   modules,
-  types,
+  types: types$1,
   utils,
   ObjectBase,
   Controller
@@ -1213,6 +1288,7 @@ if (globalThis?.$flow) globalThis.$flow = API; // @ts-ignore
 
 if ('undefined' !== typeof window) window.$flow = API;
 
+exports.API = API;
 exports.APIRestart = APIRestart;
 exports.CommandAlreadyRegistered = CommandAlreadyRegistered;
 exports.CommandBase = CommandBase;
@@ -1222,6 +1298,7 @@ exports.CommandNotFound = CommandNotFound;
 exports.CommandPublic = CommandPublic;
 exports.ControllerAlreadyRegistered = ControllerAlreadyRegistered;
 exports.ForceMethodError = ForceMethodError;
+exports.config = config;
 exports.getCommandBase = getCommandBase;
 exports.getCommandBases = getCommandBases;
 exports.getCommandData = getCommandData;
