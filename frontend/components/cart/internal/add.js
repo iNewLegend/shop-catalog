@@ -27,7 +27,7 @@ export class Add extends ( $flow.commandBases.CommandInternal )  {
 			return addItem( product );
 		}
 
-		return $flow.managers.data.create( 'Components/Cart/Data/Add', { id, amount  } )
+		return $flow.managers.data.create( 'Components/Cart/Data/Add', { id, amount } )
 			.then( () => addItem( product ) )
 	}
 

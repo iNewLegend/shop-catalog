@@ -3,13 +3,14 @@
  * @description: Modules Namespace O__o
  */
 import { Terminal } from '../services/';
+import { getContainer } from "@appflux/mvc";
 
 /* global $flow */
 
 /**
  * @memberOf modules
  */
-export class Page extends $flow.Container {
+export class Page extends getContainer() {
 	static getName() {
 		return 'Modules/Page';
 	}
