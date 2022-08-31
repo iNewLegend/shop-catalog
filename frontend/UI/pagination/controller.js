@@ -5,7 +5,11 @@
 import * as commands from "./commands/";
 import * as internal from './internal/';
 
-export class Controller extends $flow.Controller {
+import { getController } from "@appflux/core";
+
+/* global $flow */
+
+export class Controller extends getController() {
 	static getName() {
 		return 'UI/Pagination/Controller';
 	}

@@ -3,9 +3,12 @@
  * @description: component for pagination.
  */
 import './pagination.css';
+
 import Controller from './controller';
 
-export class Component extends $flow.Component {
+import { getComponent } from "@appflux/mvc";
+
+export class Component extends getComponent() {
 	static getName() {
 		return 'UI/Pagination';
 	}
@@ -26,7 +29,7 @@ export class Component extends $flow.Component {
 	}
 
 	template() {
-		return () => (
+		return `
 			<div id="pagination" class="pagination hidden">
 				<div class="pagination">
 					<a onClick="$flow.managers.commands.run( 'UI/Pagination/Commands/GetPage', { component: this, page: this.page - 1 } )"
@@ -36,7 +39,7 @@ export class Component extends $flow.Component {
 					   class="next" href="#">&raquo;</a>
 				</div>
 			</div>
-		);
+		`;
 	}
 
 	afterRender() {

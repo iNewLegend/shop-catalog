@@ -7,7 +7,6 @@
 		"postinstall": "cd backend/underyourskin/nestjs; npm i"
 	},
 	"dependencies": {
-		"@appflux/core": "^1.0.2-alpha.16",
 		"@appflux/mvc": "^1.0.3-alpha.7",
 		"@babel/plugin-transform-react-jsx": "^7.17.3",
 		"hash-it": "^5.0.2",

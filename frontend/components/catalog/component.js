@@ -78,11 +78,15 @@ export class Component extends getComponent() {
 
 			this.renderProducts();
 
+		} );
+
+		$flow.managers.data.onAfterOnce( 'Components/Catalog/Data/Index', ( data, options ) => {
 			$flow.managers.internal.run( 'UI/Pagination/Internal/Set',  {
 				component: this.components.pagination,
 				pagination: data.result.pagination,
 			} );
 		} );
+
 
 		$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
 	}

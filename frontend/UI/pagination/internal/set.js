@@ -1,7 +1,8 @@
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: Add catalog item.
  */
+
+/* global $flow */
 
 /**
  * @typedef PaginationData pagination data.
@@ -15,7 +16,9 @@ export class Set extends ( $flow.commandBases.CommandInternal ) {
 		return 'UI/Pagination/Internal/Set';
 	}
 
-	apply() {
-		// All the logic is side effects of the UI.
+	apply( args, options) {
+		// All the logic is side effects of the UI, located in the controller.
+		// For the logs.
+		return `applied: ${ this.constructor.getName() }`;
 	}
 }

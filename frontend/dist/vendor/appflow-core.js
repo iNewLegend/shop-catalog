@@ -565,6 +565,10 @@ ForceMethod: ForceMethod
  * @description: Responsible for manging/running/hooking commands.
  */
 class Commands extends ObjectBase {
+  static trace = [];
+  current = {};
+  currentArgs = {};
+  trace = [];
   commands = {};
   onBeforeHooks = {};
   onBeforeUIHooks = {};
@@ -577,16 +581,18 @@ class Commands extends ObjectBase {
     return "Flow/Core/Managers/Commands";
   }
 
-  static runCallbacks(callbacks, args = {}, options = {}) {
+  static async runCallbacks(callbacks, args = {}, options = {}) {
+    const callbacksLength = callbacks?.length;
+
     if (callbacks) {
-      for (let i = 0; i != callbacks.length; ++i) {
-        const callback = options.pop === false ? callbacks[i] : callbacks.pop();
+      for (let i = 0; i < callbacksLength; ++i) {
+        const callback = options.pop === true ? callbacks.pop() : callbacks[i];
 
         if (!callback) {
-          break;
+          throw new Error("Callback is not defined.");
         }
 
-        callback(args, options);
+        await callback(args, options);
       }
     }
   }
@@ -605,12 +611,15 @@ class Commands extends ObjectBase {
     this.logger.startEmpty();
   }
 
-  run(command, args = {}, options = {}) {
+  async run(command, args = {}, options = {}) {
     if (typeof command === "string") {
       command = this.getCommandInstance(command, args, options);
     }
 
-    return this.runInstance(command, args, options);
+    this.attachCurrent(command, args);
+    const result = await this.runInstance(command, args, options);
+    this.detachCurrent(command);
+    return result;
   }
 
   register(commands, controller) {
@@ -628,12 +637,12 @@ class Commands extends ObjectBase {
     return result;
   }
 
-  get(name) {
-    return this.commands[name];
-  }
-
   getAll() {
     return this.commands;
+  }
+
+  getByName(name) {
+    return this.commands[name];
   }
 
   getLogger() {
@@ -711,7 +720,7 @@ class Commands extends ObjectBase {
     }
   }
 
-  runInstance(command, args = {}, options = {}) {
+  async runInstance(command, args = {}, options = {}) {
     let result = null; // TODO: Maybe a logger method to handle such cases.
 
     if (Object.keys(args).length) {
@@ -731,44 +740,53 @@ class Commands extends ObjectBase {
     }
 
     this.onBeforeRun(command, args, options);
-    result = command.run();
-
-    if (result instanceof Promise) {
-      result.then(_result => this.onAfterRun(command, args, options, _result));
-    } else {
-      this.onAfterRun(command, args, options, result);
-    }
-
+    result = await command.run();
+    await this.onAfterRun(command, args, options, result);
     return result;
   }
 
-  onAfterRun(command, args, options, result) {
+  async onAfterRun(command, args, options, result) {
+    options = Object.assign({}, options);
+
     if (this.onAfterAffectHooks[command.getName()]) {
       this.onAfterAffectHooks[command.getName()].forEach(command => {
         args.result = result;
         result = this.run(command.toString(), args, options);
       });
+      result = await result;
     }
 
     if (this.onAfterHooks) {
       args.result = result;
-      Commands.runCallbacks(Object.assign([], this.onAfterHooks[command.getName()]), args, options);
+      await Commands.runCallbacks(Object.assign([], this.onAfterHooks[command.getName()]), args, options);
     }
 
     if (this.onAfterOnceHooks) {
-      const callbacks = this.onAfterOnceHooks[command.getName()];
-      Commands.runCallbacks(callbacks);
-      delete this.onAfterOnceHooks[command.getName()];
-    }
-
-    if (this.onAfterUIHooks) {
-      Commands.runCallbacks(Object.assign([], this.onAfterUIHooks[command.getName()]), args, { ...options,
-        pop: false // Delete after run.
+      await Commands.runCallbacks(this.onAfterOnceHooks[command.getName()], args, { ...options,
+        pop: true // Delete after run.
 
       });
     }
 
+    if (this.onAfterUIHooks) {
+      Commands.runCallbacks(Object.assign([], this.onAfterUIHooks[command.getName()]), args, options);
+    }
+
     return result;
+  }
+
+  attachCurrent(command, args = {}) {
+    this.current[command.getName()] = command;
+    this.currentArgs[command.getName()] = args;
+    this.trace.push(command.getName());
+    Commands.trace.push(command.getName());
+  }
+
+  detachCurrent(command) {
+    delete this.current[command.getName()];
+    delete this.currentArgs[command.getName()];
+    Commands.trace.pop();
+    this.trace.pop();
   }
 
 }
