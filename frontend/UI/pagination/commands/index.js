@@ -1,0 +1,1 @@
+export { GetPage } from './get-page';
