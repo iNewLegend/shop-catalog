@@ -31,7 +31,7 @@ https://user-images.githubusercontent.com/10234691/167252894-74428297-945b-4642-
 
 
 ### [ Live ]
-http://inewlegend.myftp.org:9090/shop-catalog/frontend/dist/
+http://inewlegend.ddns.net:9090/shop-catalog/frontend/dist/
 
 # [ Install ]:
 ```shell script
