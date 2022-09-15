@@ -4,9 +4,8 @@
  */
 import './pagination.css';
 
-import { getComponent } from "@appflux/mvc";
-
-/* global $flow */
+import $flow from "@appsflow/core";
+import $mvc from "@appsflow/mvc";
 
 /**
  * @typedef PaginationData pagination data.
@@ -14,9 +13,8 @@ import { getComponent } from "@appflux/mvc";
  * @property {number} total total amount of items.
  * @property {number} pages amount of pages.
  * @property {number} perPage amount of pages per page.
- * @memberOf components.catalog
  */
-export class Pagination extends getComponent() {
+export class Pagination extends $mvc.Component {
 	static getName() {
 		return 'Components/Catalog/Pagination';
 	}
@@ -24,7 +22,10 @@ export class Pagination extends getComponent() {
 	constructor( parent, options ) {
 		super( parent, options );
 
-		this.logger = new $flow.modules.Logger(  Pagination.getName(), true, { sameColor: true } );
+		/**
+		 * @type {import('@appsflow/core/src/modules/logger').Logger}
+		 */
+		this.logger = new ($flow.modules().Logger)( Pagination.getName(), true, { sameColor: true } );
 
 		this.logger.startWith( { options } );
 
@@ -49,9 +50,9 @@ export class Pagination extends getComponent() {
 
 		this.elements = {
 			self: this.view.element,
-			prev: $flow.Factory.createElement( "#pagination .prev" ),
-			next: $flow.Factory.createElement( "#pagination .next" ),
-			placeHolder: $flow.Factory.createElement( '#pagination .placeholder' )
+			prev: $mvc.Factory.createElement( "#pagination .prev" ),
+			next: $mvc.Factory.createElement( "#pagination .next" ),
+			placeHolder: $mvc.Factory.createElement( '#pagination .placeholder' )
 		};
 	}
 
@@ -94,7 +95,7 @@ export class Pagination extends getComponent() {
 
 		// Create pages.
 		for ( let i = 0; i < paginationData.pages; ++i ) {
-			const anchor = new $flow.Element( placeHolder, `<a href="#">${i + 1}</a>` );
+			const anchor = new $mvc.Element( placeHolder, `<a href="#">${i + 1}</a>` );
 
 			this.anchors.push( anchor );
 

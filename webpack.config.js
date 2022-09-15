@@ -35,7 +35,7 @@ module.exports = {
 						],
 						plugins: [
 							[ '@babel/plugin-proposal-object-rest-spread' ],
-							[ "@babel/plugin-transform-react-jsx", { "pragma": "new $flow.JsxElement" } ]
+							[ "@babel/plugin-transform-react-jsx", { "pragma": "new $mvc.JsxElement" } ]
 						]
 					}
 				}
@@ -49,7 +49,7 @@ module.exports = {
 		colors: true
 	},
 	externals: {
-		'@appflux/core': '$flow',
-		'@appflux/mvc': '$flow',
+		'@appsflow/core': '$flow',
+		'@appsflow/mvc': '$mvc',
 	}
 };

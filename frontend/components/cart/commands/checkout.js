@@ -2,10 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Tells the cart request checkout.
  */
+import $flow from "@appsflow/core";
 
-/* global $flow */
-
-export class Checkout extends ( $flow.commandBases.CommandPublic ) {
+export class Checkout extends $flow.commandBases().CommandPublic {
 	static getName() {
 		return 'Components/Cart/Commands/Checkout';
 	}

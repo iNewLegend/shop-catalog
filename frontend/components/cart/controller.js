@@ -8,15 +8,13 @@ import * as internal from "./internal/";
 
 import Model from './model';
 
-import { getController } from "@appflux/core";
-
-/* global $flow */
+import $flow from "@appsflow/core";
 
 /**
  * @name CartController
  * @property {Model} model
  */
-export class Controller extends getController() {
+export class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Cart/Controller';
 	}
@@ -38,17 +36,17 @@ export class Controller extends getController() {
 	}
 
 	setupHooks() {
-		$flow.managers.commands.onAfterAffect(
+		$flow.managers().commands.onAfterAffect(
 			'Components/Cart/Item/Commands/Remove',
 			'Components/Cart/Commands/Remove'
 		);
 
 		const updateTotal = () => {
-			setTimeout( () => $flow.managers.internal.run( 'Components/Cart/Internal/UpdateTotal' ) );
+			setTimeout( () => $flow.managers().internal.run( 'Components/Cart/Internal/UpdateTotal' ) );
 		};
 
-		$flow.managers.internal.onAfterUI( 'Components/Cart/Internal/Add', updateTotal );
-		$flow.managers.commands.onAfterUI( 'Components/Cart/Commands/Remove', updateTotal )
+		$flow.managers().internal.onAfterUI( 'Components/Cart/Internal/Add', updateTotal );
+		$flow.managers().commands.onAfterUI( 'Components/Cart/Commands/Remove', updateTotal )
 	}
 }
 

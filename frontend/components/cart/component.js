@@ -5,15 +5,15 @@
 import './cart.css';
 
 import CartController from './controller'
-import { getComponent } from "@appflux/mvc";
 
-/* global $flow */
+import $flow from "@appsflow/core";
+import $mvc from "@appsflow/mvc";
 
 /**
  * @name CartComponent
  * @extends {Component}
  */
-export class Component extends getComponent() {
+export class Component extends $mvc.Component {
 	static getName() {
 		return 'Components/Cart/Component';
 	}
@@ -25,12 +25,15 @@ export class Component extends getComponent() {
 	initialize( options ) {
 		this.model.on( 'change', this.onChange.bind( this ) );
 
-		this.logger = new $flow.modules.Logger( Component.getName(), true );
+		/**
+		 * @type {import('@appsflow/core/src/modules/logger').Logger}
+		 */
+		this.logger = new ($flow.modules().Logger)( Component.getName(), true );
 
 		options.logger = this.logger;
 
 		// Determine View, if cart empty or not, re-render when empty-state changed, since JSx applied in `template()`.
-		$flow.managers.internal.onAfterUI(
+		$flow.managers().internal.onAfterUI(
 			'Components/Cart/Internal/UpdateTotal',
 			( args, options ) => {
 				if ( 0 === args.result ) {
@@ -63,7 +66,7 @@ export class Component extends getComponent() {
 
 				{! isCartEmpty ?
 					<button class="checkout bg-info"
-					        onClick="$flow.managers.commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
+					        onClick="$flow.managers().commands.run( 'Components/Cart/Commands/Checkout' )">CHECKOUT</button> : null}
 			</div>
 
 		}
@@ -117,11 +120,11 @@ export class Component extends getComponent() {
 		super.render();
 
 		this.elements = {
-			items: $flow.Factory.createElementRef(
+			items: $mvc.Factory.createElementRef(
 				'.cart .items',
 				'Components/Cart/Component/Items'
 			),
-			totalPrice: $flow.Factory.createElementRef(
+			totalPrice: $mvc.Factory.createElementRef(
 				'.cart .total .price',
 				'Components/Cart/Component/TotalPrice'
 			),

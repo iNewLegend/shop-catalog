@@ -2,10 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart item unit.
  */
+import $mvc from "@appsflow/mvc";
 
-/* global $flow */
-
-export default class Model extends $flow.Model {
+export default class Model extends $mvc.Model {
 	id = this.number();
 	name = this.string();
 	price = this.number();

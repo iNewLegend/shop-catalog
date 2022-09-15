@@ -2,10 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Add catalog item.
  */
+import $flow from "@appsflow/core";
 
-/* global $flow */
-
-export class Add extends ( $flow.commandBases.CommandPublic ) {
+export class Add extends $flow.commandBases().CommandPublic {
 	static getName() {
 		return 'Components/Catalog/Commands/Add';
 	}

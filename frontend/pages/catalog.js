@@ -5,9 +5,6 @@
 import Page from '../modules/page';
 import * as components from '../components/';
 
-/**
- * @memberOf pages
- */
 export class Catalog extends Page {
 	static getName() {
 		return 'Pages/Catalog';

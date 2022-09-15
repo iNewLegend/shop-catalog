@@ -1,8 +1,12 @@
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('$flow')) :
 typeof define === 'function' && define.amd ? define(['exports', '$flow'], factory) :
-(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["AppFlow-MVC"] = {}, global.$flow));
-})(this, (function (exports, core) { 'use strict';
+(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.mvc = {}, global.$flow));
+})(this, (function (exports, $flow) { 'use strict';
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var $flow__default = /*#__PURE__*/_interopDefaultLegacy($flow);
 
 /**
  * based on string passed, get the integer hash value
@@ -525,7 +529,7 @@ class ArrayClass extends Array {
     if (this.length) {
       Object.values(this).forEach(prop => {
         // TODO: It may not work since maybe, the prop is external declared.
-        if (prop instanceof Component) {
+        if (prop instanceof Component$1) {
           prop.remove();
         }
       });
@@ -579,11 +583,7 @@ const modelRefresh = model => {
   model._prevModel = Object.assign(data);
   model._prevModelHash = dataHash;
 };
-/**
- * @name $flow.Model
- */
-
-class Model extends core.getObjectBase() {
+class Model extends $flow__default["default"].ObjectBase {
   get logger() {
     return this._logger;
   }
@@ -606,7 +606,7 @@ class Model extends core.getObjectBase() {
 
   constructor(options = {}) {
     super();
-    this._logger = new (core.getLoggerModule())(this.getName(), true, {
+    this._logger = new ($flow__default["default"].modules().Logger)(this.getName(), true, {
       sameColor: true
     }); // @ts-ignore
 
@@ -685,7 +685,7 @@ class Model extends core.getObjectBase() {
       if (prop instanceof ArrayClass) {
         // If its array of components.
         // @ts-ignore
-        if (prop.some(instance => instance instanceof $flow.Component)) {
+        if (prop.some(instance => instance instanceof Component$1)) {
           // @ts-ignore
           result[property] = prop.map(prop => prop.model.getModelData());
           return;
@@ -796,10 +796,6 @@ class HTML {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-/**
- * @name @mvc.Context
- */
-
 class Context {
   static getName() {
     return 'Flow/MVC/Context';
@@ -839,7 +835,7 @@ class Context {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-class ElementBase extends core.getObjectBase() {
+class ElementBase extends $flow__default["default"].ObjectBase {
   static getName() {
     return 'Flow/MVC/Base/Element';
   }
@@ -1027,10 +1023,6 @@ class Container extends ElementBase {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: WIP.
  */
-/**
- * @name $flow.Element
- */
-
 class Element extends Container {
   static getName() {
     return 'Flow/MVC/Element';
@@ -1227,11 +1219,7 @@ class Element extends Container {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: nope.
  */
-/**
- * @name $flow.View
- */
-
-class View extends core.getObjectBase() {
+class View extends $flow__default["default"].ObjectBase {
   isRenderOnce = false;
 
   static getName() {
@@ -1248,7 +1236,7 @@ class View extends core.getObjectBase() {
   initialize(options) {}
 
   template() {
-    throw new core.ForceMethodError(this, 'template');
+    throw new ($flow__default["default"].errors().ForceMethod)(this, 'template');
   }
 
   render() {
@@ -1269,16 +1257,9 @@ class View extends core.getObjectBase() {
 
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
- * @description: nope.
+ * @description: Builder of MVC pattern.
  */
-core.getController();
-/**
- * Builder of MVC pattern.
- *
- * @name $flow.Component
- */
-
-class Component extends core.getObjectBase() {
+class Component extends $flow__default["default"].ObjectBase {
   static getName() {
     return 'Flow/MVC/Component';
   }
@@ -1399,8 +1380,8 @@ class Component extends core.getObjectBase() {
 
     if (ControllerClass) {
       // @ts-ignore
-      return core.getControllersManager().get(ControllerClass.getName()) || // @ts-ignore
-      core.getControllersManager().register(new ControllerClass(this), this.model);
+      return $flow__default["default"].managers().controllers.get(ControllerClass.getName()) || // @ts-ignore
+      $flow__default["default"].managers().controllers.register(new ControllerClass(this), this.model);
     }
 
     throw new Error('Controller not valid.'); // TODO: Error? External class part of $flow
@@ -1411,6 +1392,7 @@ class Component extends core.getObjectBase() {
   }
 
 }
+var Component$1 = Component;
 
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
@@ -1483,28 +1465,78 @@ function JsxElement(tag, attributes, ...children) {
   return Element;
 }
 
+var name = "@appsflow/mvc";
+var version = "0.0.0-alpha.3";
+var description = "AppFlow MVC";
+var scripts = {
+	build: "rollup -c",
+	watch: "rollup -c -w"
+};
+var repository = {
+	type: "git",
+	url: "git+https://github.com/appflow/mvc.git"
+};
+var keywords = [
+	"appflow"
+];
+var author = "Leonid Vinikov <czf.leo123@gmail.com> (https://github.com/iNewLegend)";
+var license = "MIT";
+var files = [
+	"dist",
+	"src",
+	"types"
+];
+var publishConfig = {
+	access: "public"
+};
+var types = "types/index.d.ts";
+var dependencies = {
+	"@appsflow/core": "^0.0.0-alpha.1",
+	"hash-it": "^5.0.2"
+};
+var devDependencies = {
+	"@babel/core": "^7.18.10",
+	"@babel/plugin-transform-runtime": "^7.18.10",
+	"@babel/preset-env": "^7.18.10",
+	"@babel/preset-typescript": "^7.18.6",
+	"@babel/runtime": "^7.18.9",
+	"@rollup/plugin-babel": "^5.3.1",
+	"@rollup/plugin-json": "^4.1.0",
+	"@rollup/plugin-node-resolve": "^13.3.0",
+	"@rollup/plugin-replace": "^4.0.0",
+	"@typescript-eslint/eslint-plugin": "^5.32.0",
+	"@typescript-eslint/parser": "^5.32.0",
+	rollup: "^2.77.2",
+	"rollup-plugin-terser": "^7.0.2",
+	"rollup-plugin-typescript2": "^0.32.1"
+};
+var pkg = {
+	name: name,
+	version: version,
+	description: description,
+	scripts: scripts,
+	repository: repository,
+	keywords: keywords,
+	author: author,
+	license: license,
+	files: files,
+	publishConfig: publishConfig,
+	types: types,
+	dependencies: dependencies,
+	devDependencies: devDependencies
+};
+
+if (!globalThis.$flow) {
+  throw new Error('Flow/Core: $flow is not defined, please make sure you have `@appflux/core` installed.');
+} // @ts-ignore
+
+
 if (globalThis.$flow.$mvc) {
-  throw new Error('$flow.mvc is already defined');
-}
+  throw new Error('`$flow.mvc` is already defined');
+} // @ts-ignore
 
-const getComponent = () => Component;
-const getContainer = () => Container;
-const getContext = () => Context;
-const getElement = () => Element;
-const getFactory = () => Factory;
-const getJsxElement = () => JsxElement;
-const getModel = () => Model;
-const getView = () => View; // @ts-ignore
 
-globalThis.$flow.$mvc = {
-  getComponent,
-  getContainer,
-  getContext,
-  getElement,
-  getFactory,
-  getJsxElement,
-  getModel,
-  getView,
+const API = {
   Component,
   Container,
   Context,
@@ -1515,22 +1547,13 @@ globalThis.$flow.$mvc = {
   View
 }; // @ts-ignore
 
-globalThis.$flow = { // @ts-ignore$
-  ...globalThis.$flow,
-  // @ts-ignore
-  ...globalThis.$flow.$mvc
+globalThis.$flow.config.mvc = {
+  version: pkg.version
 }; // @ts-ignore
 
-window.mvc = globalThis.$mvc;
+globalThis.$mvc = API;
 
-exports.getComponent = getComponent;
-exports.getContainer = getContainer;
-exports.getContext = getContext;
-exports.getElement = getElement;
-exports.getFactory = getFactory;
-exports.getJsxElement = getJsxElement;
-exports.getModel = getModel;
-exports.getView = getView;
+exports.API = API;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

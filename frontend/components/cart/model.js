@@ -2,10 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges cart items/data.
  */
+import $mvc from "@appsflow/mvc";
 
-/* global $flow */
-
-export default class Model extends $flow.Model {
+export default class Model extends $mvc.Model {
 	/**
 	 * State of the cart, open/closed.
 	 *
@@ -17,7 +16,7 @@ export default class Model extends $flow.Model {
 	 *
 	 * Loaded items to be rendered.
 	 *
-	 * @type {Component[]|import('@appflux/mvc/dist/model/array-class').default}
+	 * @type {Component[]|import('@appsflow/mvc/dist/src/model/array-class').default}
 	 */
 	items = this.array();
 

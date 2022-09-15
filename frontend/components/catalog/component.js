@@ -6,14 +6,14 @@ import Pagination from './pagination/pagination';
 import CatalogProductComponent from './product/component';
 import Spinner from './spinner/spinner';
 import Controller from './controller';
-import { getComponent } from "@appflux/mvc";
 
-/* global $flow */
+import $flow from "@appsflow/core";
+import $mvc from "@appsflow/mvc";
 
 /**
  * @name CatalogComponent
  */
-export class Component extends getComponent() {
+export class Component extends $mvc.Component {
 	static amountMaxValue = 999;
 	static amountMinValue = 1;
 
@@ -26,7 +26,10 @@ export class Component extends getComponent() {
 	}
 
 	initialize( options ) {
-		this.logger = new $flow.modules.Logger( Component.getName(), true, { sameColor: true } );
+		/**
+		 * @type {import('@appsflow/core/src/modules/logger').Logger}
+		 */
+		this.logger = new ($flow.modules().Logger)( Component.getName(), true, { sameColor: true } );
 		this.logger.startWith( { options } );
 
 		return super.initialize( options );
@@ -60,11 +63,11 @@ export class Component extends getComponent() {
 		pagination.render();
 
 		pagination.on( 'page:change', ( page ) => {
-			$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
+			$flow.managers().data.get( 'Components/Catalog/Data/Index', { page: page - 1 } )
 				.then( this.onCatalogReceived.bind( this ) );
 		} );
 
-		$flow.managers.data.get( 'Components/Catalog/Data/Index', { page: 0 } )
+		$flow.managers().data.get( 'Components/Catalog/Data/Index', { page: 0 } )
 			.then( this.onCatalogReceived.bind( this ) );
 	}
 
