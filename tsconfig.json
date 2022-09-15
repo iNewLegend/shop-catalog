@@ -7,8 +7,6 @@
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution":	"Node", /* Support swallow paths 'index' */
-		"declaration": true,
-		"declarationDir": "./types",
 		"baseUrl": "./",
 		"sourceMap": true,
 

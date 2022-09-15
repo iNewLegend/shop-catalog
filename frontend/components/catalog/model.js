@@ -3,14 +3,13 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Manges catalog model.
  */
+import $mvc from "@appsflow/mvc";
 
-/* global $flow */
-
-export default class Model extends $flow.Model {
+export default class Model extends $mvc.Model {
 	/**
 	 * Loaded items to be rendered.
 	 *
-	 * @type {CatalogComponent[]|import('@appflux/mvc/dist/model/array-class').default}
+	 * @type {CatalogComponent[]|import('@appsflow/mvc/dist/model/array-class').default}
 	 */
 	products = this.array();
 

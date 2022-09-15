@@ -5,9 +5,10 @@
 import * as commands from './commands/';
 
 import Model from './model.js';
-import { getController } from "@appflux/core";
 
-export default class Controller extends getController() {
+import $flow from "@appsflow/core";
+
+export default class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Sidebar/Controller';
 	}

@@ -4,11 +4,10 @@
  */
 import Controller from './controller';
 
-import { getComponent } from '@appflux/mvc'
+import $flow from "@appsflow/core";
+import $mvc from '@appsflow/mvc';
 
-/* global $flow */
-
-export default class SidebarComponent extends getComponent() {
+export default class SidebarComponent extends $mvc.Component {
 	static getName() {
 		return 'Components/Sidebar/Component';
 	}
@@ -21,16 +20,15 @@ export default class SidebarComponent extends getComponent() {
 		super.initialize( options );
 
 		this.elements = {
-			overlay: $flow.Factory.createElement( '#overlay' ),
+			overlay: $mvc.Factory.createElement( '#overlay' ),
 		}
 
 		this.elements.overlay.click(
-			() => $flow.managers.commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } )
+			() => $flow.managers().commands.run( 'Components/Sidebar/Commands/Toggle', { state: false } )
 		);
 
 		this.model.on( 'change', () => {
-			const state = this.model.state;
-			state ?
+			this.model.state ?
 				this.onShow() :
 				this.onHide();
 		} );

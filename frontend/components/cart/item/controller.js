@@ -7,14 +7,12 @@ import * as internal from "./internal/";
 
 import Model from "./model";
 
-import { getController } from "@appflux/core";
-
-/* global $flow */
+import $flow from "@appsflow/core";
 
 /**
  * @property {Model} model
  */
-export class Controller extends getController() {
+export class Controller extends $flow.Controller {
 	static getName() {
 		return 'Components/Cart/Item/Controller';
 	}

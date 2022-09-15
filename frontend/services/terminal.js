@@ -4,7 +4,6 @@
  */
 const LOCAL_STORAGE_KEY = 'local_storage_key';
 
-/* global $flow */
 
 export class Terminal {
 	static instance = null;
@@ -27,7 +26,10 @@ export class Terminal {
 	constructor() {
 		if ( Terminal.instance == null ) {
 
-			this.logger = new $flow.modules.Logger( Terminal.getName(), true );
+			/**
+			 * @type {import('@appsflow/core/src/modules/logger').Logger}
+			 */
+			this.logger = new ($flow.modules().Logger)( Terminal.getName(), true );
 			this.logger.startEmpty();
 
 			this.localStorage = window.localStorage;
@@ -289,7 +291,7 @@ Terminal.onOutput = function( output ) {
 
 			output = `[Event]: type: '${output.type}' element: '${selector}'`;
 		} else {
-			output = JSON.stringify( output, $flow.utils.getCircularReplacer() );
+			output = JSON.stringify( output, $flow.utils().getCircularReplacer() );
 
 			output = `<pre>${output}</pre>`;
 		}

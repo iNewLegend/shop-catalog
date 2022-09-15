@@ -35,7 +35,7 @@ class ObjectBase {
 
   constructor() {
     this.virtualId = IdCounter;
-    ++IdCounter;
+    APIIncreaseIdCounter();
   }
 
   getName() {
@@ -43,10 +43,29 @@ class ObjectBase {
   }
 
 }
-function APIResetIdCounter() {
-  IdCounter = 0;
-  return 0;
+function APIIncreaseIdCounter() {
+  return IdCounter++;
 }
+
+/**
+ * Function getCircularReplacer() : Reduce circular references.
+ *
+ * @copyright https://stackoverflow.com/a/53731154
+ */
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+
+      seen.add(value);
+    }
+
+    return value;
+  };
+};
 
 /**
  * Function hexColorDelta() : Return color difference in ratio decimal point.
@@ -76,25 +95,11 @@ const hexColorDelta = function (hex1, hex2) {
   return (r + g + b) / 3;
 };
 
-/**
- * Function getCircularReplacer() : Reduce circular references.
- *
- * @copyright https://stackoverflow.com/a/53731154
- */
-const getCircularReplacer = () => {
-  const seen = new WeakSet();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-
-      seen.add(value);
-    }
-
-    return value;
-  };
-};
+var utils = /*#__PURE__*/Object.freeze({
+__proto__: null,
+getCircularReplacer: getCircularReplacer,
+hexColorDelta: hexColorDelta
+});
 
 const MAX_WRAPPING_RECURSIVE_DEPTH = 4;
 class Logger {
@@ -172,7 +177,7 @@ class Logger {
 
 
   constructor(owner, isActive = false, args = {}) {
-    if ('off' === globalThis.process?.env['flow/modules/logger']) {
+    if ('off' === globalThis.process?.env['flow_modules_logger']) {
       return;
     }
 
@@ -460,24 +465,20 @@ class Logger {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Base for all commands, that can be managed by any commands' manager.
  */
-/**
- * @name $flow.commandBases.CommandBase
- */
-
-class CommandBase$1 extends ObjectBase {
+class CommandBase extends ObjectBase {
   args = {};
   options = {};
 
   constructor(args = {}, options = {}) {
     super();
 
-    if (!CommandBase$1.logger) {
-      CommandBase$1.logger = new Logger(this.constructor.getName(), true, {
+    if (!CommandBase.logger) {
+      CommandBase.logger = new Logger(this.constructor.getName(), true, {
         sameColor: true
       });
     }
 
-    this.logger = CommandBase$1.logger;
+    this.logger = CommandBase.logger;
     this.logger.startWith({
       args,
       options
@@ -512,11 +513,7 @@ class CommandBase$1 extends ObjectBase {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: CommandPublic, is used everytime the act should represent a user action.
  * */
-/**
- * @name $flow.commandBases.CommandPublic
- */
-
-class CommandPublic$1 extends CommandBase$1 {
+class CommandPublic extends CommandBase {
   static getName() {
     return "Flow/Core/CommandBases/CommandPublic";
   }
@@ -528,7 +525,7 @@ __proto__: null,
 Logger: Logger
 });
 
-class CommandAlreadyRegistered$1 extends Error {
+class CommandAlreadyRegistered extends Error {
   constructor(command) {
     super(`Command: '${command.getName()}' is already registered`);
   }
@@ -538,14 +535,14 @@ class CommandAlreadyRegistered$1 extends Error {
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  */
-class CommandNotFound$1 extends Error {
+class CommandNotFound extends Error {
   constructor(command) {
     super(`Command: '${command}' is not found`);
   }
 
 }
 
-class ControllerAlreadyRegistered$1 extends Error {
+class ControllerAlreadyRegistered extends Error {
   constructor(controller) {
     super(`Controller: '${controller.getName()}' is already registered`);
   }
@@ -554,9 +551,9 @@ class ControllerAlreadyRegistered$1 extends Error {
 
 var errors = /*#__PURE__*/Object.freeze({
 __proto__: null,
-CommandAlreadyRegistered: CommandAlreadyRegistered$1,
-CommandNotFound: CommandNotFound$1,
-ControllerAlreadyRegistered: ControllerAlreadyRegistered$1,
+CommandAlreadyRegistered: CommandAlreadyRegistered,
+CommandNotFound: CommandNotFound,
+ControllerAlreadyRegistered: ControllerAlreadyRegistered,
 ForceMethod: ForceMethod
 });
 
@@ -565,6 +562,10 @@ ForceMethod: ForceMethod
  * @description: Responsible for manging/running/hooking commands.
  */
 class Commands extends ObjectBase {
+  static trace = [];
+  current = {};
+  currentArgs = {};
+  trace = [];
   commands = {};
   onBeforeHooks = {};
   onBeforeUIHooks = {};
@@ -577,17 +578,17 @@ class Commands extends ObjectBase {
     return "Flow/Core/Managers/Commands";
   }
 
-  static runCallbacks(callbacks, args = {}, options = {}) {
-    if (callbacks) {
-      for (let i = 0; i != callbacks.length; ++i) {
-        const callback = options.pop === false ? callbacks[i] : callbacks.pop();
+  static async runCallbacks(callbacks, args = {}, options = {}) {
+    const callbacksLength = callbacks?.length || 0;
 
-        if (!callback) {
-          break;
-        }
+    for (let i = 0; i < callbacksLength; ++i) {
+      const callback = options.pop === true ? callbacks.pop() : callbacks[i];
 
-        callback(args, options);
+      if (!callback) {
+        throw new Error("Callback is not defined.");
       }
+
+      await callback(args, options);
     }
   }
 
@@ -605,12 +606,15 @@ class Commands extends ObjectBase {
     this.logger.startEmpty();
   }
 
-  run(command, args = {}, options = {}) {
+  async run(command, args = {}, options = {}) {
     if (typeof command === "string") {
       command = this.getCommandInstance(command, args, options);
     }
 
-    return this.runInstance(command, args, options);
+    this.attachCurrent(command, args);
+    const result = await this.runInstance(command, args, options);
+    this.detachCurrent(command);
+    return result;
   }
 
   register(commands, controller) {
@@ -619,7 +623,7 @@ class Commands extends ObjectBase {
       const commandName = command.getName();
 
       if (this.commands[commandName]) {
-        throw new CommandAlreadyRegistered$1(command);
+        throw new CommandAlreadyRegistered(command);
       }
 
       this.commands[commandName] = command;
@@ -628,12 +632,12 @@ class Commands extends ObjectBase {
     return result;
   }
 
-  get(name) {
-    return this.commands[name];
-  }
-
   getAll() {
     return this.commands;
+  }
+
+  getByName(name) {
+    return this.commands[name];
   }
 
   getLogger() {
@@ -644,7 +648,7 @@ class Commands extends ObjectBase {
     const CommandClass = this.commands[name];
 
     if (!CommandClass) {
-      throw new CommandNotFound$1(name);
+      throw new CommandNotFound(name);
     } // @ts-ignore
 
 
@@ -711,7 +715,7 @@ class Commands extends ObjectBase {
     }
   }
 
-  runInstance(command, args = {}, options = {}) {
+  async runInstance(command, args = {}, options = {}) {
     let result = null; // TODO: Maybe a logger method to handle such cases.
 
     if (Object.keys(args).length) {
@@ -731,44 +735,53 @@ class Commands extends ObjectBase {
     }
 
     this.onBeforeRun(command, args, options);
-    result = command.run();
-
-    if (result instanceof Promise) {
-      result.then(_result => this.onAfterRun(command, args, options, _result));
-    } else {
-      this.onAfterRun(command, args, options, result);
-    }
-
+    result = await command.run();
+    await this.onAfterRun(command, args, options, result);
     return result;
   }
 
-  onAfterRun(command, args, options, result) {
+  async onAfterRun(command, args, options, result) {
+    options = Object.assign({}, options);
+
     if (this.onAfterAffectHooks[command.getName()]) {
       this.onAfterAffectHooks[command.getName()].forEach(command => {
         args.result = result;
         result = this.run(command.toString(), args, options);
       });
+      result = await result;
     }
 
     if (this.onAfterHooks) {
       args.result = result;
-      Commands.runCallbacks(Object.assign([], this.onAfterHooks[command.getName()]), args, options);
+      await Commands.runCallbacks(Object.assign([], this.onAfterHooks[command.getName()]), args, options);
     }
 
     if (this.onAfterOnceHooks) {
-      const callbacks = this.onAfterOnceHooks[command.getName()];
-      Commands.runCallbacks(callbacks);
-      delete this.onAfterOnceHooks[command.getName()];
-    }
-
-    if (this.onAfterUIHooks) {
-      Commands.runCallbacks(Object.assign([], this.onAfterUIHooks[command.getName()]), args, { ...options,
-        pop: false // Delete after run.
+      await Commands.runCallbacks(this.onAfterOnceHooks[command.getName()], args, { ...options,
+        pop: true // Delete after run.
 
       });
     }
 
+    if (this.onAfterUIHooks) {
+      Commands.runCallbacks(Object.assign([], this.onAfterUIHooks[command.getName()]), args, options);
+    }
+
     return result;
+  }
+
+  attachCurrent(command, args = {}) {
+    this.current[command.getName()] = command;
+    this.currentArgs[command.getName()] = args;
+    this.trace.push(command.getName());
+    Commands.trace.push(command.getName());
+  }
+
+  detachCurrent(command) {
+    delete this.current[command.getName()];
+    delete this.currentArgs[command.getName()];
+    Commands.trace.pop();
+    this.trace.pop();
   }
 
 }
@@ -790,7 +803,7 @@ class Controllers extends ObjectBase {
 
   register(controller) {
     if (this.controllers[controller.getName()]) {
-      throw new ControllerAlreadyRegistered$1(controller);
+      throw new ControllerAlreadyRegistered(controller);
     } // Register.
 
 
@@ -971,28 +984,24 @@ class Internal extends Commands {
 
 }
 
-let commands$1 = new Commands();
-let controllers$1 = new Controllers();
-let data$1 = new Data();
-let internal$1 = new Internal();
+let commands = new Commands();
+let controllers = new Controllers();
+let data = new Data();
+let internal = new Internal();
 
 var managers = /*#__PURE__*/Object.freeze({
 __proto__: null,
-commands: commands$1,
-controllers: controllers$1,
-data: data$1,
-internal: internal$1
+commands: commands,
+controllers: controllers,
+data: data,
+internal: internal
 });
 
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Each data command should represent a final REST endpoint.
  */
-/**
- * @name $flow.commandBases.CommandData
- */
-
-class CommandData$1 extends CommandPublic$1 {
+class CommandData extends CommandPublic {
   static getName() {
     return 'Flow/Core/CommandBases/CommandData';
   }
@@ -1011,7 +1020,7 @@ class CommandData$1 extends CommandPublic$1 {
 
   apply(args = this.args, options = this.options) {
     const endpoint = this.applyEndpointFormat(this.getEndpoint(), args);
-    return data$1.getClient().fetch(endpoint, data$1.currentHttpMethod, args || null);
+    return data.getClient().fetch(endpoint, data.currentHttpMethod, args || null);
   }
 
   applyEndpointFormat(endpoint, data = {}) {
@@ -1039,11 +1048,7 @@ class CommandData$1 extends CommandPublic$1 {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: CommandInternal, is used when part of the logic needed to be command but not represent a User command.
  */
-/**
- * @name $flow.commandBases.CommandInternal
- */
-
-class CommandInternal$1 extends CommandPublic$1 {
+class CommandInternal extends CommandPublic {
   static getName() {
     return "Flow/Core/CommandBases/CommandInternal";
   }
@@ -1052,27 +1057,17 @@ class CommandInternal$1 extends CommandPublic$1 {
 
 var commandBases = /*#__PURE__*/Object.freeze({
 __proto__: null,
-CommandPublic: CommandPublic$1,
-CommandData: CommandData$1,
-CommandBase: CommandBase$1,
-CommandInternal: CommandInternal$1
+CommandPublic: CommandPublic,
+CommandData: CommandData,
+CommandBase: CommandBase,
+CommandInternal: CommandInternal
 });
 
-var types$1 = /*#__PURE__*/Object.freeze({
-__proto__: null
-});
-
-var utils = /*#__PURE__*/Object.freeze({
-__proto__: null,
-getCircularReplacer: getCircularReplacer,
-hexColorDelta: hexColorDelta
-});
-
-var name = "@appflux/core";
-var version = "1.0.2-alpha.17";
-var description = "Commands management API";
+var name = "@appsflow/core";
+var version = "0.0.0-alpha.1";
+var description = "AppFlow core";
 var scripts = {
-	test: "jest",
+	test: "export flow_modules_logger=off && jest",
 	build: "rollup -c",
 	watch: "rollup -c -w"
 };
@@ -1081,22 +1076,19 @@ var repository = {
 	url: "git+https://github.com/appflow/core.git"
 };
 var keywords = [
-	"commands",
-	"commander",
-	"flux",
-	"flow",
-	"AppFlow"
+	"appflow"
 ];
 var author = "Leonid Vinikov <czf.leo123@gmail.com> (https://github.com/iNewLegend)";
 var license = "MIT";
 var files = [
 	"dist",
-	"src"
+	"src",
+	"types"
 ];
 var publishConfig = {
 	access: "public"
 };
-var types = "dist/index.d.ts";
+var types = "types/index.d.ts";
 var devDependencies = {
 	"@babel/core": "^7.18.10",
 	"@babel/plugin-transform-runtime": "^7.18.10",
@@ -1130,22 +1122,6 @@ var pkg = {
 	devDependencies: devDependencies
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/**
- * @TODO: Remove - Its better to redeclare the whole API.
- */
-
-function APIRestart$1() {
-  // @ts-ignore
-  commands = new Commands(); // @ts-ignore
-
-  controllers = new Controllers(); // @ts-ignore
-
-  data = new Data(); // @ts-ignore
-
-  internal = new Internal();
-}
-
 /**
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Controller is part of MVC concept, responsible for actions.
@@ -1172,12 +1148,12 @@ class Controller extends ObjectBase {
   setupHooks() {}
 
   register() {
-    const commands = Object.values(this.getCommands()),
-          data = Object.values(this.getData()),
-          internal = Object.values(this.getInternal());
-    this.commands = commands$1.register(commands, this);
-    this.data = data$1.register(data, this);
-    this.internal = internal$1.register(internal, this);
+    const commands$1 = Object.values(this.getCommands()),
+          data$1 = Object.values(this.getData()),
+          internal$1 = Object.values(this.getInternal());
+    this.commands = commands.register(commands$1, this);
+    this.data = data.register(data$1, this);
+    this.internal = internal.register(internal$1, this);
   }
 
   getCommands() {
@@ -1202,120 +1178,22 @@ if (globalThis?.$flow) {
 const config = { // @ts-ignore
   ...globalThis?.$flowConfig,
   version: pkg.version
-}; // Remove the injection if it was injected.
-// @ts-ignore
-
-if (globalThis?.$flowConfig) {
-  // @ts-ignore
-  delete globalThis?.$flowConfig;
-}
-/**
- * After fighting too much with IDE to make it work with automatic declarations, in order to have with long namespaces like:
- * `$flow.modules.Logger`, without success I decided to use "names" to get all the declarations works outofbox.
- */
-// export namespace $flow {
-
-
-const getCommandBases = () => commandBases;
-const getCommandBase = () => CommandBase$1;
-const getCommandPublic = () => CommandPublic$1;
-const getCommandData = () => CommandData$1;
-const getCommandInternal = () => CommandInternal$1;
-const CommandBase = CommandBase$1;
-const CommandPublic = CommandPublic$1;
-const CommandData = CommandData$1;
-const CommandInternal = CommandInternal$1;
-const getErrors = () => errors;
-const CommandAlreadyRegistered = CommandAlreadyRegistered$1;
-const CommandNotFound = CommandNotFound$1;
-const ControllerAlreadyRegistered = ControllerAlreadyRegistered$1;
-const ForceMethodError = ForceMethod;
-const getManagers = () => managers;
-const getCommandsManager = () => commands$1;
-const getDataManager = () => data$1;
-const getInternalManager = () => internal$1;
-const getControllersManager = () => controllers$1;
-const getModules = () => modules;
-const getLoggerModule = () => Logger;
-const getTypes = () => types$1;
-const getUtils = () => utils;
-const getObjectBase = () => ObjectBase;
-const getController = () => Controller;
-const APIRestart = () => {
-  APIRestart$1();
-  APIResetIdCounter();
-  Logger.reset();
-}; // }
-
+};
 const API = {
   config,
-  getCommandBases,
-  getCommandBase,
-  getCommandPublic,
-  getCommandData,
-  getCommandInternal,
-  CommandBase,
-  CommandPublic,
-  CommandData,
-  CommandInternal,
-  getErrors,
-  CommandAlreadyRegistered,
-  CommandNotFound,
-  ControllerAlreadyRegistered,
-  ForceMethodError,
-  getManagers,
-  getCommandsManager,
-  getDataManager,
-  getInternalManager,
-  getControllersManager,
-  getModules,
-  getLoggerModule,
-  getTypes,
-  getObjectBase,
-  getController,
-  APIRestart,
-  commandBases,
-  errors,
-  managers,
-  modules,
-  types: types$1,
-  utils,
+  commandBases: () => commandBases,
+  errors: () => errors,
+  managers: () => managers,
+  modules: () => modules,
+  utils: () => utils,
   ObjectBase,
   Controller
 }; // @ts-ignore
 
-if (globalThis?.$flow) globalThis.$flow = API; // @ts-ignore
-
-if ('undefined' !== typeof window) window.$flow = API;
+if (!globalThis?.$flow) globalThis.$flow = API;
 
 exports.API = API;
-exports.APIRestart = APIRestart;
-exports.CommandAlreadyRegistered = CommandAlreadyRegistered;
-exports.CommandBase = CommandBase;
-exports.CommandData = CommandData;
-exports.CommandInternal = CommandInternal;
-exports.CommandNotFound = CommandNotFound;
-exports.CommandPublic = CommandPublic;
-exports.ControllerAlreadyRegistered = ControllerAlreadyRegistered;
-exports.ForceMethodError = ForceMethodError;
 exports.config = config;
-exports.getCommandBase = getCommandBase;
-exports.getCommandBases = getCommandBases;
-exports.getCommandData = getCommandData;
-exports.getCommandInternal = getCommandInternal;
-exports.getCommandPublic = getCommandPublic;
-exports.getCommandsManager = getCommandsManager;
-exports.getController = getController;
-exports.getControllersManager = getControllersManager;
-exports.getDataManager = getDataManager;
-exports.getErrors = getErrors;
-exports.getInternalManager = getInternalManager;
-exports.getLoggerModule = getLoggerModule;
-exports.getManagers = getManagers;
-exports.getModules = getModules;
-exports.getObjectBase = getObjectBase;
-exports.getTypes = getTypes;
-exports.getUtils = getUtils;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

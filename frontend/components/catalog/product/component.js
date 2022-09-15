@@ -4,15 +4,14 @@
  */
 import './product.css';
 import Controller from './controller';
-import { getComponent } from "@appflux/mvc";
 
-/* global $flow */
+import $mvc from "@appsflow/mvc";
 
 /**
  * @name CatalogProductComponent
  * @extends {Component}
  */
-export class Component extends getComponent() {
+export class Component extends $mvc.Component {
 	static getName() {
 		return 'Components/Catalog/Product/Component';
 	}
@@ -58,7 +57,7 @@ export class Component extends getComponent() {
 					<div class="footer">
 						<h5>Price: <span class="price">${price}$</span></h5>
 						<div class="row">
-							<button onclick="$flow.managers.commands.run( 'Components/Catalog/Product/Commands/Add', { component: this } );" class="bg-primary">Add To Cart</button>
+							<button onclick="$flow.managers().commands.run( 'Components/Catalog/Product/Commands/Add', { component: this } );" class="bg-primary">Add To Cart</button>
 							<input onchange="this.onProductChange( event )" class="amount" type="number" name="amount"	value="1" min="1">
 						</div>
 					</div>

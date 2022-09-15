@@ -2,10 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Sidebar model.
  */
+import $mvc from "@appsflow/mvc";
 
-/* global $flow */
-
-export default class Model extends $flow.Model {
+export default class Model extends $mvc.Model {
 	state = this.boolean();
 
 	static getName() {

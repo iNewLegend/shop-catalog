@@ -2,10 +2,9 @@
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Remove item from cart.
  */
+import $flow from '@appsflow/core';
 
-/* global $flow */
-
-export class Remove extends ( $flow.commandBases.CommandPublic ) {
+export class Remove extends $flow.commandBases().CommandPublic {
 	static getName() {
 		return 'Components/Cart/Commands/Remove';
 	}
@@ -19,8 +18,8 @@ export class Remove extends ( $flow.commandBases.CommandPublic ) {
 	 */
 	async apply( args, options ) {
 		const id = args.model.id,
-			{ model } = $flow.managers.controllers.get( 'Components/Cart/Controller' ),
-			result = await $flow.managers.data.update( 'Components/Cart/Data/Remove', { id } );
+			{ model } = $flow.managers().controllers.get( 'Components/Cart/Controller' ),
+			result = await $flow.managers().data.update( 'Components/Cart/Data/Remove', { id } );
 
 		// Find item being removed.
 		const item = model.items.find( ( filteredItem ) => filteredItem.model.id === id );

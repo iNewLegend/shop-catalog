@@ -4,9 +4,10 @@
  */
 import ItemComponent from "../item/component";
 
-/* global $flow */
+import $flow from "@appsflow/core";
+import $mvc from '@appsflow/mvc'
 
-export class Add extends ( $flow.commandBases.CommandInternal )  {
+export class Add extends $flow.commandBases().CommandInternal  {
 	static getName() {
 		return 'Components/Cart/Internal/Add';
 	}
@@ -27,7 +28,7 @@ export class Add extends ( $flow.commandBases.CommandInternal )  {
 			return addItem( product );
 		}
 
-		return $flow.managers.data.create( 'Components/Cart/Data/Add', { id, amount } )
+		return $flow.managers().data.create( 'Components/Cart/Data/Add', { id, amount } )
 			.then( () => addItem( product ) )
 	}
 
@@ -43,7 +44,7 @@ export class Add extends ( $flow.commandBases.CommandInternal )  {
 		/**
 		 * @type {CartController}
 		 */
-		const controller = $flow.managers.controllers.get( 'Components/Cart/Controller' )
+		const controller = $flow.managers().controllers.get( 'Components/Cart/Controller' )
 
 		controller.model.items.pushSilent( item );
 
@@ -61,7 +62,7 @@ export class Add extends ( $flow.commandBases.CommandInternal )  {
 		this.logger.startWith( { item, notifyCartChanged, highlight } );
 
 		const itemId = item.model.id,
-			controller = $flow.managers.controllers.get( 'Components/Cart/Controller' ),
+			controller = $flow.managers().controllers.get( 'Components/Cart/Controller' ),
 			existItem = controller.model.getById( itemId )
 
 		// TODO: Fix `model.amount` is string.
@@ -91,7 +92,7 @@ export class Add extends ( $flow.commandBases.CommandInternal )  {
 		data.id = parseInt( data.id );
 
 		// In other words: create the whole MVC in some area upon some data.
-		return new ItemComponent( () => $flow.Factory.getElementRef( 'Components/Cart/Component/Items' ), {
+		return new ItemComponent( () => $mvc.Factory.getElementRef( 'Components/Cart/Component/Items' ), {
 			logger,
 			...data,
 		} );

@@ -3,14 +3,13 @@
  * @description: Manages one item unit.
  */
 import Controller from './controller';
-import { getComponent } from "@appflux/mvc";
 
-/* global $flow */
+import $mvc from "@appsflow/mvc";
 
 /**
  * @property {Model} model
  */
-export class Component extends getComponent() {
+export class Component extends $mvc.Component {
 	static getName() {
 		return 'Components/Cart/Item/Component';
 	}
@@ -39,7 +38,7 @@ export class Component extends getComponent() {
 	                <div class="thumbnail"><img alt="item" src="img/product-${id}.jpg" /></div>
 	                <div class="info">
 	                    <h2>${name}</h2>
-	                    <button class="color-primary close" onclick="$flow.managers.commands.run( 'Components/Cart/Item/Commands/Remove', { model: this.model } )">&times;</button>
+	                    <button class="color-primary close" onclick="$flow.managers().commands.run( 'Components/Cart/Item/Commands/Remove', { model: this.model } )">&times;</button>
 	                    <div class="amount-price">
 	                        <span class="amount">${amount}</span> x <strong>${price}</strong>
 	                        <p class="sum">$<span class="value">${sum}</span></p>
@@ -65,7 +64,7 @@ export class Component extends getComponent() {
 		}
 
 		if ( states.currentModel.amount !== states.prevModel.amount ) {
-			$flow.managers.internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
+			$flow.managers().internal.run( 'Components/Cart/Item/Internal/UpdateAmount', {
 				component: this,
 				amount: states.currentModel.amount,
 				sum: this.model.getTotal(),
