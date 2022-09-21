@@ -6,9 +6,9 @@ import * as commands from './commands/';
 
 import Model from './model.js';
 
-import $flow from "@appsflow/core";
+import $mvc from "@appsflow/mvc";
 
-export default class Controller extends $flow.Controller {
+export default class Controller extends $mvc.Controller {
 	static getName() {
 		return 'Components/Sidebar/Controller';
 	}

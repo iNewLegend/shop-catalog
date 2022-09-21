@@ -687,7 +687,7 @@ class Model extends $flow__default["default"].ObjectBase {
         // @ts-ignore
         if (prop.some(instance => instance instanceof Component$1)) {
           // @ts-ignore
-          result[property] = prop.map(prop => prop.model.getModelData());
+          result[property] = prop.map(prop => prop.getController().getModel().getModelData());
           return;
         }
 
@@ -708,7 +708,7 @@ class Model extends $flow__default["default"].ObjectBase {
       if (this[key]?._isCollectionModel) {
         // @ts-ignore
         this[key].forEach(item => {
-          item.model.destroy();
+          item.getController()().getModel().destroy();
         });
       }
     });
@@ -1259,13 +1259,35 @@ class View extends $flow__default["default"].ObjectBase {
  * @author: Leonid Vinikov <czf.leo123@gmail.com>
  * @description: Builder of MVC pattern.
  */
+class Controller extends $flow__default["default"].Controller {
+  static getName() {
+    return 'Flow/MVC/Controller';
+  }
+
+  static getModelClass() {
+    return null;
+  }
+
+  getModel() {
+    return this.model;
+  }
+
+  setModel(model) {
+    this.model = model;
+  }
+
+}
+
+/**
+ * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @description: Builder of MVC pattern.
+ */
 class Component extends $flow__default["default"].ObjectBase {
   static getName() {
     return 'Flow/MVC/Component';
   }
 
   static getControllerClass() {
-    // @ts-ignore
     return null;
   }
 
@@ -1276,17 +1298,15 @@ class Component extends $flow__default["default"].ObjectBase {
     this.controller = this.getController();
 
     if (this.controller === null) {
-      this.controller = new class NullController {}();
-    }
-
-    if (this.controller) {
+      this.controller = new class NullController extends Controller {}();
+    } else if (this.controller) {
       // @ts-ignore
       let {
         model
       } = options;
 
       if (!model) {
-        const ModelClass = this.controller.constructor.getModelClass?.call(),
+        const ModelClass = this.controller.constructor.getModelClass(),
               modelOptions = {
           owner: this
         };
@@ -1298,9 +1318,8 @@ class Component extends $flow__default["default"].ObjectBase {
         }
       }
 
-      this.model = model; // TODO Add to interface or smth like that.
-
-      this.controller.model = this.model;
+      this.model = model;
+      this.controller.setModel(this.model);
     }
 
     this.initialize(this.options);
@@ -1384,7 +1403,7 @@ class Component extends $flow__default["default"].ObjectBase {
       $flow__default["default"].managers().controllers.register(new ControllerClass(this), this.model);
     }
 
-    throw new Error('Controller not valid.'); // TODO: Error? External class part of $flow
+    throw new Error('Controller not valid.'); // TODO: Use custom error.
   }
 
   getView() {
@@ -1466,7 +1485,7 @@ function JsxElement(tag, attributes, ...children) {
 }
 
 var name = "@appsflow/mvc";
-var version = "0.0.0-alpha.3";
+var version = "0.0.0-alpha.7";
 var description = "AppFlow MVC";
 var scripts = {
 	build: "rollup -c",
@@ -1538,6 +1557,7 @@ if (globalThis.$flow.$mvc) {
 
 const API = {
   Component,
+  Controller,
   Container,
   Context,
   Element,

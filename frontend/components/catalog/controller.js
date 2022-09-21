@@ -7,9 +7,9 @@ import * as commands from './commands/';
 
 import Model from "./model";
 
-import $flow from "@appsflow/core";
+import $mvc from "@appsflow/mvc";
 
-export class Controller extends $flow.Controller {
+export class Controller extends $mvc.Controller {
 	static getName() {
 		return 'Components/Catalog/Controller';
 	}

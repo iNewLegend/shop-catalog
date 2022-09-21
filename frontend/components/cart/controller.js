@@ -9,12 +9,13 @@ import * as internal from "./internal/";
 import Model from './model';
 
 import $flow from "@appsflow/core";
+import $mvc from "@appsflow/mvc";
 
 /**
  * @name CartController
  * @property {Model} model
  */
-export class Controller extends $flow.Controller {
+export class Controller extends $mvc.Controller {
 	static getName() {
 		return 'Components/Cart/Controller';
 	}

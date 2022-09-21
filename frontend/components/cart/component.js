@@ -51,7 +51,8 @@ export class Component extends $mvc.Component {
 	template() {
 		// JSX Element callback applied on render.
 		return () => {
-			const isCartEmpty = !!! this.model.items.length,
+			const model = this.getController().getModel(),
+				isCartEmpty = !!! model.items.length,
 				totalClass = isCartEmpty ? 'total' : 'total open';
 
 			return <div class="cart">
@@ -60,7 +61,7 @@ export class Component extends $mvc.Component {
 				<ul class="items">
 					<li class={totalClass}>
 						<h2>TOTAL</h2>
-						<h3><span class="price">{this.model.getTotal()}</span></h3>
+						<h3><span class="price">{model.getTotal()}</span></h3>
 					</li>
 				</ul>
 
