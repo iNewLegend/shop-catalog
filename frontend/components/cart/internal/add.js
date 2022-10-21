@@ -19,7 +19,6 @@ export class Add extends $flow.commandBases().CommandInternal  {
 			addItem = ( product ) => {
 				this.doAddItem(
 					this.createItemComponent( product ),
-					true,
 					! options.local
 				);
 			}
@@ -55,11 +54,10 @@ export class Add extends $flow.commandBases().CommandInternal  {
 	 * Function doAddItem() : Adds item to cart
 	 *
 	 * @param {ItemComponent} item
-	 * @param {boolean} notifyCartChanged
 	 * @param {boolean} highlight
 	 */
-	doAddItem( item, notifyCartChanged = true, highlight = false ) {
-		this.logger.startWith( { item, notifyCartChanged, highlight } );
+	doAddItem( item, highlight = false ) {
+		this.logger.startWith( { item, highlight } );
 
 		const itemId = item.model.id,
 			controller = $flow.managers().controllers.get( 'Components/Cart/Controller' ),
