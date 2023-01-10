@@ -31,7 +31,7 @@ https://user-images.githubusercontent.com/10234691/167252894-74428297-945b-4642-
 
 
 ### [ Live ]
-http://inewlegend.ddns.net:9090/
+http://inewlegend.com:9090/
 
 # [ Install ]:
 ```shell script
